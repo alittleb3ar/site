@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Michael Donovan — workbench</title>
+<meta name="description" content="Data engineering and scientific computing projects.">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="logo">~/<b>michaeldonovan</b></div>
+  <div class="links">
+    <a href="index.html" class="here">work</a>
+    <a href="#about">about</a>
+    <a href="#contact">contact</a>
+  </div>
+</nav>
+
+<header class="hero wrap" id="top">
+  <span class="stamp"><span class="pulse"></span> open to collaborate</span>
+  <h1>I build tools that turn <u>messy data</u> into things you can read.</h1>
+  <p class="tag">Data engineering, scientific computing, and the occasional rewrite of someone else's library. Below: <b>live projects</b> — each card opens its notebooks or reports.</p>
+</header>
+
+<main class="wrap">
+
+  <section class="sec" id="work">
+    <div class="sec-head">
+      <span class="tick">§01</span>
+      <h2>Projects</h2>
+      <span class="meta" id="meta"></span>
+    </div>
+    <div id="projects"></div>
+  </section>
+
+  <section class="sec" id="about">
+    <div class="sec-head"><span class="tick">§02</span><h2>About</h2></div>
+    <div class="about">
+      <div>
+        <p class="lead">I like the unglamorous middle of data work — <em>the cleaning, the porting, the part where a chart finally makes sense.</em></p>
+        <div class="body" style="margin-top:22px">
+          <p>// Replace with your real story. What you're into, what you've shipped, what you want to work on next.</p>
+          <p>// Right now I'm reproducing microbiome analyses in pure Python and building a pipeline that aggregates film, TV, and anime data into readable reports.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row"><span>focus</span><b>data eng / sci-py</b></div>
+        <div class="row"><span>langs</span><b>Python, SQL, JS</b></div>
+        <div class="row"><span>tooling</span><b>pandas, duckdb</b></div>
+        <div class="row"><span>status</span><b style="color:var(--accent)">shipping</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec contact" id="contact">
+    <p class="tick">§03 — say hi</p>
+    <h2>Let's build<br>something <a href="mailto:m.p.donovan1014@gmail.com">useful</a>.</h2>
+    <div class="row">
+      <a href="https://github.com/alittleb3ar" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/alittleb3ar/phyloseq" target="_blank" rel="noopener">phyloseq repo</a>
+      <a href="https://github.com/alittleb3ar/plotline" target="_blank" rel="noopener">plotline repo</a>
+      <a href="mailto:m.p.donovan1014@gmail.com">m.p.donovan1014@gmail.com</a>
+    </div>
+  </section>
+
+</main>
+
+<footer>·  built by hand  · <span id="yr"></span></footer>
+
+<script>
+
+const PROJECTS = [
+  {
+    title:"phyloseq",
+    lang:"Python",
+    status:"active",
+    desc:"A pure-Python port of the R package phyloseq. I'm reproducing published microbiome analyses paper by paper, and exporting each notebook as a browsable HTML page.",
+    stack:["pandas","scikit-bio","matplotlib","Jupyter"],
+    link:"phyloseq/index.html",
+    open:"Browse notebooks",
+    viz:"scatter"
+  },
+  {
+    title:"plotline",
+    lang:"Python · SQL",
+    status:"active",
+    desc:"An open-source data engineering project aggregating film, TV, and anime data. It produces generated analytics reports, published here as standalone HTML.",
+    stack:["duckdb","dbt","Polars","Plotly"],
+    link:"plotline/index.html",
+    open:"Read reports",
+    viz:"bars"
+  },
+];
+
+$(function(){
+  $('#yr').text(new Date().getFullYear());
+  $('#meta').text(PROJECTS.length+' projects');
+
+  PROJECTS.forEach((p,i)=>{
+    const stack=p.stack.map(s=>`<span>${s}</span>`).join('');
+    $('#projects').append(`
+      <a class="proj" href="${p.link}" data-viz="${p.viz}" style="transition-delay:${i*0.07}s">
+        <div class="proj-grid">
+          <div class="info">
+            <div class="head">
+              <span class="lang">${p.lang}</span>
+              <span class="status">● ${p.status}</span>
+            </div>
+            <h3>${p.title}</h3>
+            <p class="desc">${p.desc}</p>
+            <div class="stack">${stack}</div>
+            <span class="open">${p.open} <span class="arr">↗</span></span>
+          </div>
+          <div class="viz"><canvas></canvas><span class="cap">fig.${i+1}</span></div>
+        </div>
+      </a>`);
+  });
+
+  /* reveal + draw plot */
+  const io=new IntersectionObserver(es=>es.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('in');drawViz(e.target);io.unobserve(e.target);}
+  }),{threshold:.2});
+  $('.proj').each(function(){io.observe(this)});
+
+  function drawViz(el){
+    const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const type=el.getAttribute('data-viz');
+    const cv=el.querySelector('canvas'), ctx=cv.getContext('2d');
+    const DPR=Math.min(window.devicePixelRatio||1,2);
+    function size(){cv.width=cv.clientWidth*DPR;cv.height=cv.clientHeight*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+    size();
+    const W=cv.clientWidth,H=cv.clientHeight,pad=18,accent='#0d8a7a';
+    let t=0;
+
+    function scatter(progress){
+      ctx.clearRect(0,0,W,H);
+      const pts=42;
+      for(let i=0;i<pts;i++){
+        const seed=i*97.13;
+        const cx=W*0.5+Math.cos(seed)*W*0.26*Math.sin(seed*1.7);
+        const cy=H*0.5+Math.sin(seed*1.3)*H*0.3;
+        const r=2+(i%5);
+        if(i/pts>=progress) continue;
+        ctx.beginPath();
+        ctx.fillStyle = i%3===0 ? accent : 'rgba(28,31,29,.32)';
+        ctx.globalAlpha = i%3===0 ? .85 : .5;
+        ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+      }
+      ctx.globalAlpha=1;
+    }
+    function bars(progress){
+      ctx.clearRect(0,0,W,H);
+      const n=9,gap=6,bw=(W-pad*2-gap*(n-1))/n;
+      const heights=[.4,.65,.9,.55,.8,.35,.7,.5,.95];
+      for(let i=0;i<n;i++){
+        const h=(H-pad*2)*heights[i]*progress;
+        const x=pad+i*(bw+gap), y=H-pad-h;
+        ctx.fillStyle = i===8 ? accent : 'rgba(28,31,29,.22)';
+        ctx.fillRect(x,y,bw,h);
+      }
+    }
+    function line(progress){
+      ctx.clearRect(0,0,W,H);
+      ctx.strokeStyle=accent;ctx.lineWidth=2;ctx.beginPath();
+      const n=Math.floor(40*progress);
+      for(let i=0;i<=n;i++){
+        const x=pad+(W-pad*2)*(i/40);
+        const y=H/2 - Math.sin(i*0.4)*H*0.22 - Math.sin(i*0.13)*H*0.1;
+        i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+      }
+      ctx.stroke();
+    }
+    const fn = type==='bars'?bars : type==='line'?line : scatter;
+    if(reduce){ fn(1); return; }
+    (function anim(){ t+=0.025; const p=Math.min(t,1); fn(p); if(p<1) requestAnimationFrame(anim); })();
+    let rt; $(window).on('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{size();fn(1);},150);});
+  }
+});
+</script>
+</body>
+</html>

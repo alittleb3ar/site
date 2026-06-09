@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>plotline — reports</title>
+<meta name="description" content="Generated analytics reports on film, TV, and anime data.">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="logo">~/<b>alittleb3ar</b>/plotline</div>
+  <div class="links">
+    <a href="../index.html">← all work</a>
+    <a href="https://github.com/alittleb3ar/plotline" target="_blank" rel="noopener">repo ↗</a>
+  </div>
+</nav>
+
+<header class="hero short wrap">
+  <p class="crumb"><a href="../index.html">work</a> / plotline</p>
+  <span class="stamp"><span class="pulse"></span> active · open source</span>
+  <h1>plotline <u>reports</u>.</h1>
+  <p class="tag">An open-source data engineering pipeline aggregating <b>film, TV, and anime</b> data. The pipeline emits standalone HTML analytics reports — each one published here as it's generated.</p>
+</header>
+
+<main class="wrap">
+  <section class="sec">
+    <div class="sec-head">
+      <span class="tick">§</span>
+      <h2>Reports</h2>
+      <span class="meta" id="meta"></span>
+    </div>
+    <div class="entries" id="entries"></div>
+  </section>
+</main>
+
+<footer>part of <a href="../index.html">the workbench</a> · <span id="yr"></span></footer>
+
+<script>
+/* =========================================================
+   ADD A REPORT: append an object to this list.
+   1. Have plotline generate its HTML report.
+   2. Drop the .html in   plotline/reports/
+   3. Add an entry below pointing 'file' at it.
+   ========================================================= */
+const REPORTS = [
+  // {
+  //   title:"Anime seasonal rankings — Winter 2026",
+  //   summary:"Score velocity, studio output, and genre share across the winter cour.",
+  //   file:"reports/anime-2026-winter.html",
+  //   date:"2026-02-01",
+  //   tags:["anime","rankings"]
+  // },
+];
+
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+(function(){
+  const wrap = document.getElementById('entries');
+  document.getElementById('meta').textContent = REPORTS.length + (REPORTS.length===1?' report':' reports');
+
+  if(REPORTS.length === 0){
+    wrap.innerHTML =
+      '<div class="empty">No reports published yet.<br>' +
+      'Generate one with plotline, drop the HTML in <code>plotline/reports/</code>,<br>' +
+      'then add an entry to the <code>REPORTS</code> list in this file.</div>';
+    return;
+  }
+
+  const sorted = REPORTS.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  sorted.forEach((r,i)=>{
+    const num = String(REPORTS.length - i).padStart(2,'0');
+    const tags = (r.tags||[]).map(t=>`<span>${t}</span>`).join('');
+    const a = document.createElement('a');
+    a.className = 'entry';
+    a.href = r.file;
+    a.innerHTML =
+      `<div class="idx">${num}</div>
+       <div class="body">
+         <h3>${r.title}</h3>
+         <p>${r.summary||''}</p>
+         ${tags?`<div class="tags">${tags}</div>`:''}
+       </div>
+       <div class="right">${r.date||''}<span class="arr">↗</span></div>`;
+    wrap.appendChild(a);
+  });
+})();
+</script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>

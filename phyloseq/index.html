@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>phyloseq — notebooks</title>
+<meta name="description" content="Reproductions of published microbiome analyses in pure Python.">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<nav class="top">
+  <div class="logo">~/<b>alittleb3ar</b>/phyloseq</div>
+  <div class="links">
+    <a href="../index.html">← all work</a>
+    <a href="https://github.com/alittleb3ar/phyloseq" target="_blank" rel="noopener">repo ↗</a>
+  </div>
+</nav>
+
+<header class="hero short wrap">
+  <p class="crumb"><a href="../index.html">work</a> / phyloseq</p>
+  <span class="stamp"><span class="pulse"></span> active · Python</span>
+  <h1>phyloseq <u>notebooks</u>.</h1>
+  <p class="tag">A pure-Python port of the R package <b>phyloseq</b>. Each entry reproduces a published microbiome analysis, exported straight from Jupyter to HTML so the full notebook is browsable.</p>
+</header>
+
+<main class="wrap">
+  <section class="sec">
+    <div class="sec-head">
+      <span class="tick">§</span>
+      <h2>Reproductions</h2>
+      <span class="meta" id="meta"></span>
+    </div>
+    <div class="entries" id="entries"></div>
+  </section>
+</main>
+
+<footer>part of <a href="../index.html">the workbench</a> · <span id="yr"></span></footer>
+
+<script>
+/* =========================================================
+   ADD A NOTEBOOK: append an object to this list.
+   1. Export your notebook:
+        jupyter nbconvert --to html my_analysis.ipynb
+   2. Drop the .html in   phyloseq/notebooks/
+   3. Add an entry below pointing 'file' at it.
+   ========================================================= */
+const NOTEBOOKS = [
+  // {
+  //   title:"Reproducing Caporaso et al. 2011",
+  //   summary:"Alpha/beta diversity across body sites from the original QIIME tutorial dataset.",
+  //   file:"notebooks/caporaso-2011.html",
+  //   date:"2026-01-14",
+  //   tags:["diversity","ordination"]
+  // },
+];
+
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+(function(){
+  const wrap = document.getElementById('entries');
+  document.getElementById('meta').textContent = NOTEBOOKS.length + (NOTEBOOKS.length===1?' notebook':' notebooks');
+
+  if(NOTEBOOKS.length === 0){
+    wrap.innerHTML =
+      '<div class="empty">No notebooks published yet.<br>' +
+      'Export one with <code>jupyter nbconvert --to html nb.ipynb</code>, ' +
+      'drop it in <code>phyloseq/notebooks/</code>,<br>then add an entry to the ' +
+      '<code>NOTEBOOKS</code> list in this file.</div>';
+    return;
+  }
+
+  // newest first if dates are present
+  const sorted = NOTEBOOKS.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  sorted.forEach((n,i)=>{
+    const num = String(NOTEBOOKS.length - i).padStart(2,'0');
+    const tags = (n.tags||[]).map(t=>`<span>${t}</span>`).join('');
+    const a = document.createElement('a');
+    a.className = 'entry';
+    a.href = n.file;
+    a.innerHTML =
+      `<div class="idx">${num}</div>
+       <div class="body">
+         <h3>${n.title}</h3>
+         <p>${n.summary||''}</p>
+         ${tags?`<div class="tags">${tags}</div>`:''}
+       </div>
+       <div class="right">${n.date||''}<span class="arr">↗</span></div>`;
+    wrap.appendChild(a);
+  });
+})();
+</script>
+<script src="../assets/reveal.js"></script>
+</body>
+</html>
