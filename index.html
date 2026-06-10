@@ -23,7 +23,7 @@
 <header class="hero wrap" id="top">
   <span class="stamp"><span class="pulse"></span> open to collaborate</span>
   <h1>I build tools that turn <u>messy data</u> into things you can read.</h1>
-  <p class="tag">Data engineering, scientific computing, and the occasional rewrite of someone else's library. Below: <b>live projects</b> — each card opens its notebooks or reports.</p>
+  <p class="tag">Data engineering, bioinformatics, and ad-hoc analysis.</p>
 </header>
 
 <main class="wrap">
@@ -41,46 +41,55 @@
     <div class="sec-head"><span class="tick">§02</span><h2>About</h2></div>
     <div class="about">
       <div>
-        <p class="lead">I like the unglamorous middle of data work — <em>the cleaning, the porting, the part where a chart finally makes sense.</em></p>
+        <p class="lead">I like the ambiguous parts of data work — <em>figuring out the right questions to ask, finding the data to answer them, and turning it into something people can act on.</em></p>
         <div class="body" style="margin-top:22px">
-          <p>// Replace with your real story. What you're into, what you've shipped, what you want to work on next.</p>
-          <p>// Right now I'm reproducing microbiome analyses in pure Python and building a pipeline that aggregates film, TV, and anime data into readable reports.</p>
+          <p>// Five-plus years building stakeholder-driven solutions in complex data ecosystems. I own the full lifecycle: gathering requirements, designing data models, and shipping production-quality code and docs.</p>
         </div>
       </div>
-      <div class="card">
-        <div class="row"><span>focus</span><b>data eng / sci-py</b></div>
-        <div class="row"><span>langs</span><b>Python, SQL, JS</b></div>
-        <div class="row"><span>tooling</span><b>pandas, duckdb</b></div>
-        <div class="row"><span>status</span><b style="color:var(--accent)">shipping</b></div>
+      <div class="card worked">
+        <div class="worked-head">worked with</div>
+        <ul class="logos">
+          <li><img src="assets/logos/mariadbfoundation.svg"     alt="MariaDB"></li>
+          <li><img src="assets/logos/wisdompanel.svg" alt="WisdomPanel"></li>
+        </ul>
       </div>
     </div>
   </section>
 
   <section class="sec contact" id="contact">
     <p class="tick">§03 — say hi</p>
-    <h2>Let's build<br>something <a href="mailto:m.p.donovan1014@gmail.com">useful</a>.</h2>
+    <h2>Let's build<br>something <span id="flip-word" style="cursor:pointer">useful</span>.</h2>
+    <script>
+      (function(){
+        var words = ['useful','fun','new','challenging'];
+        var i = 0;
+        document.getElementById('flip-word').addEventListener('click', function(){
+          i = (i + 1) % words.length;
+          this.textContent = words[i];
+        });
+      })();
+    </script>
     <div class="row">
       <a href="https://github.com/alittleb3ar" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://github.com/alittleb3ar/phyloseq" target="_blank" rel="noopener">phyloseq repo</a>
-      <a href="https://github.com/alittleb3ar/plotline" target="_blank" rel="noopener">plotline repo</a>
+      <a href="https://www.linkedin.com/in/michael-d-201b8783/" target="_blank" rel="noopener">Linkedin</a>
       <a href="mailto:m.p.donovan1014@gmail.com">m.p.donovan1014@gmail.com</a>
     </div>
   </section>
 
 </main>
 
-<footer>·  built by hand  · <span id="yr"></span></footer>
+<footer>·  <span id="yr"></span>  ·</footer>
 
 <script>
 
 const PROJECTS = [
   {
-    title:"phyloseq",
+    title:"pyloseq",
     lang:"Python",
     status:"active",
     desc:"A pure-Python port of the R package phyloseq. I'm reproducing published microbiome analyses paper by paper, and exporting each notebook as a browsable HTML page.",
     stack:["pandas","scikit-bio","matplotlib","Jupyter"],
-    link:"phyloseq/index.html",
+    link:"pyloseq/index.html",
     open:"Browse notebooks",
     viz:"scatter"
   },
@@ -88,7 +97,7 @@ const PROJECTS = [
     title:"plotline",
     lang:"Python · SQL",
     status:"active",
-    desc:"An open-source data engineering project aggregating film, TV, and anime data. It produces generated analytics reports, published here as standalone HTML.",
+    desc:"An open-source data engineering project aggregating film, TV, and anime data. Reports generated from it are published here.",
     stack:["duckdb","dbt","Polars","Plotly"],
     link:"plotline/index.html",
     open:"Read reports",
