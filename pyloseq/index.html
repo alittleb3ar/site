@@ -51,8 +51,21 @@ const NOTEBOOKS = [
      title:"McMurdie & Holmes 2013",
      summary:"<em>phyloseq: An R Package for Reproducible Interactive Analysis and Graphics of Microbiome Census Data</em> — Core analyses covering all four bundled datasets: <strong>GlobalPatterns</strong>, <strong>enterotype</strong>, <strong>esophagus</strong>, and <strong>soilrep</strong>.",
      file:"notebooks/mcmurdie_holmes_2013.html",
-     date:"2026-06-10",
-     tags:["diversity","ordination","plotting"]
+   },
+   {
+     title:"Torondel et al. 2016",
+     summary:"<em>Assessment of the influence of intrinsic environmental and geographical factors on the bacterial ecology of pit latrines</em>",
+     file:"notebooks/torondel_2016_pit_latrines.html",
+   },
+   {
+     title:"Strano et al. 2023",
+     summary:"<em>Marine heatwave conditions drive carryover effects in a temperate sponge microbiome and developmental performance</em>",
+     file:"notebooks/strano_2023_sponge_microbiome.html",
+   },
+   {
+     title:"Garrido-Sanz et al. 2025",
+     summary:"<em>Seed-borne bacteria drive wheat rhizosphere microbiome assembly via niche partitioning and facilitation</em>",
+     file:"notebooks/garrido_sanz_2025_rhizcom.html",
    },
 ];
 
@@ -84,9 +97,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
        <div class="body">
          <h3>${n.title}</h3>
          <p>${n.summary||''}</p>
-         ${tags?`<div class="tags">${tags}</div>`:''}
-       </div>
-       <div class="right">${n.date||''}<span class="arr">↗</span></div>`;
+       </div>`;
     wrap.appendChild(a);
   });
 })();
