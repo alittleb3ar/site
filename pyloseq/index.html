@@ -20,9 +20,9 @@
 
 <header class="hero short wrap">
   <p class="crumb"><a href="../index.html">work</a> / pyloseq</p>
-  <span class="stamp"><span class="pulse"></span> active · Python</span>
-  <h1>pyloseq <em>notebooks</em>.</h1>
-  <p class="tag">A pure-Python port of the R package <a href="https://github.com/joey711/phyloseq"><b>phyloseq</b></a>. Each notebook reproduces the analyses and visualizations from a published microbiome study.</p>
+  <span class="stamp"><span class="pulse"></span> active</span>
+  <h1>pyloseq.</h1>
+  <p class="tag">A pure-Python reimplementation of the R package <a href="https://github.com/joey711/phyloseq"><b>phyloseq</b></a>, bringing its microbiome data structures and analysis toolkit to the Python ecosystem. Available on <a href="https://pypi.org/project/pyloseq/">PyPI</a> and open source on <a href="https://github.com/alittleb3ar/pyloseq">GitHub</a>. The notebooks below reproduce analyses and visualizations from published microbiome studies.</p>
 </header>
 
 <main class="wrap">
@@ -87,7 +87,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   // newest first if dates are present
   const sorted = NOTEBOOKS.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   sorted.forEach((n,i)=>{
-    const num = String(NOTEBOOKS.length - i).padStart(2,'0');
+    const num = String(i + 1).padStart(2,'0');
     const tags = (n.tags||[]).map(t=>`<span>${t}</span>`).join('');
     const a = document.createElement('a');
     a.className = 'entry';
