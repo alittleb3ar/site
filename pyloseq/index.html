@@ -7,6 +7,34 @@
 <meta name="description" content="Reproductions of published microbiome analyses in pure Python.">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
+<style>
+details.entry { cursor: pointer; display: block; }
+details.entry summary {
+  list-style: none;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  align-items: center;
+  padding: 20px 24px;
+}
+details.entry summary::-webkit-details-marker { display: none; }
+details.entry summary::marker { display: none; }
+.nb-toggle { color: var(--accent); font-size: 14px; transition: transform .25s; display: block; }
+details[open].entry .nb-toggle { transform: rotate(90deg); }
+.nb-frame-wrap { border-top: 1px solid var(--line); }
+.nb-frame {
+  display: block;
+  width: 100%;
+  height: 82vh;
+  border: none;
+  background: #fff;
+  border-radius: 0 0 10px 10px;
+}
+@media(max-width:600px){
+  details.entry summary { grid-template-columns: auto 1fr; gap: 14px; }
+  details.entry summary .nb-toggle { grid-column: 2; margin-top: 6px; }
+}
+</style>
 </head>
 <body>
 
@@ -88,17 +116,28 @@ document.getElementById('yr').textContent = new Date().getFullYear();
   const sorted = NOTEBOOKS.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   sorted.forEach((n,i)=>{
     const num = String(i + 1).padStart(2,'0');
-    const tags = (n.tags||[]).map(t=>`<span>${t}</span>`).join('');
-    const a = document.createElement('a');
-    a.className = 'entry';
-    a.href = n.file;
-    a.innerHTML =
-      `<div class="idx">${num}</div>
-       <div class="body">
-         <h3>${n.title}</h3>
-         <p>${n.summary||''}</p>
+    const det = document.createElement('details');
+    det.className = 'entry';
+    det.innerHTML =
+      `<summary>
+         <div class="idx">${num}</div>
+         <div class="body">
+           <h3>${n.title}</h3>
+           <p>${n.summary||''}</p>
+         </div>
+         <span class="nb-toggle">&#9658;</span>
+       </summary>
+       <div class="nb-frame-wrap">
+         <iframe class="nb-frame" data-src="${n.file}" src="about:blank"
+           sandbox="allow-scripts allow-same-origin" title="${n.title}"></iframe>
        </div>`;
-    wrap.appendChild(a);
+    det.addEventListener('toggle', function(){
+      if(this.open){
+        const f = this.querySelector('iframe');
+        if(f.src === 'about:blank' || !f.src) f.src = f.dataset.src;
+      }
+    });
+    wrap.appendChild(det);
   });
 })();
 </script>
