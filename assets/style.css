@@ -120,6 +120,19 @@
     .entry .right .arr{display:inline;margin-left:8px}
   }
   
+  /* ---- stack cards (project sub-pages) ---- */
+  .stack-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+  @media(max-width:680px){.stack-grid{grid-template-columns:1fr}}
+  .stack-grid .card{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:20px 22px;transition:border-color .25s,box-shadow .25s}
+  .stack-grid .card:hover{border-color:var(--accent);box-shadow:0 14px 32px -24px rgba(13,138,122,.5)}
+  .stack-grid .card h4{font-family:var(--disp);font-weight:600;font-size:16px;letter-spacing:-.01em;
+    margin-bottom:14px;display:flex;align-items:center;gap:9px}
+  .stack-grid .card h4::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:.7}
+  .stack-grid .card .tags{display:flex;gap:7px;flex-wrap:wrap}
+  .stack-grid .card .tags span{font-family:var(--mono);font-size:11.5px;color:var(--mute);
+    border:1px solid var(--line);padding:3px 10px;border-radius:4px;background:var(--bg)}
+
   /* empty state */
   .empty{background:var(--paper);border:1px dashed var(--line);border-radius:10px;
     padding:40px 28px;text-align:center;font-family:var(--mono);font-size:13px;color:var(--mute);line-height:1.8}

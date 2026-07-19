@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>plotline — reports</title>
-<meta name="description" content="Generated analytics reports on film, TV, and anime data.">
+<title>plotline</title>
+<meta name="description" content="An open-source data pipeline for film, TV, and anime data — and the apps and reports built on top of it.">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
@@ -21,11 +21,83 @@
 <header class="hero short wrap">
   <p class="crumb"><a href="../index.html">work</a> / plotline</p>
   <span class="stamp"><span class="pulse"></span> active · open source</span>
-  <h1>plotline <u>reports</u>.</h1>
-  <p class="tag">An open-source data engineering pipeline aggregating <b>film, TV, and anime</b> data. The pipeline emits standalone HTML analytics reports — each one published here as it's generated.</p>
+  <h1>plotline.</h1>
+  <p class="tag">An open-source data engineering pipeline aggregating <b>film, TV, and anime</b> data — IMDb and TMDB into a Dagster/dbt/DuckDB warehouse. Everything downstream of it — live apps, generated reports — gets published here as it ships.</p>
 </header>
 
 <main class="wrap">
+
+  <section class="sec">
+    <div class="sec-head">
+      <span class="tick">§</span>
+      <h2>Stack</h2>
+    </div>
+    <div class="stack-grid">
+      <div class="card">
+        <h4>Pipeline</h4>
+        <div class="tags"><span>Dagster</span><span>dbt</span><span>DuckDB</span><span>Polars</span><span>pandas</span><span>pytest</span></div>
+      </div>
+      <div class="card">
+        <h4>API</h4>
+        <div class="tags"><span>FastAPI</span><span>Uvicorn</span><span>Python 3.12</span></div>
+      </div>
+      <div class="card">
+        <h4>Frontend</h4>
+        <div class="tags"><span>React</span><span>TypeScript</span><span>Vite</span><span>React Router</span></div>
+      </div>
+      <div class="card">
+        <h4>Infra</h4>
+        <div class="tags"><span>Docker</span><span>Docker Compose</span><span>Caddy</span><span>GitHub Actions</span><span>Let's Encrypt</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <span class="tick">§</span>
+      <h2>How it's built</h2>
+    </div>
+    <div class="entries">
+      <div class="entry">
+        <div class="idx">01</div>
+        <div class="body">
+          <h3>CI/CD</h3>
+          <p>Every push to main touching <code>api/</code>, <code>web/</code>, <code>Caddyfile</code>, or <code>docker-compose.yml</code> triggers a GitHub Actions build check, then an SSH deploy that runs <code>docker compose up -d --build</code> on the VPS — guarded so overlapping deploys can't race each other.</p>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="idx">02</div>
+        <div class="body">
+          <h3>Containerized, single-origin deploy</h3>
+          <p>Frontend and API ship as separate Docker images, but both sit behind one Caddy instance on a single domain — Caddy auto-provisions HTTPS and reverse-proxies <code>/api/*</code> to the backend, so the browser never crosses origins.</p>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="idx">03</div>
+        <div class="body">
+          <h3>Tests &amp; static checks</h3>
+          <p>pytest plus Dagster asset checks and dbt schema tests cover the pipeline; ruff, mypy, and pre-commit keep the Python side honest; oxlint and tsc do the same for the React apps.</p>
+        </div>
+      </div>
+      <div class="entry">
+        <div class="idx">04</div>
+        <div class="body">
+          <h3>Config over code</h3>
+          <p>Every API key and connection string — IMDb, TMDB, MotherDuck, and more — comes from environment variables, documented in <code>.env.example</code> and never committed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <span class="tick">§</span>
+      <h2>Apps</h2>
+      <span class="meta" id="apps-meta"></span>
+    </div>
+    <div class="entries" id="apps"></div>
+  </section>
+
   <section class="sec">
     <div class="sec-head">
       <span class="tick">§</span>
@@ -34,11 +106,26 @@
     </div>
     <div class="entries" id="entries"></div>
   </section>
+
 </main>
 
 <footer>part of <a href="../index.html">the workbench</a> · <span id="yr"></span></footer>
 
 <script>
+/* =========================================================
+   ADD AN APP: append an object to this list, pointing 'url'
+   at wherever it's deployed.
+   ========================================================= */
+const APPS = [
+  {
+    title:"However Many Degrees of Whoever",
+    summary:"Chain together co-stars to connect any two people — find the shortest path, or hunt for one of an exact length. (As long as they're on IMDb.)",
+    url:"https://plotline.mpdonovan.com",
+    status:"live",
+    tags:["FastAPI","React","TypeScript"]
+  },
+];
+
 /* =========================================================
    ADD A REPORT: append an object to this list.
    1. Have plotline generate its HTML report.
@@ -56,6 +143,35 @@ const REPORTS = [
 ];
 
 document.getElementById('yr').textContent = new Date().getFullYear();
+
+(function(){
+  const wrap = document.getElementById('apps');
+  document.getElementById('apps-meta').textContent = APPS.length + (APPS.length===1?' app':' apps');
+
+  if(APPS.length === 0){
+    wrap.innerHTML = '<div class="empty">No apps published yet.</div>';
+    return;
+  }
+
+  APPS.forEach((app,i)=>{
+    const num = String(i + 1).padStart(2,'0');
+    const tags = (app.tags||[]).map(t=>`<span>${t}</span>`).join('');
+    const a = document.createElement('a');
+    a.className = 'entry';
+    a.href = app.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.innerHTML =
+      `<div class="idx">${num}</div>
+       <div class="body">
+         <h3>${app.title}</h3>
+         <p>${app.summary||''}</p>
+         ${tags?`<div class="tags">${tags}</div>`:''}
+       </div>
+       <div class="right">${app.status||''}<span class="arr">↗</span></div>`;
+    wrap.appendChild(a);
+  });
+})();
 
 (function(){
   const wrap = document.getElementById('entries');
