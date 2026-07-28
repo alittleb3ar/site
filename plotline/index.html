@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>plotline</title>
-<meta name="description" content="An open-source data pipeline for film, TV, and anime data — and the apps and reports built on top of it.">
+<meta name="description" content="A data analytics stack for analyzing any and all entertainment data, with the IMDb bulk dataset at its core.">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 </head>
@@ -22,7 +22,7 @@
   <p class="crumb"><a href="../index.html">work</a> / plotline</p>
   <span class="stamp"><span class="pulse"></span> active · open source</span>
   <h1>plotline.</h1>
-  <p class="tag">An open-source data engineering pipeline aggregating <b>film, TV, and anime</b> data — IMDb and TMDB into a Dagster/dbt/DuckDB warehouse. Everything downstream of it — live apps, generated reports — gets published here as it ships.</p>
+  <p class="tag">A data analytics stack for analyzing <b>any and all entertainment data</b>, with the IMDb bulk dataset as its core. Everything downstream of it — live apps, generated reports — gets published here as it ships.</p>
 </header>
 
 <main class="wrap">
@@ -31,23 +31,64 @@
     <div class="sec-head">
       <span class="tick">§</span>
       <h2>Stack</h2>
+      <span class="meta">top to bottom</span>
     </div>
-    <div class="stack-grid">
-      <div class="card">
-        <h4>Pipeline</h4>
-        <div class="tags"><span>Dagster</span><span>dbt</span><span>DuckDB</span><span>Polars</span><span>pandas</span><span>pytest</span></div>
+    <div class="entries">
+      <div class="entry">
+        <div class="idx">01</div>
+        <div class="body">
+          <h3>IONOS VPS</h3>
+          <p>Everything is hosted on an IONOS VPS. I originally looked at cobbling together a bunch of free offerings from various SaaS platforms, but IONOS turned out to be a great deal — forty-something bucks a month for a 16&nbsp;GB VPS.</p>
+        </div>
+        <div class="right">hosting</div>
       </div>
-      <div class="card">
-        <h4>API</h4>
-        <div class="tags"><span>FastAPI</span><span>Uvicorn</span><span>Python 3.12</span></div>
+      <div class="entry">
+        <div class="idx">02</div>
+        <div class="body">
+          <h3>DuckLake <span class="sub">(DuckDB + Postgres)</span></h3>
+          <p>DuckDB is an amazing OLAP engine, but the single-writer / multiple-reader concurrency issue is kind of annoying — so I switched to the DuckLake architecture, using Postgres as the operational plane. Postgres is just the tried-and-true default for anything RDBMS, which is why I elected to go with it.</p>
+        </div>
+        <div class="right">lakehouse</div>
       </div>
-      <div class="card">
-        <h4>Frontend</h4>
-        <div class="tags"><span>React</span><span>TypeScript</span><span>Vite</span><span>React Router</span></div>
+      <a class="entry" href="https://plotline.mpdonovan.com/dagster" target="_blank" rel="noopener">
+        <div class="idx">03</div>
+        <div class="body">
+          <h3>Dagster <span class="sub">read-only UI</span></h3>
+          <p>For orchestration I just wanted to try something new — I had a little experience with Airflow and found it pretty bulky, just a lot going on. The Dagster UI is pretty neat and easy to understand. Some of the partitioning and backfill stuff is a little weird, but I think it would make sense at scale. Being able to run a read-only server alongside the admin server is nice too — pretty happy with it.</p>
+        </div>
+        <div class="right">orchestration<span class="arr">↗</span></div>
+      </a>
+      <a class="entry" href="https://plotline.mpdonovan.com/dbt-docs" target="_blank" rel="noopener">
+        <div class="idx">04</div>
+        <div class="body">
+          <h3>dbt <span class="sub">docs + lineage</span></h3>
+          <p>I originally included dbt because you see it everywhere as the industry standard, but after starting another project and realizing I was basically recreating a lot of its functionality, I started appreciating it a lot more. The testing is awesome, being able to version-control your SQL is cool, and <code>dbt docs generate</code> is really neat — the lineage graphs and whatnot. Sometimes I do miss the first-class support ORMs offer, but, you know.</p>
+        </div>
+        <div class="right">transformation<span class="arr">↗</span></div>
+      </a>
+      <div class="entry">
+        <div class="idx">05</div>
+        <div class="body">
+          <h3>FastAPI</h3>
+          <p>FastAPI is just my go-to. As a Python guy, spinning up quick things with a good spec given to Claude — FastAPI is great for that. What's serving right now, the person-graph API, isn't super complicated.</p>
+        </div>
+        <div class="right">serving</div>
       </div>
-      <div class="card">
-        <h4>Infra</h4>
-        <div class="tags"><span>Docker</span><span>Docker Compose</span><span>Caddy</span><span>GitHub Actions</span><span>Let's Encrypt</span></div>
+      <div class="entry">
+        <div class="idx">06</div>
+        <div class="body">
+          <h3>React</h3>
+          <p>For the front-facing apps, React is just my go-to. I'm not really concerned with learning another frontend framework at this point — it does what it needs to do for me. I'd like to do more D3.js stuff.</p>
+        </div>
+        <div class="right">frontend</div>
+      </div>
+      <div class="entry">
+        <div class="idx">07</div>
+        <div class="body">
+          <h3>Metabase</h3>
+          <p>Another piece of software I wanted to try out for the first time — a great open-source BI layer. It's actually one of the reasons I bumped the VPS from 8&nbsp;GB up to 16&nbsp;GB. Hopefully it'll make for some user-facing dashboards — exposing the data in more ways than just the APIs.</p>
+        </div>
+        <div class="right">BI</div>
       </div>
     </div>
   </section>
