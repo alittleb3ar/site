@@ -90,7 +90,7 @@
       </div>
       <div class="flow"></div>
       <div class="lane">
-        <h4>Edge<span class="role">TLS, routing, one origin</span></h4>
+        <h4>Runtime<span class="role">containers, TLS, one origin</span></h4>
         <div class="nodes">
           <div class="node" style="--brand:#1F88C0"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></div>
           <div class="node" style="--brand:#1B91EC"><svg class="lg" aria-hidden="true"><use href="#i-docker"></use></svg><span>Docker</span></div>
@@ -134,14 +134,13 @@
           <div class="node"><span>MovieLens</span></div>
           <div class="node" style="--brand:#BA478F"><svg class="lg" aria-hidden="true"><use href="#i-musicbrainz"></use></svg><span>MusicBrainz</span></div>
           <div class="node" style="--brand:#181717"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>GitHub</span></div>
-          <div class="node" style="--brand:#2088FF"><svg class="lg" aria-hidden="true"><use href="#i-gha"></use></svg><span>GitHub Actions</span></div>
         </div>
       </div>
       <div class="flow"></div>
       <div class="hosts">
         <div class="host">
           <div class="host-head"><svg class="lg" aria-hidden="true"><use href="#i-ionos"></use></svg><h4>VPS 01 · production</h4></div>
-          <p class="spec">6 vCore · 16 GB · 240 GB NVMe</p>
+          <p class="spec">8 vCore · 16 GB · 480 GB NVMe</p>
           <p class="addr"><a href="https://plotline.mpdonovan.com" target="_blank" rel="noopener">plotline.mpdonovan.com</a></p>
           <div class="nodes">
             <div class="node" style="--brand:#1F88C0"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></div>
@@ -177,17 +176,16 @@
           </div>
           <div class="link in">
             <span class="dir"></span>
-            <b>host metrics</b><em>beszel-agent :45876</em>
+            <b>host metrics</b><em>beszel-agent</em>
           </div>
           <div class="link in">
             <span class="dir"></span>
-            <b>log stream</b><em>dozzle-agent :7007</em>
+            <b>log stream</b><em>dozzle-agent</em>
           </div>
         </div>
         <div class="host">
           <div class="host-head"><svg class="lg" aria-hidden="true"><use href="#i-ionos"></use></svg><h4>VPS 02 · monitoring</h4></div>
-          <p class="spec">8 GB · uptime, alerts, backups</p>
-          <p class="addr">status · ntfy · beszel · logs · analytics · restic</p>
+          <p class="spec">6 vCore · 8 GB · 240 GB NVMe</p>
           <div class="nodes">
             <div class="node" style="--brand:#1F88C0"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></div>
             <a class="node" style="--brand:#22A250" href="https://status.plotline.mpdonovan.com/status/plotline" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-uptimekuma"></use></svg><span>Uptime Kuma</span></a>
@@ -206,7 +204,6 @@
         <div class="nodes">
           <div class="node" style="--brand:#E21E29"><svg class="lg" aria-hidden="true"><use href="#i-backblaze"></use></svg><span>Backblaze B2</span></div>
           <div class="node" style="--brand:#362D59"><svg class="lg" aria-hidden="true"><use href="#i-sentry"></use></svg><span>Sentry</span></div>
-          <div class="node" style="--brand:#139B9B"><svg class="lg" aria-hidden="true"><use href="#i-godaddy"></use></svg><span>GoDaddy DNS</span></div>
         </div>
       </div>
     </div>
@@ -302,6 +299,50 @@ const REPORTS = [
   // },
 ];
 
+/* =========================================================
+   WHY-THIS-TECH NOTES: keyed by a chip's label text; click
+   the chip to read the note. Trailing version numbers are
+   stripped before lookup ("PostgreSQL 17" -> "PostgreSQL").
+   Chips without an entry stay plain. Rendering lives in
+   assets/node-notes.js.
+   ========================================================= */
+const NODE_NOTES = {
+  "IMDb":"The canonical film dataset — free daily TSV dumps covering titles, cast, and crew at a scale nothing else matches.",
+  "TMDB":"Fills the gaps IMDb's dumps leave out — artwork, overviews, and a friendly REST API with generous limits.",
+  "Wikidata":"One SPARQL endpoint that links everything to everything — the connective tissue for matching IDs across sources.",
+  "MovieLens":"The classic ratings research dataset — clean, stable, and ready for recommender experiments without scraping anyone.",
+  "MusicBrainz":"Open, community-maintained music metadata with proper stable IDs — covers the soundtrack side of the graph.",
+  "GitHub":"Where the code lives — and repo metadata gets pulled like any other upstream.",
+  "Dagster":"Asset-based orchestration fits a lakehouse: every table is a declared asset with lineage, retries, and schedules built in, and the UI doubles as documentation.",
+  "DuckLake":"Lakehouse format with a plain SQL catalog — Postgres holds the metadata, Parquet holds the data, no JVM or object-store stack required.",
+  "DuckDB":"An OLAP engine that runs in-process — scans Parquet absurdly fast with zero servers to babysit. Ideal on a single box.",
+  "PostgreSQL":"The boring, correct default — DuckLake catalog and app database in one, with decades of reliability for free.",
+  "dbt":"SQL transforms with tests, docs, and lineage — keeps the bronze → silver → gold flow declarative and reviewable.",
+  "pandas":"The lingua franca of tabular Python — used where an API hands back something awkward that just needs munging.",
+  "Polars":"Lazy, multi-threaded dataframes for the heavier transforms — dramatically faster than pandas where it counts.",
+  "FastAPI":"Typed Python endpoints with automatic OpenAPI docs — the query layer stays small and self-describing.",
+  "Uvicorn":"The standard ASGI server for FastAPI — one process, no drama.",
+  "Metabase":"Point-and-click BI over the gold tables — dashboards without hand-building a frontend for each one.",
+  "React":"Boring in a good way — the biggest ecosystem, so every problem a component throws has already been solved by someone.",
+  "TypeScript":"Types catch the dumb mistakes before the browser does — non-negotiable on a solo project with no QA team.",
+  "Vite":"Instant dev server, sane defaults, fast builds — frontend tooling that stays out of the way.",
+  "Caddy":"One binary for TLS, HTTP/2, and reverse proxying — automatic certificates mean zero renewal cron jobs.",
+  "Docker":"Every service is a container with a pinned version — either host rebuilds from a single compose file.",
+  "GitHub Actions":"CI lives next to the code — tests and deploys trigger straight from a push, no runner to maintain.",
+  "pytest":"Plain-assert tests and composable fixtures — the Python testing default for a reason.",
+  "Ruff":"Linter and formatter in one Rust-fast tool — replaces five slower ones and ends formatting debates.",
+  "Sentry":"Stack traces with full context instead of log-file spelunking — errors find me, not the other way around.",
+  "ntfy":"Push notifications over plain HTTP — a curl call becomes a phone alert, self-hosted.",
+  "Uptime Kuma":"Self-hosted uptime checks with a public status page — watches production from the other box.",
+  "Umami":"Privacy-friendly analytics — no cookies, no consent banner, and the data stays on my own hardware.",
+  "restic":"Encrypted, deduplicated, incremental backups from one binary — nightly snapshots shipped off-box.",
+  "Backblaze B2":"S3-compatible object storage at a fraction of S3's price — the offsite home for restic snapshots.",
+  "beszel-agent":"Ships this host's CPU, memory, and disk metrics to Beszel on the monitoring box.",
+  "Beszel":"Lightweight server monitoring with a clean dashboard — metrics without the Prometheus-plus-Grafana weight.",
+  "dozzle-agent":"Streams this host's container logs to Dozzle on the monitoring box.",
+  "Dozzle":"Live tail of every container's logs in the browser — no ssh session, no log stack."
+};
+
 document.getElementById('yr').textContent = new Date().getFullYear();
 
 (function(){
@@ -363,5 +404,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 })();
 </script>
 <script src="../assets/reveal.js"></script>
+<script src="../assets/node-notes.js"></script>
 </body>
 </html>
