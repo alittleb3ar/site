@@ -22,7 +22,7 @@
 
 <header class="hero wrap" id="top">
   <span class="stamp"><span class="pulse"></span> open to collaborate</span>
-  <h1>I build tools that turn <u>messy data</u> into things you can read.</h1>
+  <h1>I build tools that turn <u id="scramble" tabindex="0"><span class="sr-only">messy data</span><span class="glyphs" aria-hidden="true">messy data</span></u> into things you can read.</h1>
   <p class="tag">Data engineering, bioinformatics, and ad-hoc analysis.</p>
 </header>
 
@@ -189,6 +189,68 @@ $(function(){
     let rt; $(window).on('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{size();fn(1);},150);});
   }
 });
+</script>
+<script>
+/* ---- hero "messy data" scramble ---- */
+(function(){
+  const el=document.getElementById('scramble');
+  if(!el) return;
+  const out=el.querySelector('.glyphs');
+  const TEXT='messy data';
+  const POOL='#$%&*+=?<>23456789abcdeghknopqrsuvxyz';
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    out.textContent=TEXT;
+    return;
+  }
+
+  let raf=0, solved=false;
+  const rand=()=>POOL[Math.floor(Math.random()*POOL.length)];
+  /* reveal = how many leading characters show their real glyph;
+     everything past that churns randomly (spaces stay put) */
+  function render(reveal){
+    let s='';
+    for(let i=0;i<TEXT.length;i++){
+      const c=TEXT[i];
+      s+= c===' ' ? ' ' : (i<reveal ? c : rand());
+    }
+    out.textContent=s;
+  }
+  function play(from,to,done){
+    cancelAnimationFrame(raf);
+    let pos=from;
+    const step=to>from?0.35:-0.5;
+    (function tick(){
+      pos+=step;
+      const end=step>0?pos>=to:pos<=to;
+      render(end?to:pos);
+      if(!end){raf=requestAnimationFrame(tick);}
+      else if(done){done();}
+    })();
+  }
+  function unscramble(){
+    if(solved) return;
+    solved=true;
+    play(0,TEXT.length,()=>{out.textContent=TEXT;});
+  }
+  function scramble(){
+    if(!solved) return;
+    solved=false;
+    play(TEXT.length,0);
+  }
+
+  render(0);
+
+  if(window.matchMedia('(hover: hover)').matches){
+    el.addEventListener('mouseenter',unscramble);
+    el.addEventListener('mouseleave',scramble);
+    el.addEventListener('focus',unscramble);
+    el.addEventListener('blur',scramble);
+  }else{
+    /* touch: resolve once on load so the line is readable, then tap toggles */
+    el.addEventListener('click',()=>{solved?scramble():unscramble();});
+    setTimeout(unscramble,1200);
+  }
+})();
 </script>
 </body>
 </html>
