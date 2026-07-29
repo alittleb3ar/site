@@ -1,18 +1,31 @@
 /* ============================================================
    shared styles — workbench / lab-notebook theme
-   used by:  / (home)  ·  /phyloseq/  ·  /plotline/
+   used by:  / (home)  ·  /pyloseq/  ·  /plotline/
    ============================================================ */
    :root{
     --bg:#f7f6f1;
     --grid:#e6e4da;
     --ink:#1c1f1d;
-    --mute:#6e726b;
+    --mute:#5b5f58;          /* darkened for AA contrast on the gridded bg */
     --accent:#0d8a7a;        /* teal fountain-pen ink */
     --accent-soft:#d3ece7;
     --paper:#fffefb;
     --line:#dedccf;
-    --disp:"Space Grotesk",sans-serif;
-    --mono:"Spline Sans Mono",monospace;
+    --disp:"Space Grotesk",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"Spline Sans Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  /* ---- dark theme: same ink-on-paper system, inverted ---- */
+  @media(prefers-color-scheme:dark){
+    :root{
+      --bg:#14150f;
+      --grid:#20221b;
+      --ink:#e9e8df;
+      --mute:#9aa093;
+      --accent:#37b9a6;      /* brighter teal so it reads on dark paper */
+      --accent-soft:#123029;
+      --paper:#1b1d16;
+      --line:#2b2e25;
+    }
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html{scroll-behavior:smooth}
@@ -262,7 +275,12 @@
   .contact h2{font-family:var(--disp);font-weight:700;font-size:clamp(38px,8vw,86px);
     letter-spacing:-.03em;line-height:.95;margin-bottom:30px}
   .contact h2 a,.contact h2 #flip-word{color:var(--accent);border-bottom:3px solid var(--accent-soft);transition:border-color .25s;user-select:none}
+  /* #flip-word is a <button> for keyboard access — strip the native chrome so
+     it renders as inline emphasised text within the heading */
+  .contact h2 #flip-word{background:none;border-top:0;border-left:0;border-right:0;
+    padding:0;margin:0;font:inherit;letter-spacing:inherit;vertical-align:baseline;cursor:pointer}
   .contact h2 a:hover,.contact h2 #flip-word:hover{border-color:var(--accent)}
+  .contact h2 #flip-word:focus-visible{outline:2px dashed var(--accent);outline-offset:4px}
   .contact .row{display:flex;gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:13px}
   .contact .row a{color:var(--mute);border-bottom:1px solid var(--line);padding-bottom:2px;transition:.25s}
   .contact .row a:hover{color:var(--accent);border-color:var(--accent)}

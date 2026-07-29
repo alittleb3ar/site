@@ -5,6 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>pyloseq — notebooks</title>
 <meta name="description" content="Reproductions of published microbiome analyses in pure Python.">
+<link rel="canonical" href="https://mpdonovan.com/pyloseq/">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+
+<!-- social / link previews -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mpdonovan.com/pyloseq/">
+<meta property="og:title" content="pyloseq — notebooks">
+<meta property="og:description" content="A pure-Python reimplementation of the R package phyloseq, with notebooks reproducing published microbiome studies.">
+<meta property="og:image" content="https://mpdonovan.com/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="pyloseq — notebooks">
+<meta name="twitter:description" content="A pure-Python reimplementation of the R package phyloseq.">
+<meta name="twitter:image" content="https://mpdonovan.com/assets/og-image.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <style>
@@ -50,7 +68,7 @@ details[open].entry .nb-toggle { transform: rotate(90deg); }
   <p class="crumb"><a href="../index.html">work</a> / pyloseq</p>
   <span class="stamp"><span class="pulse"></span> active</span>
   <h1>pyloseq.</h1>
-  <p class="tag">A pure-Python reimplementation of the R package <a href="https://github.com/joey711/phyloseq"><b>phyloseq</b></a>, bringing its microbiome data structures and analysis toolkit to the Python ecosystem. Available on <a href="https://pypi.org/project/pyloseq/">PyPI</a> and open source on <a href="https://github.com/alittleb3ar/pyloseq">GitHub</a>. The notebooks below reproduce analyses and visualizations from published microbiome studies.</p>
+  <p class="tag">A pure-Python reimplementation of the R package <a href="https://github.com/joey711/phyloseq" target="_blank" rel="noopener"><b>phyloseq</b></a>, bringing its microbiome data structures and analysis toolkit to the Python ecosystem. Available on <a href="https://pypi.org/project/pyloseq/" target="_blank" rel="noopener">PyPI</a> and open source on <a href="https://github.com/alittleb3ar/pyloseq" target="_blank" rel="noopener">GitHub</a>. The notebooks below reproduce analyses and visualizations from published microbiome studies.</p>
 </header>
 
 <main class="wrap">
@@ -71,7 +89,7 @@ details[open].entry .nb-toggle { transform: rotate(90deg); }
    ADD A NOTEBOOK: append an object to this list.
    1. Export your notebook:
         jupyter nbconvert --to html my_analysis.ipynb
-   2. Drop the .html in   phyloseq/notebooks/
+   2. Drop the .html in   pyloseq/notebooks/
    3. Add an entry below pointing 'file' at it.
    ========================================================= */
 const NOTEBOOKS = [
@@ -128,6 +146,9 @@ document.getElementById('yr').textContent = new Date().getFullYear();
          <span class="nb-toggle">&#9658;</span>
        </summary>
        <div class="nb-frame-wrap">
+         <!-- nbconvert output is our own trusted HTML and needs scripts for the
+              interactive plots; allow-same-origin lets it share our fonts/CSS.
+              Together these effectively opt out of sandboxing on purpose -->
          <iframe class="nb-frame" data-src="${n.file}" src="about:blank"
            sandbox="allow-scripts allow-same-origin" title="${n.title}"></iframe>
        </div>`;
