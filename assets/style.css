@@ -153,6 +153,22 @@
   a.node::after{content:"↗";font-size:9px;opacity:.5;margin-left:-1px;transition:transform .2s,opacity .2s}
   a.node:hover::after{opacity:1;transform:translate(2px,-2px)}
 
+  /* ---- node notes: click a chip to see why it was picked ---- */
+  .node.has-note{cursor:pointer}
+  .node.has-note>span{border-bottom:1px dotted var(--mute)}
+  .node.has-note:hover>span,.node.open>span{border-color:currentColor}
+  .node.open{color:var(--brand,var(--accent));border-color:currentColor;background:var(--paper)}
+  .node.open .lg{opacity:1}
+  .node.has-note:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .node-note{position:absolute;z-index:70;width:min(300px,calc(100vw - 24px));
+    background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);
+    border-radius:8px;padding:12px 14px;box-shadow:0 14px 32px -20px rgba(13,138,122,.55);
+    animation:note-in .15s ease}
+  .node-note b{display:block;font-family:var(--mono);font-size:11px;color:var(--accent);
+    letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+  .node-note p{font-family:var(--mono);font-size:12px;color:var(--mute);line-height:1.6}
+  @keyframes note-in{from{opacity:0;transform:translateY(4px)}}
+
   /* connector between lanes */
   .flow{height:22px;position:relative}
   .flow::before{content:"";position:absolute;left:50%;top:0;bottom:9px;width:1px;
