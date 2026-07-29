@@ -203,7 +203,7 @@ $(function(){
     return;
   }
 
-  let raf=0, solved=false;
+  let raf=0, busy=false;
   const rand=()=>POOL[Math.floor(Math.random()*POOL.length)];
   /* reveal = how many leading characters show their real glyph;
      everything past that churns randomly (spaces stay put) */
@@ -227,29 +227,24 @@ $(function(){
       else if(done){done();}
     })();
   }
-  function unscramble(){
-    if(solved) return;
-    solved=true;
-    play(0,TEXT.length,()=>{out.textContent=TEXT;});
+  function decode(){
+    play(0,TEXT.length,()=>{out.textContent=TEXT;busy=false;});
   }
-  function scramble(){
-    if(!solved) return;
-    solved=false;
-    play(TEXT.length,0);
+  function reshuffle(){
+    if(busy) return;
+    busy=true;
+    play(TEXT.length,0,decode);
   }
 
+  /* start scrambled, decode on its own after a beat;
+     hovering (or tapping / focusing) reshuffles and decodes again */
+  busy=true;
   render(0);
+  setTimeout(decode,1500);
 
-  if(window.matchMedia('(hover: hover)').matches){
-    el.addEventListener('mouseenter',unscramble);
-    el.addEventListener('mouseleave',scramble);
-    el.addEventListener('focus',unscramble);
-    el.addEventListener('blur',scramble);
-  }else{
-    /* touch: resolve once on load so the line is readable, then tap toggles */
-    el.addEventListener('click',()=>{solved?scramble():unscramble();});
-    setTimeout(unscramble,1200);
-  }
+  el.addEventListener('mouseenter',reshuffle);
+  el.addEventListener('click',reshuffle);
+  el.addEventListener('focus',reshuffle);
 })();
 </script>
 </body>
