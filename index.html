@@ -12,18 +12,25 @@
 <body>
 
 <nav class="top">
-  <div class="logo">~/<b>michaeldonovan</b></div>
+  <div class="logo"><a href="#top" id="home-link">~/<b>michaeldonovan</b></a></div>
   <div class="links">
-    <a href="index.html" class="here">work</a>
+    <a href="#work" class="here">work</a>
     <a href="#about">about</a>
     <a href="#contact">contact</a>
   </div>
 </nav>
+<script>
+  /* logo returns you to the very top without leaving a #top in the URL */
+  document.getElementById('home-link').addEventListener('click',function(e){
+    e.preventDefault();
+    window.scrollTo({top:0,behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+    history.replaceState(null,'',location.pathname+location.search);
+  });
+</script>
 
 <header class="hero wrap" id="top">
   <span class="stamp"><span class="pulse"></span> open to collaborate</span>
   <h1>I build tools that turn <u id="scramble" tabindex="0"><span class="sr-only">messy data</span><span class="glyphs" aria-hidden="true">messy data</span></u> into things you can read.</h1>
-  <p class="tag">Data engineering, bioinformatics, and ad-hoc analysis.</p>
 </header>
 
 <main class="wrap">
@@ -203,48 +210,52 @@ $(function(){
     return;
   }
 
-  let raf=0, busy=false;
+  const DECODE_STEP=0.09;   /* characters resolved per frame (~1.9s for the whole word) */
+  const SCRAMBLE_STEP=0.4;  /* characters given back to the churn per frame */
+  const CHURN_EVERY=4;      /* re-roll the random glyphs every N frames, not every frame */
+
   const rand=()=>POOL[Math.floor(Math.random()*POOL.length)];
+  let raf=0, frame=0, reveal=0, held=false, armed=false, glyphs=[];
+
+  function roll(){
+    glyphs=[];
+    for(let i=0;i<TEXT.length;i++) glyphs.push(TEXT[i]===' '?' ':rand());
+  }
   /* reveal = how many leading characters show their real glyph;
      everything past that churns randomly (spaces stay put) */
-  function render(reveal){
+  function render(){
     let s='';
     for(let i=0;i<TEXT.length;i++){
       const c=TEXT[i];
-      s+= c===' ' ? ' ' : (i<reveal ? c : rand());
+      s+= c===' ' ? ' ' : (i<reveal ? c : glyphs[i]);
     }
     out.textContent=s;
   }
-  function play(from,to,done){
-    cancelAnimationFrame(raf);
-    let pos=from;
-    const step=to>from?0.35:-0.5;
-    (function tick(){
-      pos+=step;
-      const end=step>0?pos>=to:pos<=to;
-      render(end?to:pos);
-      if(!end){raf=requestAnimationFrame(tick);}
-      else if(done){done();}
-    })();
+  function tick(){
+    frame++;
+    if(frame%CHURN_EVERY===0) roll();
+    /* held (hovering) pins it at fully scrambled for as long as the cursor stays */
+    if(held) reveal=Math.max(0,reveal-SCRAMBLE_STEP);
+    else if(armed) reveal=Math.min(TEXT.length,reveal+DECODE_STEP);
+    render();
+    if(!held && armed && reveal>=TEXT.length){ out.textContent=TEXT; raf=0; return; }
+    raf=requestAnimationFrame(tick);
   }
-  function decode(){
-    play(0,TEXT.length,()=>{out.textContent=TEXT;busy=false;});
-  }
-  function reshuffle(){
-    if(busy) return;
-    busy=true;
-    play(TEXT.length,0,decode);
-  }
+  function run(){ if(!raf) raf=requestAnimationFrame(tick); }
+  function restart(){ reveal=0; run(); }
 
-  /* start scrambled, decode on its own after a beat;
-     hovering (or tapping / focusing) reshuffles and decodes again */
-  busy=true;
-  render(0);
-  setTimeout(decode,1500);
+  /* start scrambled, decode on its own after a beat; hovering re-scrambles
+     and holds, and it only decodes again once the cursor leaves */
+  roll();
+  render();
+  run();
+  setTimeout(()=>{armed=true;run();},1500);
 
-  el.addEventListener('mouseenter',reshuffle);
-  el.addEventListener('click',reshuffle);
-  el.addEventListener('focus',reshuffle);
+  /* touch has no meaningful "as long as you hover", so a tap just replays it */
+  el.addEventListener('pointerenter',e=>{if(e.pointerType==='touch')return;held=true;run();});
+  el.addEventListener('pointerleave',e=>{if(e.pointerType==='touch')return;held=false;armed=true;run();});
+  el.addEventListener('click',()=>{held=false;armed=true;restart();});
+  el.addEventListener('focus',()=>{held=false;armed=true;restart();});
 })();
 </script>
 </body>
