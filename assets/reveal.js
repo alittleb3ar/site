@@ -1,7 +1,7 @@
-/* shared scroll-reveal: adds .in to .proj / .entry as they enter view */
+/* shared scroll-reveal: adds .in to .proj / .entry / .lane / .host as they enter view */
 (function(){
     function reveal(){
-      var els = document.querySelectorAll('.proj, .entry');
+      var els = document.querySelectorAll('.proj, .entry, .lane, .host');
       if(!('IntersectionObserver' in window)){
         els.forEach(function(e){e.classList.add('in');});
         return;
