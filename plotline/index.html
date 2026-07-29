@@ -41,7 +41,7 @@
           <a class="node" style="--brand:#006699" href="https://www.wikidata.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-wikidata"></use></svg><span>Wikidata</span></a>
           <a class="node" href="https://grouplens.org/datasets/movielens/" target="_blank" rel="noopener"><span>MovieLens</span></a>
           <a class="node" style="--brand:#BA478F" href="https://musicbrainz.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-musicbrainz"></use></svg><span>MusicBrainz</span></a>
-          <a class="node" style="--brand:#181717" href="https://github.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>GitHub</span></a>
+          <a class="node" style="--brand:#181717" href="https://github.com/manami-project/anime-offline-database" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>anime-offline-database</span></a>
         </div>
       </div>
       <div class="flow"></div>
@@ -126,14 +126,14 @@
     </div>
     <div class="topo">
       <div class="lane">
-        <h4>Upstream<span class="role">pulled by VPS 01</span></h4>
+        <h4>Upstream data sources<span class="role">pulled by VPS 01</span></h4>
         <div class="nodes">
           <div class="node" style="--brand:#AF8A08"><svg class="lg" aria-hidden="true"><use href="#i-imdb"></use></svg><span>IMDb</span></div>
           <div class="node" style="--brand:#0198C0"><svg class="lg" aria-hidden="true"><use href="#i-tmdb"></use></svg><span>TMDB</span></div>
           <div class="node" style="--brand:#006699"><svg class="lg" aria-hidden="true"><use href="#i-wikidata"></use></svg><span>Wikidata</span></div>
           <div class="node"><span>MovieLens</span></div>
           <div class="node" style="--brand:#BA478F"><svg class="lg" aria-hidden="true"><use href="#i-musicbrainz"></use></svg><span>MusicBrainz</span></div>
-          <div class="node" style="--brand:#181717"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>GitHub</span></div>
+          <div class="node" style="--brand:#181717"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>anime-offline-database</span></div>
         </div>
       </div>
       <div class="flow to-vps1"></div>
@@ -312,7 +312,7 @@ const NODE_NOTES = {
   "Wikidata":"One SPARQL endpoint that links everything to everything — the connective tissue for matching IDs across sources.",
   "MovieLens":"The classic ratings research dataset — clean, stable, and ready for recommender experiments without scraping anyone.",
   "MusicBrainz":"Open, community-maintained music metadata with proper stable IDs — covers the soundtrack side of the graph.",
-  "GitHub":"Where the code lives — and repo metadata gets pulled like any other upstream.",
+  "anime-offline-database":"One community-maintained JSON file cross-linking IDs from every major anime site (MAL, AniList, Kitsu, AniDB…) — anime metadata without scraping a dozen APIs.",
   "Dagster":"Asset-based orchestration fits a lakehouse: every table is a declared asset with lineage, retries, and schedules built in, and the UI doubles as documentation.",
   "DuckDB":"An OLAP engine that runs in-process — scans Parquet absurdly fast with zero servers to babysit. Ideal on a single box.",
   "PostgreSQL":"The boring, correct default — DuckLake catalog and app database in one, with decades of reliability for free.",
