@@ -36,83 +36,83 @@
       <div class="lane">
         <h4>Sources<span class="role">public dumps, REST &amp; SPARQL</span></h4>
         <div class="nodes">
-          <div class="node" style="--brand:#AF8A08"><svg class="lg" aria-hidden="true"><use href="#i-imdb"></use></svg><span>IMDb</span></div>
-          <div class="node" style="--brand:#0198C0"><svg class="lg" aria-hidden="true"><use href="#i-tmdb"></use></svg><span>TMDB</span></div>
-          <div class="node" style="--brand:#006699"><svg class="lg" aria-hidden="true"><use href="#i-wikidata"></use></svg><span>Wikidata</span></div>
-          <div class="node"><span>MovieLens</span></div>
-          <div class="node" style="--brand:#BA478F"><svg class="lg" aria-hidden="true"><use href="#i-musicbrainz"></use></svg><span>MusicBrainz</span></div>
-          <div class="node" style="--brand:#181717"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>GitHub</span></div>
+          <a class="node" style="--brand:#AF8A08" href="https://developer.imdb.com/non-commercial-datasets/" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-imdb"></use></svg><span>IMDb</span></a>
+          <a class="node" style="--brand:#0198C0" href="https://www.themoviedb.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-tmdb"></use></svg><span>TMDB</span></a>
+          <a class="node" style="--brand:#006699" href="https://www.wikidata.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-wikidata"></use></svg><span>Wikidata</span></a>
+          <a class="node" href="https://grouplens.org/datasets/movielens/" target="_blank" rel="noopener"><span>MovieLens</span></a>
+          <a class="node" style="--brand:#BA478F" href="https://musicbrainz.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-musicbrainz"></use></svg><span>MusicBrainz</span></a>
+          <a class="node" style="--brand:#181717" href="https://github.com/manami-project/anime-offline-database" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>anime-offline-database</span></a>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Orchestration<span class="role">ingest, retry, schedule</span></h4>
         <div class="nodes">
-          <div class="node" style="--brand:#4F43DD"><svg class="lg" aria-hidden="true"><use href="#i-dagster"></use></svg><span>Dagster</span></div>
+          <a class="node" style="--brand:#4F43DD" href="https://dagster.io" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-dagster"></use></svg><span>Dagster</span></a>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Lakehouse<span class="role">Postgres catalog + Parquet</span></h4>
         <div class="nodes">
-          <div class="node"><span>DuckLake</span></div>
-          <div class="node" style="--brand:#999000"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></div>
-          <div class="node" style="--brand:#4169E1"><svg class="lg" aria-hidden="true"><use href="#i-postgresql"></use></svg><span>PostgreSQL 17</span></div>
+          <a class="node" href="https://ducklake.select" target="_blank" rel="noopener"><span>DuckLake</span></a>
+          <a class="node" style="--brand:#999000" href="https://duckdb.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></a>
+          <a class="node" style="--brand:#4169E1" href="https://www.postgresql.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-postgresql"></use></svg><span>PostgreSQL 17</span></a>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Transform<span class="role">bronze &rarr; silver &rarr; gold</span></h4>
         <div class="nodes">
-          <div class="node" style="--brand:#FF4F2C"><svg class="lg" aria-hidden="true"><use href="#i-dbt"></use></svg><span>dbt</span></div>
-          <div class="node" style="--brand:#150458"><svg class="lg" aria-hidden="true"><use href="#i-pandas"></use></svg><span>pandas</span></div>
-          <div class="node" style="--brand:#CD792C"><svg class="lg" aria-hidden="true"><use href="#i-polars"></use></svg><span>Polars</span></div>
+          <a class="node" style="--brand:#FF4F2C" href="https://www.getdbt.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-dbt"></use></svg><span>dbt</span></a>
+          <a class="node" style="--brand:#150458" href="https://pandas.pydata.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-pandas"></use></svg><span>pandas</span></a>
+          <a class="node" style="--brand:#CD792C" href="https://pola.rs" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-polars"></use></svg><span>Polars</span></a>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Serve<span class="role">read-only query layer</span></h4>
         <div class="nodes">
-          <div class="node" style="--brand:#009688"><svg class="lg" aria-hidden="true"><use href="#i-fastapi"></use></svg><span>FastAPI</span></div>
-          <div class="node"><span>Uvicorn</span></div>
-          <div class="node" style="--brand:#999000"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></div>
-          <div class="node" style="--brand:#3A92DF"><svg class="lg" aria-hidden="true"><use href="#i-metabase"></use></svg><span>Metabase</span></div>
+          <a class="node" style="--brand:#009688" href="https://fastapi.tiangolo.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-fastapi"></use></svg><span>FastAPI</span></a>
+          <a class="node" href="https://www.uvicorn.org" target="_blank" rel="noopener"><span>Uvicorn</span></a>
+          <a class="node" style="--brand:#999000" href="https://duckdb.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></a>
+          <a class="node" style="--brand:#3A92DF" href="https://www.metabase.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-metabase"></use></svg><span>Metabase</span></a>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Web<span class="role">single-page app</span></h4>
         <div class="nodes">
-          <div class="node" style="--brand:#059AC3"><svg class="lg" aria-hidden="true"><use href="#i-react"></use></svg><span>React 19</span></div>
-          <div class="node" style="--brand:#3178C6"><svg class="lg" aria-hidden="true"><use href="#i-typescript"></use></svg><span>TypeScript</span></div>
-          <div class="node" style="--brand:#646CFF"><svg class="lg" aria-hidden="true"><use href="#i-vite"></use></svg><span>Vite</span></div>
+          <a class="node" style="--brand:#059AC3" href="https://react.dev" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-react"></use></svg><span>React 19</span></a>
+          <a class="node" style="--brand:#3178C6" href="https://www.typescriptlang.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-typescript"></use></svg><span>TypeScript</span></a>
+          <a class="node" style="--brand:#646CFF" href="https://vite.dev" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-vite"></use></svg><span>Vite</span></a>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Runtime<span class="role">containers, TLS, one origin</span></h4>
         <div class="nodes">
-          <div class="node" style="--brand:#1F88C0"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></div>
-          <div class="node" style="--brand:#1B91EC"><svg class="lg" aria-hidden="true"><use href="#i-docker"></use></svg><span>Docker</span></div>
+          <a class="node" style="--brand:#1F88C0" href="https://caddyserver.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></a>
+          <a class="node" style="--brand:#1B91EC" href="https://www.docker.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-docker"></use></svg><span>Docker</span></a>
         </div>
       </div>
       <div class="lane cross">
         <h4>CI / CD<span class="role">test, build, deploy</span></h4>
         <div class="nodes">
-          <div class="node" style="--brand:#2088FF"><svg class="lg" aria-hidden="true"><use href="#i-gha"></use></svg><span>GitHub Actions</span></div>
-          <div class="node" style="--brand:#0A97D2"><svg class="lg" aria-hidden="true"><use href="#i-pytest"></use></svg><span>pytest</span></div>
-          <div class="node" style="--brand:#709700"><svg class="lg" aria-hidden="true"><use href="#i-ruff"></use></svg><span>Ruff</span></div>
+          <a class="node" style="--brand:#2088FF" href="https://github.com/features/actions" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-gha"></use></svg><span>GitHub Actions</span></a>
+          <a class="node" style="--brand:#0A97D2" href="https://docs.pytest.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-pytest"></use></svg><span>pytest</span></a>
+          <a class="node" style="--brand:#709700" href="https://docs.astral.sh/ruff/" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-ruff"></use></svg><span>Ruff</span></a>
         </div>
       </div>
       <div class="lane cross">
         <h4>Ops<span class="role">alerting &amp; backups</span></h4>
         <div class="nodes">
-          <div class="node" style="--brand:#362D59"><svg class="lg" aria-hidden="true"><use href="#i-sentry"></use></svg><span>Sentry</span></div>
-          <div class="node" style="--brand:#317F6F"><svg class="lg" aria-hidden="true"><use href="#i-ntfy"></use></svg><span>ntfy</span></div>
-          <div class="node" style="--brand:#22A250"><svg class="lg" aria-hidden="true"><use href="#i-uptimekuma"></use></svg><span>Uptime Kuma</span></div>
-          <div class="node" style="--brand:#000000"><svg class="lg" aria-hidden="true"><use href="#i-umami"></use></svg><span>Umami</span></div>
-          <div class="node"><span>restic</span></div>
-          <div class="node" style="--brand:#E21E29"><svg class="lg" aria-hidden="true"><use href="#i-backblaze"></use></svg><span>Backblaze B2</span></div>
+          <a class="node" style="--brand:#362D59" href="https://sentry.io" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-sentry"></use></svg><span>Sentry</span></a>
+          <a class="node" style="--brand:#317F6F" href="https://ntfy.sh" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-ntfy"></use></svg><span>ntfy</span></a>
+          <a class="node" style="--brand:#22A250" href="https://github.com/louislam/uptime-kuma" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-uptimekuma"></use></svg><span>Uptime Kuma</span></a>
+          <a class="node" style="--brand:#000000" href="https://umami.is" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-umami"></use></svg><span>Umami</span></a>
+          <a class="node" href="https://restic.net" target="_blank" rel="noopener"><span>restic</span></a>
+          <a class="node" style="--brand:#E21E29" href="https://www.backblaze.com/cloud-storage" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-backblaze"></use></svg><span>Backblaze B2</span></a>
         </div>
       </div>
     </div>
@@ -126,17 +126,17 @@
     </div>
     <div class="topo">
       <div class="lane">
-        <h4>Upstream<span class="role">pulled by VPS 01</span></h4>
+        <h4>Upstream data sources<span class="role">pulled by VPS 01</span></h4>
         <div class="nodes">
           <div class="node" style="--brand:#AF8A08"><svg class="lg" aria-hidden="true"><use href="#i-imdb"></use></svg><span>IMDb</span></div>
           <div class="node" style="--brand:#0198C0"><svg class="lg" aria-hidden="true"><use href="#i-tmdb"></use></svg><span>TMDB</span></div>
           <div class="node" style="--brand:#006699"><svg class="lg" aria-hidden="true"><use href="#i-wikidata"></use></svg><span>Wikidata</span></div>
           <div class="node"><span>MovieLens</span></div>
           <div class="node" style="--brand:#BA478F"><svg class="lg" aria-hidden="true"><use href="#i-musicbrainz"></use></svg><span>MusicBrainz</span></div>
-          <div class="node" style="--brand:#181717"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>GitHub</span></div>
+          <div class="node" style="--brand:#181717"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>anime-offline-database</span></div>
         </div>
       </div>
-      <div class="flow"></div>
+      <div class="flow to-vps1"></div>
       <div class="hosts">
         <div class="host">
           <div class="host-head"><svg class="lg" aria-hidden="true"><use href="#i-ionos"></use></svg><h4>VPS 01 · production</h4></div>
@@ -174,13 +174,13 @@
             <span class="dir"></span>
             <b>uptime probes</b><em>/api/health, /dagster</em>
           </div>
-          <div class="link in">
+          <div class="link out">
             <span class="dir"></span>
-            <b>host metrics</b><em>beszel-agent</em>
+            <b>host metrics</b><em>beszel-agent → Beszel</em>
           </div>
-          <div class="link in">
+          <div class="link out">
             <span class="dir"></span>
-            <b>log stream</b><em>dozzle-agent</em>
+            <b>log stream</b><em>dozzle-agent → Dozzle</em>
           </div>
         </div>
         <div class="host">
@@ -188,11 +188,11 @@
           <p class="spec">6 vCore · 8 GB · 240 GB NVMe</p>
           <div class="nodes">
             <div class="node" style="--brand:#1F88C0"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></div>
-            <a class="node" style="--brand:#22A250" href="https://status.plotline.mpdonovan.com/status/plotline" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-uptimekuma"></use></svg><span>Uptime Kuma</span></a>
+            <div class="node" style="--brand:#22A250"><svg class="lg" aria-hidden="true"><use href="#i-uptimekuma"></use></svg><span>Uptime Kuma</span></div>
             <div class="node" style="--brand:#317F6F"><svg class="lg" aria-hidden="true"><use href="#i-ntfy"></use></svg><span>ntfy</span></div>
             <div class="node"><span>Beszel</span></div>
             <div class="node"><span>Dozzle</span></div>
-            <a class="node" style="--brand:#000000" href="https://umami.plotline.mpdonovan.com/websites/1defe65e-e605-4ff1-a76d-bfb04b918110" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-umami"></use></svg><span>Umami</span></a>
+            <div class="node" style="--brand:#000000"><svg class="lg" aria-hidden="true"><use href="#i-umami"></use></svg><span>Umami</span></div>
             <div class="node" style="--brand:#4169E1"><svg class="lg" aria-hidden="true"><use href="#i-postgresql"></use></svg><span>PostgreSQL</span></div>
             <div class="node" style="--brand:#1B91EC"><svg class="lg" aria-hidden="true"><use href="#i-docker"></use></svg><span>Docker</span></div>
           </div>
@@ -300,9 +300,9 @@ const REPORTS = [
 ];
 
 /* =========================================================
-   WHY-THIS-TECH NOTES: keyed by a chip's label text; click
-   the chip to read the note. Trailing version numbers are
-   stripped before lookup ("PostgreSQL 17" -> "PostgreSQL").
+   WHY-THIS-TECH NOTES for the Deployment diagram: keyed by
+   a chip's label text; click the chip to read the note.
+   Trailing version numbers are stripped before lookup.
    Chips without an entry stay plain. Rendering lives in
    assets/node-notes.js.
    ========================================================= */
@@ -312,25 +312,16 @@ const NODE_NOTES = {
   "Wikidata":"One SPARQL endpoint that links everything to everything — the connective tissue for matching IDs across sources.",
   "MovieLens":"The classic ratings research dataset — clean, stable, and ready for recommender experiments without scraping anyone.",
   "MusicBrainz":"Open, community-maintained music metadata with proper stable IDs — covers the soundtrack side of the graph.",
-  "GitHub":"Where the code lives — and repo metadata gets pulled like any other upstream.",
+  "anime-offline-database":"One community-maintained JSON file cross-linking IDs from every major anime site (MAL, AniList, Kitsu, AniDB…) — anime metadata without scraping a dozen APIs.",
   "Dagster":"Asset-based orchestration fits a lakehouse: every table is a declared asset with lineage, retries, and schedules built in, and the UI doubles as documentation.",
-  "DuckLake":"Lakehouse format with a plain SQL catalog — Postgres holds the metadata, Parquet holds the data, no JVM or object-store stack required.",
   "DuckDB":"An OLAP engine that runs in-process — scans Parquet absurdly fast with zero servers to babysit. Ideal on a single box.",
   "PostgreSQL":"The boring, correct default — DuckLake catalog and app database in one, with decades of reliability for free.",
   "dbt":"SQL transforms with tests, docs, and lineage — keeps the bronze → silver → gold flow declarative and reviewable.",
-  "pandas":"The lingua franca of tabular Python — used where an API hands back something awkward that just needs munging.",
-  "Polars":"Lazy, multi-threaded dataframes for the heavier transforms — dramatically faster than pandas where it counts.",
   "FastAPI":"Typed Python endpoints with automatic OpenAPI docs — the query layer stays small and self-describing.",
-  "Uvicorn":"The standard ASGI server for FastAPI — one process, no drama.",
   "Metabase":"Point-and-click BI over the gold tables — dashboards without hand-building a frontend for each one.",
   "React":"Boring in a good way — the biggest ecosystem, so every problem a component throws has already been solved by someone.",
-  "TypeScript":"Types catch the dumb mistakes before the browser does — non-negotiable on a solo project with no QA team.",
-  "Vite":"Instant dev server, sane defaults, fast builds — frontend tooling that stays out of the way.",
   "Caddy":"One binary for TLS, HTTP/2, and reverse proxying — automatic certificates mean zero renewal cron jobs.",
   "Docker":"Every service is a container with a pinned version — either host rebuilds from a single compose file.",
-  "GitHub Actions":"CI lives next to the code — tests and deploys trigger straight from a push, no runner to maintain.",
-  "pytest":"Plain-assert tests and composable fixtures — the Python testing default for a reason.",
-  "Ruff":"Linter and formatter in one Rust-fast tool — replaces five slower ones and ends formatting debates.",
   "Sentry":"Stack traces with full context instead of log-file spelunking — errors find me, not the other way around.",
   "ntfy":"Push notifications over plain HTTP — a curl call becomes a phone alert, self-hosted.",
   "Uptime Kuma":"Self-hosted uptime checks with a public status page — watches production from the other box.",
