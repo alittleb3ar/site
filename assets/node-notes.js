@@ -1,6 +1,6 @@
-/* click-to-open "why this tech" notes for diagram chips.
-   Reads a page-defined NODE_NOTES map keyed by chip label
-   (trailing version numbers stripped: "PostgreSQL 17" -> "PostgreSQL").
+/* click-to-open "why this tech" notes for deployment-diagram chips
+   (.topo section). Reads a page-defined NODE_NOTES map keyed by chip
+   label (trailing version numbers stripped: "PostgreSQL 17" -> "PostgreSQL").
    Pages without a NODE_NOTES map are left untouched. */
 (function(){
   var notes = (typeof NODE_NOTES !== 'undefined') && NODE_NOTES;
@@ -50,8 +50,8 @@
     current = node;
   }
 
-  /* only plain chips — a.node keeps navigating */
-  document.querySelectorAll('div.node').forEach(function(node){
+  /* only plain deployment chips — a.node keeps navigating */
+  document.querySelectorAll('.topo div.node').forEach(function(node){
     var key = keyFor(node);
     if(!notes[key]) return;
     node.classList.add('has-note');
