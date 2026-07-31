@@ -9,6 +9,8 @@
     --mute:#5b5f58;          /* darkened for AA contrast on the gridded bg */
     --accent:#0d8a7a;        /* teal fountain-pen ink */
     --accent-soft:#d3ece7;
+    --warn:#a2611a;          /* ochre — the second ink, for what things cost */
+    --warn-soft:#f2e4d0;
     --paper:#fffefb;
     --line:#dedccf;
     --nav-bg:rgba(247,246,241,.82);   /* frosted nav backing, matched to --bg */
@@ -27,6 +29,8 @@
     --mute:#9aa093;
     --accent:#37b9a6;      /* brighter teal so it reads on dark paper */
     --accent-soft:#123029;
+    --warn:#d2984e;
+    --warn-soft:#33251230;
     --paper:#1b1d16;
     --line:#2b2e25;
     --nav-bg:rgba(20,21,15,.82);
@@ -39,6 +43,8 @@
       --mute:#9aa093;
       --accent:#37b9a6;
       --accent-soft:#123029;
+      --warn:#d2984e;
+      --warn-soft:#33251230;
       --paper:#1b1d16;
       --line:#2b2e25;
       --nav-bg:rgba(20,21,15,.82);
@@ -205,6 +211,9 @@
   .lane .role{display:block;font-family:var(--mono);font-size:11px;color:var(--mute);
     text-transform:none;letter-spacing:0;line-height:1.45;margin-top:5px}
   .lane .nodes{display:flex;gap:8px;flex-wrap:wrap}
+  /* the note popover is inserted beside the chip that opened it, so it needs
+     a positioned ancestor to be placed against. both diagrams, hence both. */
+  .diagram .nodes,.topo .nodes{position:relative}
   /* cross-cutting band: wraps the stack rather than sitting under it */
   .lane.cross{border-style:dashed;background:transparent;margin-top:26px}
   .lane.cross:hover{box-shadow:none}
@@ -216,6 +225,9 @@
   .node .lg{width:14px;height:14px;flex:none;fill:currentColor;opacity:.8;transition:opacity .2s}
   .node:hover{color:var(--brand,var(--accent));border-color:currentColor;background:var(--paper)}
   .node:hover .lg{opacity:1}
+  /* a chip standing in for the ones not drawn: reads as a count, not a table */
+  .node.dim{border-style:dashed;opacity:.75}
+
   /* chips that link somewhere get a small out-arrow */
   a.node::after{content:"↗";font-size:9px;opacity:.5;margin-left:-1px;transition:transform .2s,opacity .2s}
   a.node:hover::after{opacity:1;transform:translate(2px,-2px)}
@@ -227,6 +239,17 @@
   .node.open{color:var(--brand,var(--accent));border-color:currentColor;background:var(--paper)}
   .node.open .lg{opacity:1}
   .node.has-note:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+  /* two marks, so a diagram can be read twice. the teal pip means there is
+     something running at the other end of this chip; the ochre asterisk means
+     it cost something to get there. both are ::after on the chip, so a chip
+     carrying both shows the pip and the note carries the rest. */
+  .node.has-live::after{content:"";width:5px;height:5px;border-radius:50%;
+    background:var(--accent);flex:none;margin-left:1px;opacity:.75;transition:opacity .2s,transform .2s}
+  .node.has-live:hover::after,.node.has-live.open::after{opacity:1;transform:scale(1.25)}
+  .node.has-scar:not(.has-live)::after{content:"\2732";font-size:8px;line-height:1;
+    color:var(--warn);margin-left:1px;opacity:.85}
+
   .node-note{position:absolute;z-index:70;width:min(300px,calc(100vw - 24px));
     background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--accent);
     border-radius:8px;padding:12px 14px;box-shadow:0 14px 32px -20px rgba(13,138,122,.55);
@@ -235,6 +258,33 @@
     letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
   .node-note p{font-family:var(--mono);font-size:12px;color:var(--mute);line-height:1.6}
   @keyframes note-in{from{opacity:0;transform:translateY(4px)}}
+
+  /* a note with a scar switches ink: ochre rule, ochre title, and the scar
+     paragraph set off by a rule of its own so the two halves stay separable
+     at a glance — what it is, then what it cost. */
+  .node-note.scarred{border-left-color:var(--warn)}
+  .node-note.scarred b{color:var(--warn)}
+  .node-note .scar{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);
+    color:var(--ink);opacity:.86}
+  .node-note .scar::before{content:"\2732  ";color:var(--warn)}
+
+  .node-note .note-links{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:11px;
+    padding-top:9px;border-top:1px dashed var(--line)}
+  .node-note .note-links a{font-family:var(--mono);font-size:11px;color:var(--mute);
+    border-bottom:1px solid var(--line);transition:color .2s,border-color .2s}
+  .node-note .note-links a::after{content:" \2197";font-size:9px}
+  .node-note .note-links a:hover{color:var(--accent);border-color:var(--accent)}
+  .node-note .note-links a.live{color:var(--accent);border-color:var(--accent-soft)}
+  .node-note .note-links a.live:hover{border-color:var(--accent)}
+
+  /* legend under a diagram head — the chips are only obviously clickable once
+     somebody says so. mirrors the marks above rather than describing them. */
+  .legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin:-18px 0 20px;
+    font-family:var(--mono);font-size:11.5px;color:var(--mute);line-height:1.5}
+  .legend i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
+  .legend .pip{width:5px;height:5px;border-radius:50%;background:var(--accent);flex:none}
+  .legend .ast{color:var(--warn)}
+  .legend .dot{border-bottom:1px dotted var(--mute);padding-bottom:1px}
 
   /* connector between lanes */
   .flow{height:22px;position:relative}
@@ -368,3 +418,102 @@
   ul.logos li:has(img){padding:12px 0}
   ul.logos li:has(img)::before{display:none}
   ul.logos li:hover img{filter:none;opacity:1}
+  /* ---- figure strip (project sub-pages) ----
+     the numbers hang off a rule like marks off a ruler, rather than sitting in
+     boxes: this is a lab notebook, not a KPI dashboard. values come from
+     stats.json so nothing here can quietly stop being true. */
+  .strip{display:flex;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:38px}
+  .strip .fig{flex:1 1 132px;padding:15px 16px 2px;position:relative}
+  .strip .fig::before{content:"";position:absolute;top:0;left:16px;width:1px;height:9px;
+    background:var(--accent);opacity:.55}
+  .strip .fig b{display:block;font-family:var(--disp);font-weight:700;line-height:1;
+    font-size:clamp(21px,3.2vw,29px);letter-spacing:-.02em;white-space:nowrap}
+  /* the ~ / + is a qualifier, not a digit: smaller, lifted, and never the
+     thing that wraps a figure onto two lines. */
+  .strip .fig b .q{font-size:.6em;font-weight:500;color:var(--mute);vertical-align:.32em}
+  /* direct child only — the qualifier span lives inside the <b> and must stay
+     inline, or the ~ drops onto a line of its own. */
+  .strip .fig>span{display:block;font-family:var(--mono);font-size:11px;color:var(--mute);
+    margin-top:7px;line-height:1.4}
+  .strip-prov{font-family:var(--mono);font-size:11px;color:var(--mute);margin-top:14px;line-height:1.6}
+  .strip-prov code{color:var(--accent)}
+  @media(max-width:600px){.strip .fig{flex:1 1 44%}}
+
+  /* ---- the day (schedule ruler) ----
+     every row is one scheduled thing, its mark placed at the hour it fires on
+     a 0–24 UTC track. read down the column and the marks march across the day;
+     that is the only picture on the page that says "this runs without me". */
+  .clock{background:var(--paper);border:1px solid var(--line);border-radius:10px;
+    padding:18px 22px 8px;opacity:0;transform:translateY(16px);
+    transition:opacity .3s,transform .3s,border-color .25s,box-shadow .25s}
+  .clock.in{opacity:1;transform:none}
+  .clock:hover{border-color:var(--accent);box-shadow:0 14px 32px -24px rgba(13,138,122,.5)}
+  .clock .hours{position:relative;height:15px;margin-bottom:6px}
+  .clock .hours i{position:absolute;top:0;left:calc(var(--at) / 24 * 100%);
+    transform:translateX(-50%);font-family:var(--mono);font-style:normal;
+    font-size:10px;color:var(--mute);letter-spacing:.04em}
+  /* the two ends would otherwise hang half outside the card */
+  .clock .hours i:first-child{transform:none}
+  .clock .hours i:last-child{transform:translateX(-100%)}
+  .clock ol{list-style:none;margin:0;padding:0}
+  .clock li{padding:11px 0 12px;border-top:1px dashed var(--line)}
+  .clock .bar{position:relative;height:11px}
+  .clock .bar::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;
+    background:var(--line)}
+  .clock .mark{position:absolute;top:50%;left:calc(var(--at) / 24 * 100%);
+    transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;
+    background:var(--accent);box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--accent-soft)}
+  /* things that are not a moment in the day: a band for the ones always
+     running, a hollow mark for the one that only ever runs when I say so. */
+  .clock .mark.band{left:0;width:100%;height:3px;border-radius:2px;transform:translateY(-50%);
+    background:linear-gradient(90deg,var(--accent-soft),var(--accent),var(--accent-soft));
+    box-shadow:none}
+  /* not at any hour: no mark at all. a dot at left:0 would read as "runs at
+     midnight", and a dashed line competes with the row rules — an empty track
+     against the rows that do carry a mark says it by itself. */
+  .clock .mark.manual{display:none}
+  .clock .row{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin-top:9px}
+  .clock .when{font-family:var(--mono);font-size:12px;color:var(--accent);min-width:82px}
+  .clock .when.off{color:var(--mute)}
+  .clock .row b{font-family:var(--mono);font-weight:500;font-size:12.5px;color:var(--ink)}
+  .clock .row em{font-style:normal;font-family:var(--mono);font-size:11.5px;color:var(--mute);
+    line-height:1.5;flex:1 1 240px}
+  @media(max-width:600px){.clock{padding:16px 16px 6px}.clock .when{min-width:0}}
+
+  /* ---- live degrees demo ----
+     the page's one interactive claim. it calls the same public API the app
+     does, and falls back to a pre-rendered chain when that API is asleep —
+     which it is designed to be whenever the graph is mid-rebuild. */
+  .demo{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 22px}
+  .demo .pair{display:grid;grid-template-columns:1fr auto 1fr auto;gap:10px;align-items:center}
+  @media(max-width:680px){.demo .pair{grid-template-columns:1fr;gap:8px}}
+  .demo input{font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--bg);
+    border:1px solid var(--line);border-radius:6px;padding:9px 12px;width:100%;
+    transition:border-color .2s}
+  .demo input:focus{outline:none;border-color:var(--accent)}
+  .demo .joiner{font-family:var(--mono);font-size:11px;color:var(--mute)}
+  @media(max-width:680px){.demo .joiner{display:none}}
+  .demo button{font-family:var(--mono);font-size:12px;color:var(--paper);background:var(--accent);
+    border:1px solid var(--accent);border-radius:6px;padding:10px 18px;cursor:pointer;
+    transition:opacity .2s}
+  .demo button:hover{opacity:.88}
+  .demo button:disabled{opacity:.5;cursor:default}
+  .demo button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .demo .out{margin-top:18px;min-height:22px}
+  .demo .chain{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+  .demo .who{display:inline-flex;align-items:center;font-family:var(--mono);font-size:12px;
+    color:var(--ink);border:1px solid var(--line);background:var(--bg);
+    padding:5px 11px;border-radius:4px}
+  .demo .via{font-family:var(--mono);font-size:11px;color:var(--mute);
+    display:inline-flex;align-items:center;gap:6px;max-width:100%}
+  .demo .via::before{content:"\2500\2500";color:var(--line);letter-spacing:-1px}
+  .demo .via::after{content:"\25B6";font-size:7px;color:var(--accent)}
+  .demo .status{font-family:var(--mono);font-size:11.5px;color:var(--mute);
+    margin-top:12px;line-height:1.6}
+  .demo .status.stale{color:var(--warn)}
+
+  /* the reveal/motion rules above list every card type by name; the two new
+     ones join them rather than being animated by accident. */
+  @media(prefers-reduced-motion:reduce){
+    .clock{opacity:1!important;transform:none!important}
+  }

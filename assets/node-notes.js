@@ -1,77 +1,168 @@
-/* click-to-open "why this tech" notes for deployment-diagram chips
-   (.topo section). Reads a page-defined NODE_NOTES map keyed by chip
-   label (trailing version numbers stripped: "PostgreSQL 17" -> "PostgreSQL").
-   Pages without a NODE_NOTES map are left untouched. */
-(function(){
-  var notes = (typeof NODE_NOTES !== 'undefined') && NODE_NOTES;
-  if(!notes || !Object.keys(notes).length) return;
+/* click-to-open notes for the stack chips on a project page.
+
+   Reads a page-defined NODE_NOTES map keyed by chip label (trailing version
+   numbers stripped: "PostgreSQL 17" -> "PostgreSQL"), so one entry annotates
+   every chip carrying that name across every diagram on the page.
+
+   Each entry is an object:
+     why   what the thing is doing here, and why it and not something else
+     scar  optional — what it cost. The thing that broke, and what changed.
+           Chips with one get an ochre mark, so the diagrams can be read twice:
+           once for what it is built from, once for where it drew blood.
+     href  optional — the project's own homepage
+     live  optional — {url, label} for the instance actually running on the
+           box. This is the whole reason the chips became buttons: a logo
+           linking to dagster.io is a logo; a logo linking to *my* Dagster is
+           evidence.
+
+   The popover is inserted next to the chip it belongs to rather than at the
+   end of <body>, so Tab reaches its links right after the chip that opened it.
+   Pages without a NODE_NOTES map are left untouched. Legacy plain-string
+   entries are still honoured as a bare `why`. */
+(function () {
+  var notes = typeof NODE_NOTES !== 'undefined' && NODE_NOTES;
+  if (!notes || !Object.keys(notes).length) return;
 
   var pop = document.createElement('div');
   pop.className = 'node-note';
   pop.id = 'node-note';
-  pop.setAttribute('role','note');
+  pop.setAttribute('role', 'note');
   pop.hidden = true;
-  document.body.appendChild(pop);
   var current = null;
 
-  function keyFor(node){
-    var s = node.querySelector('span');
-    return s ? s.textContent.trim().replace(/\s+\d+$/,'') : '';
+  function entryFor(key) {
+    var note = notes[key];
+    if (!note) return null;
+    return typeof note === 'string' ? { why: note } : note;
   }
 
-  function close(refocus){
-    if(!current) return;
+  function keyFor(node) {
+    var label = node.querySelector('span');
+    return label ? label.textContent.trim().replace(/\s+\d+$/, '') : '';
+  }
+
+  function close(refocus) {
+    if (!current) return;
     pop.hidden = true;
     current.classList.remove('open');
-    current.setAttribute('aria-expanded','false');
+    current.setAttribute('aria-expanded', 'false');
     current.removeAttribute('aria-describedby');
-    if(refocus) current.focus();
+    if (refocus) current.focus();
     current = null;
   }
 
-  function open(node, key){
+  /* Build the note body. textContent throughout — the copy is hand-authored,
+     but it is still data, and a stray "<" in a note should read as a "<". */
+  function fill(key, entry) {
+    pop.textContent = '';
+    pop.classList.toggle('scarred', !!entry.scar);
+
+    var title = document.createElement('b');
+    title.textContent = key;
+    pop.appendChild(title);
+
+    var why = document.createElement('p');
+    why.textContent = entry.why;
+    pop.appendChild(why);
+
+    if (entry.scar) {
+      var scar = document.createElement('p');
+      scar.className = 'scar';
+      scar.textContent = entry.scar;
+      pop.appendChild(scar);
+    }
+
+    if (!entry.live && !entry.href) return;
+
+    var links = document.createElement('div');
+    links.className = 'note-links';
+    if (entry.live) {
+      var live = document.createElement('a');
+      live.className = 'live';
+      live.href = entry.live.url;
+      live.target = '_blank';
+      live.rel = 'noopener';
+      live.textContent = entry.live.label;
+      links.appendChild(live);
+    }
+    if (entry.href) {
+      var home = document.createElement('a');
+      home.href = entry.href;
+      home.target = '_blank';
+      home.rel = 'noopener';
+      home.textContent = entry.href.replace(/^https?:\/\//, '').replace(/\/$/, '');
+      links.appendChild(home);
+    }
+    pop.appendChild(links);
+  }
+
+  /* Position against the chip, clamped to the viewport, then translated into
+     the coordinates of whatever the popover's offsetParent turned out to be
+     (.nodes is position:relative for exactly this). */
+  function place(node) {
+    var chip = node.getBoundingClientRect();
+    var origin = pop.offsetParent
+      ? pop.offsetParent.getBoundingClientRect()
+      : { left: 0, top: 0 };
+    var width = pop.offsetWidth;
+    var viewport = document.documentElement.clientWidth;
+
+    var x = Math.max(8, Math.min(chip.left + chip.width / 2 - width / 2, viewport - width - 8));
+    var y = chip.bottom + 8;
+    if (chip.bottom + pop.offsetHeight + 16 > window.innerHeight) {
+      y = chip.top - pop.offsetHeight - 8; /* flip above if cramped */
+    }
+
+    pop.style.left = x - origin.left + 'px';
+    pop.style.top = y - origin.top + 'px';
+  }
+
+  function open(node, key, entry) {
     close();
-    pop.innerHTML = '<b></b><p></p>';
-    pop.querySelector('b').textContent = key;
-    pop.querySelector('p').textContent = notes[key];
+    node.parentNode.insertBefore(pop, node.nextSibling);
+    fill(key, entry);
     pop.hidden = false;
-    var r = node.getBoundingClientRect(), w = pop.offsetWidth;
-    var x = Math.max(8 + window.scrollX,
-            Math.min(r.left + r.width/2 - w/2 + window.scrollX,
-                     window.scrollX + document.documentElement.clientWidth - w - 8));
-    var y = r.bottom + window.scrollY + 8;
-    if(r.bottom + pop.offsetHeight + 16 > window.innerHeight)  /* flip above if cramped */
-      y = r.top + window.scrollY - pop.offsetHeight - 8;
-    pop.style.left = x + 'px';
-    pop.style.top = y + 'px';
+    place(node);
     node.classList.add('open');
-    node.setAttribute('aria-expanded','true');
-    node.setAttribute('aria-describedby','node-note');
+    node.setAttribute('aria-expanded', 'true');
+    node.setAttribute('aria-describedby', 'node-note');
     current = node;
   }
 
-  /* only plain deployment chips — a.node keeps navigating */
-  document.querySelectorAll('.topo div.node').forEach(function(node){
+  /* Every chip in either diagram, not just the deployment one. The
+     architecture chips used to be bare links to vendor homepages, which put
+     the notes on the diagram nobody reaches first. */
+  document.querySelectorAll('.diagram .node, .topo .node').forEach(function (node) {
     var key = keyFor(node);
-    if(!notes[key]) return;
+    var entry = entryFor(key);
+    if (!entry) return;
+
     node.classList.add('has-note');
-    node.setAttribute('tabindex','0');
-    node.setAttribute('role','button');
-    node.setAttribute('aria-expanded','false');
-    node.addEventListener('click', function(e){
+    if (entry.scar) node.classList.add('has-scar');
+    if (entry.live) node.classList.add('has-live');
+    node.setAttribute('tabindex', '0');
+    node.setAttribute('role', 'button');
+    node.setAttribute('aria-expanded', 'false');
+
+    node.addEventListener('click', function (e) {
       e.stopPropagation();
-      current === node ? close() : open(node, key);
+      current === node ? close() : open(node, key, entry);
     });
-    node.addEventListener('keydown', function(e){
-      if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); node.click(); }
+    node.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        node.click();
+      }
     });
   });
 
-  document.addEventListener('click', function(e){
-    if(current && !pop.contains(e.target)) close();
+  document.addEventListener('click', function (e) {
+    if (current && !pop.contains(e.target)) close();
   });
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape') close(true);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') close(true);
   });
-  window.addEventListener('resize', function(){ close(); });
+  window.addEventListener('resize', function () {
+    close();
+  });
 })();
