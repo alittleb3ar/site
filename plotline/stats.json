@@ -1,0 +1,91 @@
+{
+  "generated_at": "2026-07-31T00:00:00Z",
+  "generated_by": "scripts/export_site_stats.py",
+  "warehouse_built_at": null,
+  "figures": [
+    {
+      "key": "source_feeds",
+      "label": "ingest feeds",
+      "value": 23,
+      "qualifier": null,
+      "source": "catalog"
+    },
+    {
+      "key": "dbt_models",
+      "label": "dbt models",
+      "value": 39,
+      "qualifier": null,
+      "source": "catalog"
+    },
+    {
+      "key": "dbt_seeds",
+      "label": "seeds",
+      "value": 9,
+      "qualifier": null,
+      "source": "catalog"
+    },
+    {
+      "key": "schedules",
+      "label": "schedules",
+      "value": 4,
+      "qualifier": null,
+      "source": "catalog"
+    },
+    {
+      "key": "warehouse_schemas",
+      "label": "warehouse schemas",
+      "value": 5,
+      "qualifier": null,
+      "source": "catalog"
+    },
+    {
+      "key": "test_modules",
+      "label": "test modules",
+      "value": 50,
+      "qualifier": null,
+      "source": "repository"
+    },
+    {
+      "key": "graph_edges",
+      "label": "co-star edges",
+      "value": 195000000,
+      "qualifier": "approx",
+      "source": "documented"
+    },
+    {
+      "key": "graph_people",
+      "label": "people in the graph",
+      "value": 3400000,
+      "qualifier": "approx",
+      "source": "documented"
+    },
+    {
+      "key": "graph_titles",
+      "label": "titles in the graph",
+      "value": 1200000,
+      "qualifier": "approx",
+      "source": "documented"
+    },
+    {
+      "key": "credits",
+      "label": "credit rows",
+      "value": 100000000,
+      "qualifier": "min",
+      "source": "documented"
+    },
+    {
+      "key": "titles",
+      "label": "titles",
+      "value": 10000000,
+      "qualifier": "min",
+      "source": "documented"
+    },
+    {
+      "key": "people",
+      "label": "people",
+      "value": 10000000,
+      "qualifier": "min",
+      "source": "documented"
+    }
+  ]
+}

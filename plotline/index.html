@@ -80,6 +80,12 @@
   <span class="stamp"><span class="pulse"></span> active</span>
   <h1>plotline.</h1>
   <p class="tag">A data analytics stack for analyzing <b>any and all entertainment data</b>, with the IMDb bulk dataset as its core. Everything downstream of it — live apps, generated reports — gets published here as it ships.</p>
+
+  <!-- figures come from plotline/stats.json, written by the warehouse's own
+       scripts/export_site_stats.py. typed in by hand they would rot silently;
+       generated, disagreeing with the warehouse is a diff. -->
+  <div class="strip" id="strip"></div>
+  <p class="strip-prov" id="strip-prov"></p>
 </header>
 
 <main class="wrap">
@@ -88,92 +94,232 @@
     <div class="sec-head">
       <span class="tick">§</span>
       <h2>Architecture</h2>
+      <span class="meta">click a chip</span>
     </div>
+    <!-- the notes existed before this legend did, on the diagram furthest down
+         the page, with nothing anywhere saying a chip could be clicked. -->
+    <p class="legend">
+      <i><span class="dot">dotted</span> why it&rsquo;s here</i>
+      <i><span class="pip"></span> something of mine running at the other end</i>
+      <i><span class="ast">&#10034;</span> what it cost</i>
+    </p>
     <div class="diagram">
       <div class="lane">
         <h4>Sources<span class="role">public dumps, REST &amp; SPARQL</span></h4>
         <div class="nodes">
-          <a class="node" style="--brand:#AF8A08" href="https://developer.imdb.com/non-commercial-datasets/" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-imdb"></use></svg><span>IMDb</span></a>
-          <a class="node" style="--brand:#0198C0" href="https://www.themoviedb.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-tmdb"></use></svg><span>TMDB</span></a>
-          <a class="node" style="--brand:#006699" href="https://www.wikidata.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-wikidata"></use></svg><span>Wikidata</span></a>
-          <a class="node" href="https://grouplens.org/datasets/movielens/" target="_blank" rel="noopener"><span>MovieLens</span></a>
-          <a class="node" style="--brand:#BA478F" href="https://musicbrainz.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-musicbrainz"></use></svg><span>MusicBrainz</span></a>
-          <a class="node" style="--brand:#181717" href="https://github.com/manami-project/anime-offline-database" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>anime-offline-database</span></a>
+          <span class="node" style="--brand:#AF8A08"><svg class="lg" aria-hidden="true"><use href="#i-imdb"></use></svg><span>IMDb</span></span>
+          <span class="node" style="--brand:#0198C0"><svg class="lg" aria-hidden="true"><use href="#i-tmdb"></use></svg><span>TMDB</span></span>
+          <span class="node" style="--brand:#006699"><svg class="lg" aria-hidden="true"><use href="#i-wikidata"></use></svg><span>Wikidata</span></span>
+          <span class="node"><span>MovieLens</span></span>
+          <span class="node" style="--brand:#BA478F"><svg class="lg" aria-hidden="true"><use href="#i-musicbrainz"></use></svg><span>MusicBrainz</span></span>
+          <span class="node" style="--brand:#181717"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>anime-offline-database</span></span>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Orchestration<span class="role">ingest, retry, schedule</span></h4>
         <div class="nodes">
-          <a class="node" style="--brand:#4F43DD" href="https://dagster.io" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-dagster"></use></svg><span>Dagster</span></a>
+          <span class="node" style="--brand:#4F43DD"><svg class="lg" aria-hidden="true"><use href="#i-dagster"></use></svg><span>Dagster</span></span>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Lakehouse<span class="role">Postgres catalog + Parquet</span></h4>
         <div class="nodes">
-          <a class="node" href="https://ducklake.select" target="_blank" rel="noopener"><span>DuckLake</span></a>
-          <a class="node" style="--brand:#999000" href="https://duckdb.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></a>
-          <a class="node" style="--brand:#4169E1" href="https://www.postgresql.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-postgresql"></use></svg><span>PostgreSQL 17</span></a>
+          <span class="node"><span>DuckLake</span></span>
+          <span class="node" style="--brand:#999000"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></span>
+          <span class="node" style="--brand:#4169E1"><svg class="lg" aria-hidden="true"><use href="#i-postgresql"></use></svg><span>PostgreSQL 17</span></span>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Transform<span class="role">bronze &rarr; silver &rarr; gold</span></h4>
         <div class="nodes">
-          <a class="node" style="--brand:#FF4F2C" href="https://www.getdbt.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-dbt"></use></svg><span>dbt</span></a>
-          <a class="node" style="--brand:#150458" href="https://pandas.pydata.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-pandas"></use></svg><span>pandas</span></a>
-          <a class="node" style="--brand:#CD792C" href="https://pola.rs" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-polars"></use></svg><span>Polars</span></a>
+          <span class="node" style="--brand:#FF4F2C"><svg class="lg" aria-hidden="true"><use href="#i-dbt"></use></svg><span>dbt</span></span>
+          <span class="node" style="--brand:#150458"><svg class="lg" aria-hidden="true"><use href="#i-pandas"></use></svg><span>pandas</span></span>
+          <span class="node" style="--brand:#CD792C"><svg class="lg" aria-hidden="true"><use href="#i-polars"></use></svg><span>Polars</span></span>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Serve<span class="role">read-only query layer</span></h4>
         <div class="nodes">
-          <a class="node" style="--brand:#009688" href="https://fastapi.tiangolo.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-fastapi"></use></svg><span>FastAPI</span></a>
-          <a class="node" href="https://www.uvicorn.org" target="_blank" rel="noopener"><span>Uvicorn</span></a>
-          <a class="node" style="--brand:#999000" href="https://duckdb.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></a>
-          <a class="node" style="--brand:#3A92DF" href="https://www.metabase.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-metabase"></use></svg><span>Metabase</span></a>
+          <span class="node" style="--brand:#009688"><svg class="lg" aria-hidden="true"><use href="#i-fastapi"></use></svg><span>FastAPI</span></span>
+          <span class="node"><span>Uvicorn</span></span>
+          <span class="node" style="--brand:#999000"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></span>
+          <span class="node" style="--brand:#3A92DF"><svg class="lg" aria-hidden="true"><use href="#i-metabase"></use></svg><span>Metabase</span></span>
+          <span class="node"><span>Evidence</span></span>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Web<span class="role">single-page app</span></h4>
         <div class="nodes">
-          <a class="node" style="--brand:#059AC3" href="https://react.dev" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-react"></use></svg><span>React 19</span></a>
-          <a class="node" style="--brand:#3178C6" href="https://www.typescriptlang.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-typescript"></use></svg><span>TypeScript</span></a>
-          <a class="node" style="--brand:#646CFF" href="https://vite.dev" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-vite"></use></svg><span>Vite</span></a>
+          <span class="node" style="--brand:#059AC3"><svg class="lg" aria-hidden="true"><use href="#i-react"></use></svg><span>React 19</span></span>
+          <span class="node" style="--brand:#3178C6"><svg class="lg" aria-hidden="true"><use href="#i-typescript"></use></svg><span>TypeScript</span></span>
+          <span class="node" style="--brand:#646CFF"><svg class="lg" aria-hidden="true"><use href="#i-vite"></use></svg><span>Vite</span></span>
         </div>
       </div>
       <div class="flow"></div>
       <div class="lane">
         <h4>Runtime<span class="role">containers, TLS, one origin</span></h4>
         <div class="nodes">
-          <a class="node" style="--brand:#1F88C0" href="https://caddyserver.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></a>
-          <a class="node" style="--brand:#1B91EC" href="https://www.docker.com" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-docker"></use></svg><span>Docker</span></a>
+          <span class="node" style="--brand:#1F88C0"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></span>
+          <span class="node" style="--brand:#1B91EC"><svg class="lg" aria-hidden="true"><use href="#i-docker"></use></svg><span>Docker</span></span>
         </div>
       </div>
       <div class="lane cross">
         <h4>CI / CD<span class="role">test, build, deploy</span></h4>
         <div class="nodes">
-          <a class="node" style="--brand:#2088FF" href="https://github.com/features/actions" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-gha"></use></svg><span>GitHub Actions</span></a>
-          <a class="node" style="--brand:#0A97D2" href="https://docs.pytest.org" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-pytest"></use></svg><span>pytest</span></a>
-          <a class="node" style="--brand:#709700" href="https://docs.astral.sh/ruff/" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-ruff"></use></svg><span>Ruff</span></a>
+          <span class="node" style="--brand:#2088FF"><svg class="lg" aria-hidden="true"><use href="#i-gha"></use></svg><span>GitHub Actions</span></span>
+          <span class="node" style="--brand:#0A97D2"><svg class="lg" aria-hidden="true"><use href="#i-pytest"></use></svg><span>pytest</span></span>
+          <span class="node" style="--brand:#709700"><svg class="lg" aria-hidden="true"><use href="#i-ruff"></use></svg><span>Ruff</span></span>
         </div>
       </div>
       <div class="lane cross">
         <h4>Ops<span class="role">alerting &amp; backups</span></h4>
         <div class="nodes">
-          <a class="node" style="--brand:#362D59" href="https://sentry.io" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-sentry"></use></svg><span>Sentry</span></a>
-          <a class="node" style="--brand:#317F6F" href="https://ntfy.sh" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-ntfy"></use></svg><span>ntfy</span></a>
-          <a class="node" style="--brand:#22A250" href="https://github.com/louislam/uptime-kuma" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-uptimekuma"></use></svg><span>Uptime Kuma</span></a>
-          <a class="node" style="--brand:#000000" href="https://umami.is" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-umami"></use></svg><span>Umami</span></a>
-          <a class="node" href="https://restic.net" target="_blank" rel="noopener"><span>restic</span></a>
-          <a class="node" style="--brand:#E21E29" href="https://www.backblaze.com/cloud-storage" target="_blank" rel="noopener"><svg class="lg" aria-hidden="true"><use href="#i-backblaze"></use></svg><span>Backblaze B2</span></a>
+          <span class="node" style="--brand:#362D59"><svg class="lg" aria-hidden="true"><use href="#i-sentry"></use></svg><span>Sentry</span></span>
+          <span class="node" style="--brand:#317F6F"><svg class="lg" aria-hidden="true"><use href="#i-ntfy"></use></svg><span>ntfy</span></span>
+          <span class="node" style="--brand:#22A250"><svg class="lg" aria-hidden="true"><use href="#i-uptimekuma"></use></svg><span>Uptime Kuma</span></span>
+          <span class="node" style="--brand:#000000"><svg class="lg" aria-hidden="true"><use href="#i-umami"></use></svg><span>Umami</span></span>
+          <span class="node"><span>restic</span></span>
+          <span class="node" style="--brand:#E21E29"><svg class="lg" aria-hidden="true"><use href="#i-backblaze"></use></svg><span>Backblaze B2</span></span>
         </div>
       </div>
     </div>
     <p class="note">Logo marks belong to their respective owners · glyphs from <a href="https://simpleicons.org" target="_blank" rel="noopener">Simple Icons</a> and <a href="https://selfh.st/icons" target="_blank" rel="noopener">selfh.st/icons</a>.</p>
+  </section>
+
+  <!-- ============================================================
+       The data model. Same lane/flow grammar as the stack diagram above,
+       but the chips are tables rather than vendors — which is the thing a
+       warehouse actually is, and the thing the page used to leave out.
+       ============================================================ -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="tick">&sect;</span>
+      <h2>Data model</h2>
+      <span class="meta">bronze &rarr; silver &rarr; gold</span>
+    </div>
+    <div class="diagram">
+      <div class="lane">
+        <h4>Bronze<span class="role">ingested, unmodelled, one table per feed</span></h4>
+        <div class="nodes">
+          <span class="node"><span>imdb_title_basics</span></span>
+          <span class="node"><span>imdb_title_principals</span></span>
+          <span class="node"><span>imdb_name_basics</span></span>
+          <span class="node"><span>tmdb_movie</span></span>
+          <span class="node"><span>tmdb_tv</span></span>
+          <span class="node"><span>tmdb_imdb_lookup</span></span>
+          <span class="node"><span>wikidata_title_external_ids</span></span>
+          <span class="node"><span>movielens_ratings</span></span>
+          <span class="node"><span>anime_offline_db</span></span>
+          <span class="node dim"><span>&hellip;22 in all</span></span>
+        </div>
+      </div>
+      <div class="flow"></div>
+      <div class="lane">
+        <h4>Silver<span class="role">conformed, deduplicated, keyed</span></h4>
+        <div class="nodes">
+          <span class="node"><span>title_xref</span></span>
+          <span class="node"><span>person_xref</span></span>
+          <span class="node"><span>title</span></span>
+          <span class="node"><span>episode</span></span>
+          <span class="node"><span>credit</span></span>
+          <span class="node"><span>credit_tmdb</span></span>
+          <span class="node"><span>credit_tmdb_tv</span></span>
+          <span class="node"><span>anime_title</span></span>
+          <span class="node dim"><span>&hellip;16 in all</span></span>
+        </div>
+      </div>
+      <div class="flow"></div>
+      <div class="lane">
+        <h4>Gold<span class="role">dimensional: facts, dimensions, bridges</span></h4>
+        <div class="nodes">
+          <span class="node"><span>dim_title</span></span>
+          <span class="node"><span>dim_person</span></span>
+          <span class="node"><span>bridge_credit</span></span>
+          <span class="node"><span>v_credit_consolidated</span></span>
+          <span class="node"><span>fact_rating</span></span>
+          <span class="node"><span>fact_award</span></span>
+          <span class="node"><span>fact_box_office</span></span>
+          <span class="node dim"><span>&hellip;23 in all</span></span>
+        </div>
+      </div>
+      <div class="flow"></div>
+      <div class="lane">
+        <h4>Exports<span class="role">what leaves the warehouse</span></h4>
+        <div class="nodes">
+          <span class="node"><span>person_graph_edges</span></span>
+          <span class="node"><span>person_graph.duckdb</span></span>
+          <span class="node"><span>analytics.duckdb</span></span>
+          <span class="node"><span>meta.mart_inventory</span></span>
+        </div>
+      </div>
+      <div class="lane cross">
+        <h4>Contracts<span class="role">what stops the shape drifting</span></h4>
+        <div class="nodes">
+          <span class="node"><span>schema_snapshot.tsv</span></span>
+          <span class="node"><span>dbt tests</span></span>
+          <span class="node"><span>catalog parity</span></span>
+          <span class="node"><span>deterministic keys</span></span>
+        </div>
+      </div>
+    </div>
+    <p class="note">Every table above is declared once in a Python catalog and cross-checked against dbt&rsquo;s manifest, the SQL DDL, and the loaded Dagster definitions &mdash; a model that exists in only one of them fails CI.</p>
+  </section>
+
+  <!-- ============================================================
+       The day. Marks sit at the UTC hour each thing fires; read down the
+       column and they march across the day. This is the only picture on the
+       page that says the warehouse runs without anyone watching it.
+       ============================================================ -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="tick">&sect;</span>
+      <h2>The day</h2>
+      <span class="meta">UTC</span>
+    </div>
+    <div class="clock">
+      <div class="hours" aria-hidden="true">
+        <i style="--at:0">00</i><i style="--at:6">06</i><i style="--at:12">12</i><i style="--at:18">18</i><i style="--at:24">24</i>
+      </div>
+      <ol>
+        <li>
+          <div class="bar"><span class="mark band"></span></div>
+          <div class="row"><span class="when off">continuous</span><b>tmdb_changes_sensor</b><em>Polls TMDB&rsquo;s change feed and enqueues what moved. Page-capped per tick with a resume cursor, so a busy day costs more ticks rather than one unbounded one.</em></div>
+        </li>
+        <li style="--at:4.5">
+          <div class="bar"><span class="mark"></span></div>
+          <div class="row"><span class="when">04:30</span><b>restic snapshot</b><em>Encrypted, deduplicated, incremental, shipped to Backblaze B2 &mdash; followed by a heartbeat, so a backup that silently stops running trips the dead-man&rsquo;s switch on the monitoring box.</em></div>
+        </li>
+        <li style="--at:14">
+          <div class="bar"><span class="mark"></span></div>
+          <div class="row"><span class="when">14:00</span><b>imdb_daily_ingest</b><em>The day&rsquo;s IMDb dumps into bronze. A freshness sensor also triggers it early whenever a new upstream snapshot appears, so the clock is a floor and not the only trigger.</em></div>
+        </li>
+        <li style="--at:19">
+          <div class="bar"><span class="mark"></span></div>
+          <div class="row"><span class="when">19:00</span><b>warehouse_nightly</b><em>Every silver and gold model, plus the 260-odd dbt tests loaded as Dagster asset checks. Excludes the person-graph models by name &mdash; see below.</em></div>
+        </li>
+        <li style="--at:19.6">
+          <div class="bar"><span class="mark"></span></div>
+          <div class="row"><span class="when">on success</span><b>publish_analytics</b><em>Chained onto the nightly by a sensor rather than a second cron, so it cannot race it. Snapshots the marts into a standalone file, built beside the target and renamed in. The reports rebuild watches that file&rsquo;s inode.</em></div>
+        </li>
+        <li style="--at:2">
+          <div class="bar"><span class="mark"></span></div>
+          <div class="row"><span class="when">Sun 02:00</span><b>ops_license_audit</b><em>Re-checks that every source is still being used within the licence it was ingested under.</em></div>
+        </li>
+        <li style="--at:3">
+          <div class="bar"><span class="mark"></span></div>
+          <div class="row"><span class="when">Sun 03:00</span><b>ducklake_maintenance</b><em>Bounded compaction and snapshot expiry. Bounded because an unbounded compaction on this box is indistinguishable from an outage.</em></div>
+        </li>
+        <li>
+          <div class="bar"><span class="mark manual"></span></div>
+          <div class="row"><span class="when off">by hand</span><b>person_graph_rebuild</b><em>Deliberately unscheduled. It is long and memory-heavy, and the box has 16&nbsp;GB &mdash; so the graph is rebuilt when I ask for it, and the nightly excludes it rather than gambling nightly on the machine that serves everything else.</em></div>
+        </li>
+      </ol>
+    </div>
   </section>
 
   <section class="sec">
@@ -266,18 +412,51 @@
     </div>
   </section>
 
+  <!-- ============================================================
+       Try it. The page's one interactive claim: the same public API the app
+       uses, called straight from here. It is rate limited, and it is designed
+       to answer 503 while the graph is being rebuilt — so a pre-rendered chain
+       is the documented fallback, not an error path.
+       ============================================================ -->
   <section class="sec">
     <div class="sec-head">
-      <span class="tick">§</span>
-      <h2>Apps</h2>
+      <span class="tick">&sect;</span>
+      <h2>Try it</h2>
+      <span class="meta">live, from this page</span>
+    </div>
+    <p class="legend">
+      <i>Two names, one chain of people who have appeared together. Same public API the app uses, called from this page.</i>
+    </p>
+    <div class="demo">
+      <form class="pair" id="demo-form">
+        <label class="sr-only" for="demo-a">First person</label>
+        <input id="demo-a" name="a" type="text" autocomplete="off" spellcheck="false" value="Toshiro Mifune">
+        <span class="joiner" aria-hidden="true">&mdash;&mdash;&#9654;</span>
+        <label class="sr-only" for="demo-b">Second person</label>
+        <input id="demo-b" name="b" type="text" autocomplete="off" spellcheck="false" value="Harrison Ford">
+        <button type="submit" id="demo-go">connect</button>
+      </form>
+      <div class="out" id="demo-out" aria-live="polite"></div>
+      <p class="status" id="demo-status"></p>
+    </div>
+  </section>
+
+  <!-- Four public surfaces, not one app. Three of them existed for months
+       before anything on this page linked to them. -->
+  <section class="sec">
+    <div class="sec-head">
+      <span class="tick">&sect;</span>
+      <h2>Live surfaces</h2>
       <span class="meta" id="apps-meta"></span>
     </div>
     <div class="entries" id="apps"></div>
   </section>
 
-  <section class="sec">
+  <!-- Rendered only when there is something in REPORTS. An empty section that
+       says "coming soon" reads as abandoned, which is worse than no section. -->
+  <section class="sec" id="reports-sec" hidden>
     <div class="sec-head">
-      <span class="tick">§</span>
+      <span class="tick">&sect;</span>
       <h2>Reports</h2>
       <span class="meta" id="meta"></span>
     </div>
@@ -327,16 +506,39 @@
 
 <script>
 /* =========================================================
-   ADD AN APP: append an object to this list, pointing 'url'
-   at wherever it's deployed.
+   ADD A SURFACE: append an object to this list, pointing
+   'url' at wherever it's deployed. These are the things you
+   can actually open — the app, the reports, the read-only
+   Dagster, the dbt docs — not the things it's built from.
    ========================================================= */
-const APPS = [
+const SURFACES = [
   {
     title:"However Many Degrees of Whoever",
     summary:"Chain together co-stars to connect any two people — find the shortest path, or hunt for one of an exact length. (As long as they're on IMDb.)",
     url:"https://plotline.mpdonovan.com",
-    status:"live",
+    status:"app",
     tags:["FastAPI","React","TypeScript"]
+  },
+  {
+    title:"Data overview",
+    summary:"Every published table with its row count and freshness, and the shape of what's inside them — coverage by source, titles by decade, the ratings histogram. Generated from the same catalog that builds the warehouse, so a new gold model appears here by being a gold model.",
+    url:"https://plotline.mpdonovan.com/reports/",
+    status:"report",
+    tags:["Evidence","DuckDB"]
+  },
+  {
+    title:"Dagster — the asset graph",
+    summary:"The real orchestrator, read-only and public: every table as a declared asset, its lineage, its last materialization, and the ~260 dbt tests loaded as asset checks. This is what the Architecture diagram is a drawing of.",
+    url:"https://plotline.mpdonovan.com/dagster",
+    status:"read-only",
+    tags:["Dagster"]
+  },
+  {
+    title:"dbt docs",
+    summary:"Column-level documentation and the full model lineage graph, generated from the project on every deploy. If you want to know what a column means rather than what a logo is, start here.",
+    url:"https://plotline.mpdonovan.com/dbt-docs/",
+    status:"read-only",
+    tags:["dbt"]
   },
 ];
 
@@ -345,6 +547,7 @@ const APPS = [
    1. Have plotline generate its HTML report.
    2. Drop the .html in   plotline/reports/
    3. Add an entry below pointing 'file' at it.
+   The section stays hidden while this list is empty.
    ========================================================= */
 const REPORTS = [
   // {
@@ -357,85 +560,339 @@ const REPORTS = [
 ];
 
 /* =========================================================
-   WHY-THIS-TECH NOTES for the Deployment diagram: keyed by
-   a chip's label text; click the chip to read the note.
-   Trailing version numbers are stripped before lookup.
-   Chips without an entry stay plain. Rendering lives in
+   CHIP NOTES, keyed by a chip's label text (trailing version
+   numbers are stripped before lookup, so "React 19" finds
+   "React"). One entry annotates that chip everywhere it
+   appears, on every diagram. Rendering lives in
    assets/node-notes.js.
+
+     why    what it's doing here, and why it and not something else
+     scar   optional — what it cost. Chips with one get an ochre
+            mark, so the diagrams read twice: once for what this
+            is built from, once for where it drew blood.
+     href   the project's homepage
+     live   optional — {url,label} for my instance of it. A logo
+            linking to dagster.io is a logo. A logo linking to my
+            Dagster is evidence.
+
+   Chips without an entry stay plain.
    ========================================================= */
 const NODE_NOTES = {
-  "IMDb":"The canonical film dataset — free daily TSV dumps covering titles, cast, and crew at a scale nothing else matches.",
-  "TMDB":"Fills the gaps IMDb's dumps leave out — artwork, overviews, and a friendly REST API with generous limits.",
-  "Wikidata":"One SPARQL endpoint that links everything to everything — the connective tissue for matching IDs across sources.",
-  "MovieLens":"The classic ratings research dataset — clean, stable, and ready for recommender experiments without scraping anyone.",
-  "MusicBrainz":"Open, community-maintained music metadata with proper stable IDs — covers the soundtrack side of the graph.",
-  "anime-offline-database":"One community-maintained JSON file cross-linking IDs from every major anime site (MAL, AniList, Kitsu, AniDB…) — anime metadata without scraping a dozen APIs.",
-  "Dagster":"Asset-based orchestration fits a lakehouse: every table is a declared asset with lineage, retries, and schedules built in, and the UI doubles as documentation.",
-  "DuckDB":"An OLAP engine that runs in-process — scans Parquet absurdly fast with zero servers to babysit. Ideal on a single box.",
-  "PostgreSQL":"The boring, correct default — DuckLake catalog and app database in one, with decades of reliability for free.",
-  "dbt":"SQL transforms with tests, docs, and lineage — keeps the bronze → silver → gold flow declarative and reviewable.",
-  "FastAPI":"Typed Python endpoints with automatic OpenAPI docs — the query layer stays small and self-describing.",
-  "Metabase":"Point-and-click BI over the gold tables — dashboards without hand-building a frontend for each one.",
-  "React":"Boring in a good way — the biggest ecosystem, so every problem a component throws has already been solved by someone.",
-  "Caddy":"One binary for TLS, HTTP/2, and reverse proxying — automatic certificates mean zero renewal cron jobs.",
-  "Docker":"Every service is a container with a pinned version — either host rebuilds from a single compose file.",
-  "Sentry":"Stack traces with full context instead of log-file spelunking — errors find me, not the other way around.",
-  "ntfy":"Push notifications over plain HTTP — a curl call becomes a phone alert, self-hosted.",
-  "Uptime Kuma":"Self-hosted uptime checks with a public status page — watches production from the other box.",
-  "Umami":"Privacy-friendly analytics — no cookies, no consent banner, and the data stays on my own hardware.",
-  "restic":"Encrypted, deduplicated, incremental backups from one binary — nightly snapshots shipped off-box.",
-  "Backblaze B2":"S3-compatible object storage at a fraction of S3's price — the offsite home for restic snapshots.",
-  "beszel-agent":"Ships this host's CPU, memory, and disk metrics to Beszel on the monitoring box.",
-  "Beszel":"Lightweight server monitoring with a clean dashboard — metrics without the Prometheus-plus-Grafana weight.",
-  "dozzle-agent":"Streams this host's container logs to Dozzle on the monitoring box.",
-  "Dozzle":"Live tail of every container's logs in the browser — no ssh session, no log stack."
+
+  /* ---------------------------------------------------- sources */
+  "IMDb":{
+    why:"The canonical film dataset — free daily TSV dumps covering titles, cast, and crew at a scale nothing else matches. It is the spine: every other source is joined onto an IMDb identifier, not the other way around.",
+    scar:"The dumps are re-published whole every day, so ingest streams and resumes by byte range instead of downloading them again. A restart mid-pull picks up where it stopped.",
+    href:"https://developer.imdb.com/non-commercial-datasets/"
+  },
+  "TMDB":{
+    why:"Fills the gaps IMDb's dumps leave out — artwork, overviews, watch providers — through a REST API, which means it is fetched one identifier at a time rather than downloaded.",
+    scar:"An API that must be walked needs a worklist, not a loop: identifiers are queued in PostgreSQL, claimed by drain jobs, retried with backoff, and dead-lettered when they keep failing. A rate limiter shared across workers keeps the whole box inside 40 requests per 10 seconds, however many drains happen to be running.",
+    href:"https://www.themoviedb.org"
+  },
+  "Wikidata":{
+    why:"The connective tissue: one place that already knows a film's IMDb, TMDB and Wikipedia identifiers are the same film, so cross-source matching is a lookup instead of a guess.",
+    scar:"The SPARQL endpoint is the obvious way in and the wrong one — it times out on anything the size of this, and it wants POST rather than GET for queries long enough to matter. Ingest streams the full JSON entity dump and decompresses it on the fly instead; SPARQL is kept for diagnostics only.",
+    href:"https://www.wikidata.org"
+  },
+  "MovieLens":{
+    why:"The classic ratings research dataset — clean, stable, and ready for recommender experiments without scraping anyone.",
+    scar:"Its five tables are one logical feed, so they share a single ingestion asset. That means duplicate source keys have to be explicitly allowed when dbt's sources are mapped onto Dagster assets, which is otherwise an error.",
+    href:"https://grouplens.org/datasets/movielens/"
+  },
+  "MusicBrainz":{
+    why:"Open, community-maintained music metadata with proper stable identifiers — covers the soundtrack side of the graph, where IMDb is thin.",
+    href:"https://musicbrainz.org"
+  },
+  "anime-offline-database":{
+    why:"One community-maintained JSON file cross-linking identifiers from every major anime site (MAL, AniList, Kitsu, AniDB…). Anime metadata without scraping a dozen APIs, and without a dozen more rate limiters.",
+    href:"https://github.com/manami-project/anime-offline-database"
+  },
+
+  /* -------------------------------------------- orchestration */
+  "Dagster":{
+    why:"Asset-based orchestration fits a warehouse: every table is a declared asset with lineage, retries and schedules attached, and the UI doubles as documentation — which is why it is public and read-only rather than hidden behind a login.",
+    scar:"Asset checks on gold models must be keyed with the schema prefix. An unprefixed key doesn't error — Dagster quietly invents a stub asset, and the check never runs with the build it was written to guard. Silent no-ops are the expensive kind of bug, so a test now pins every key.",
+    href:"https://dagster.io",
+    live:{url:"https://plotline.mpdonovan.com/dagster",label:"my asset graph, read-only"}
+  },
+
+  /* ------------------------------------------------ lakehouse */
+  "DuckLake":{
+    why:"A lakehouse format that puts the catalog in a real database rather than in a pile of metadata files: Parquet on disk for the data, PostgreSQL for what and where it all is. Table references, snapshots and schema evolution become transactions instead of directory listings.",
+    scar:"It also retires the rule that shaped the whole first version of this project — one writer per DuckDB file. Writes are now serialized by an orchestration-level pool and conflicting writers retry with backoff, which is what makes a nightly build and an ad-hoc query able to coexist on one box.",
+    href:"https://ducklake.select"
+  },
+  "DuckDB":{
+    why:"An OLAP engine that runs in-process — scans Parquet absurdly fast with no server to babysit. Ideal on a single box, and disposable: each run attaches the catalog, does its work, and exits.",
+    scar:"Fast is not the same as unbounded. Extracting nested JSON credits is not a spillable operation, so one model that looked like ordinary SQL climbed to 20 GB and died rather than spilling to disk. Knowing which operators can spill and which cannot is most of what running this on 16 GB consists of.",
+    href:"https://duckdb.org"
+  },
+  "PostgreSQL":{
+    why:"Two jobs, one boring and correct engine: the DuckLake catalog, and a separate operational database holding the things a pipeline needs to be restartable — worklists, watermarks, a dead-letter queue, and distributed rate-limit buckets.",
+    scar:"Keeping the operational plane out of the warehouse is the point. Retry state that lives in the thing being rebuilt is not retry state.",
+    href:"https://www.postgresql.org"
+  },
+
+  /* ------------------------------------------------ transform */
+  "dbt":{
+    why:"SQL transforms with tests, docs and lineage — it keeps bronze → silver → gold declarative and reviewable, and generates the column-level documentation this site links to.",
+    scar:"Every silver and gold column and type is pinned in a checked-in snapshot file, so a schema change cannot land as a surprise: it lands as a diff somebody has to approve. Building a subset also needed dbt's test selection loosened — the default eagerly pulls in tests declared on models that have never been built, which fails on any fresh warehouse.",
+    href:"https://www.getdbt.com",
+    live:{url:"https://plotline.mpdonovan.com/dbt-docs/",label:"my dbt docs + lineage"}
+  },
+  "pandas":{
+    why:"The escape hatch for the one transform SQL couldn't hold. Not a default — a deliberate exception, used where a row-at-a-time streaming loop beats a set operation that cannot spill.",
+    scar:"That model streams Parquet 2,000 rows at a time, pulls the nested JSON apart in Python, and hands a flat frame back to DuckDB for the key lookups. The SQL version needed 20 GB and never finished. This one takes about thirteen seconds.",
+    href:"https://pandas.pydata.org"
+  },
+  "Polars":{
+    why:"Used where a bronze feed needs reshaping on the way in and the work is columnar and bounded — cheap to run, and it keeps the staging step out of the warehouse's memory budget.",
+    href:"https://pola.rs"
+  },
+
+  /* ---------------------------------------------------- serve */
+  "FastAPI":{
+    why:"Typed Python endpoints with generated OpenAPI docs. The query layer stays small and self-describing, and it opens exactly one file: the exported graph, with no catalog, no extensions and no credentials — which is what keeps the internet-facing service isolated from the warehouse.",
+    scar:"It boots without a graph on purpose. Failing closed took the whole site down on a fresh deploy, because one reverse proxy fronts the frontend, the reports, Dagster and the dbt docs from the same origin — so a missing graph became a total outage. It now answers 503 for graph routes and connects lazily once the file appears, and its container healthcheck is liveness-only so an unhealthy API cannot block a deploy.",
+    href:"https://fastapi.tiangolo.com",
+    live:{url:"https://plotline.mpdonovan.com/api/health",label:"health endpoint"}
+  },
+  "Uvicorn":{
+    why:"The ASGI server under FastAPI. Notable only for what it makes necessary: path searches are synchronous and expensive, so they run on a threadpool and are gated to a handful at a time.",
+    scar:"Without that gate, a few hub-to-hub searches were enough to occupy every worker and stall the rest of the site. Shedding load with a 503 is a better answer than a server that has quietly stopped answering.",
+    href:"https://www.uvicorn.org"
+  },
+  "Metabase":{
+    why:"Point-and-click BI over the gold tables, for the questions that aren't worth codifying — dashboards without hand-building a frontend for each one.",
+    href:"https://www.metabase.com"
+  },
+  "Evidence":{
+    why:"The reports site: SQL files and markdown, built into a static page. Its dashboards aren't authored here — they're declared in the warehouse's own catalog and rendered from it, so a card that drifts from its declaration fails CI.",
+    scar:"It reads a standalone snapshot rather than the warehouse, so the public report has no database behind it to reach. That is what makes it safe to leave unauthenticated and unmetered while the read-only Dagster and dbt docs next to it are rate-limited.",
+    href:"https://evidence.dev",
+    live:{url:"https://plotline.mpdonovan.com/reports/",label:"the data overview"}
+  },
+
+  /* ------------------------------------------------------ web */
+  "React":{
+    why:"Boring in a good way — the biggest ecosystem, so every problem a component throws has already been solved by someone.",
+    href:"https://react.dev",
+    live:{url:"https://plotline.mpdonovan.com",label:"However Many Degrees of Whoever"}
+  },
+  "TypeScript":{
+    why:"The API's response shapes are typed on the Python side; typing them again on the client means a renamed field breaks the build instead of a page.",
+    href:"https://www.typescriptlang.org"
+  },
+  "Vite":{
+    why:"Fast dev server, static build, nothing to run in production — the frontend ends up as files the reverse proxy serves directly.",
+    href:"https://vite.dev"
+  },
+
+  /* -------------------------------------------------- runtime */
+  "Caddy":{
+    why:"One binary for TLS, HTTP/2 and reverse proxying, with automatic certificates — no renewal cron job to forget. It fronts everything on one origin: app, API, reports, Dagster and dbt docs.",
+    scar:"One origin means one blast radius, so the routing is where the safety rules live. Read-only Dagster and the dbt docs are rate-limited because both issue expensive queries against the same PostgreSQL that backs the catalog — a crawler should degrade the page, not the warehouse. The reports aren't limited at all: they're files. Self-identifying AI crawlers are refused outright.",
+    href:"https://caddyserver.com"
+  },
+  "Docker":{
+    why:"Every service is a container with a pinned version, and either host rebuilds from a single compose file.",
+    scar:"The dbt manifest is compiled at image-build time while the Python assets read their configuration at runtime, so restarting with an edited environment file and no rebuild silently desynchronises the two halves. A startup check now compares them and refuses to boot rather than building a warehouse that half-agrees with itself.",
+    href:"https://www.docker.com"
+  },
+
+  /* --------------------------------------------------- ci / cd */
+  "GitHub Actions":{
+    why:"Lint, types, unit tests, and an integration run that builds every model against fixtures in a real DuckLake — then builds the images and deploys them to the box.",
+    scar:"The integration job also builds the warehouse twice, once with the optional sources on and once off, and asserts the schemas match. An optional model's empty branch has to agree with its populated one, or a table's shape quietly depends on which sources happened to be enabled.",
+    href:"https://github.com/features/actions"
+  },
+  "pytest":{
+    why:"Fifty test modules, and the interesting ones don't test functions — they test that the pieces still agree with each other: the catalog against dbt's manifest, the SQL DDL against the row builders, the loaded orchestration against the declared specs.",
+    scar:"Most of these exist because something failed silently once. The rule that stuck: if a mistake produces a no-op rather than an error, write the test that turns it back into an error.",
+    href:"https://docs.pytest.org"
+  },
+  "Ruff":{
+    why:"Lint and format in one fast binary, run identically in the pre-commit hook and in CI so the two can't disagree.",
+    href:"https://docs.astral.sh/ruff/"
+  },
+
+  /* ------------------------------------------------------- ops */
+  "Sentry":{
+    why:"Stack traces with full context instead of log-file spelunking — errors find me, not the other way around.",
+    href:"https://sentry.io"
+  },
+  "ntfy":{
+    why:"Push notifications over plain HTTP — a curl call becomes a phone alert, self-hosted. Every failed Dagster run goes through it.",
+    href:"https://ntfy.sh"
+  },
+  "Uptime Kuma":{
+    why:"Self-hosted uptime checks with a public status page, watching production from the other box — because a monitor on the machine it monitors tells you nothing when that machine is the problem.",
+    scar:"The backup job checks in here after each run, so the alert fires when a backup stops happening. Nothing is a worse false comfort than a backup that failed quietly.",
+    href:"https://github.com/louislam/uptime-kuma"
+  },
+  "Umami":{
+    why:"Privacy-friendly analytics — no cookies, no consent banner, and the data stays on my own hardware.",
+    href:"https://umami.is"
+  },
+  "restic":{
+    why:"Encrypted, deduplicated, incremental backups from one binary — nightly snapshots shipped off-box at 04:30 UTC.",
+    href:"https://restic.net"
+  },
+  "Backblaze B2":{
+    why:"S3-compatible object storage at a fraction of S3's price — the offsite home for restic snapshots.",
+    href:"https://www.backblaze.com/cloud-storage"
+  },
+  "beszel-agent":{ why:"Ships this host's CPU, memory and disk metrics to Beszel on the monitoring box." },
+  "Beszel":{ why:"Lightweight server monitoring with a clean dashboard — metrics without the Prometheus-plus-Grafana weight." },
+  "dozzle-agent":{ why:"Streams this host's container logs to Dozzle on the monitoring box." },
+  "Dozzle":{ why:"Live tail of every container's logs in the browser — no ssh session, no log stack." },
+
+  /* ------------------------------------------- data model chips */
+  "title_xref":{
+    why:"The identifier spine. Every title's surrogate key is derived arithmetically from its IMDb identifier, not handed out by a row counter.",
+    scar:"That choice is load-bearing. Sequential surrogate keys would be reassigned on every full rebuild, silently repointing every snapshot and every exported graph that had already stored them. Derived keys survive a rebuild, so downstream copies stay valid — and a test exists purely to stop anyone helpfully reintroducing the counter."
+  },
+  "credit_tmdb_tv":{
+    why:"TV credits, where a person can hold several roles on one show and the source nests them in arrays — so it is the one model written in Python rather than SQL.",
+    scar:"It was SQL first, and it OOM'd at 20 GB: pulling apart nested JSON is not an operation DuckDB can spill to disk, so it grew until it died. Rewritten to stream 2,000 rows at a time, it runs in about thirteen seconds."
+  },
+  "bridge_credit":{
+    why:"One row per physical observation of a credit, unioned across all three credit sources — deliberately not deduplicated here, so disagreement between sources stays visible rather than being resolved invisibly.",
+    scar:"Deduplication happens one model later, by confidence. Keeping the two steps apart means you can always ask why a credit was dropped."
+  },
+  "person_graph_edges":{
+    why:"Who has appeared with whom: roughly 195 million co-appearance pairs, derived from gold and exported to a standalone file the API opens read-only.",
+    scar:"Edges are stored undirected, with the lower identifier first, and both columns indexed — rather than storing each pair twice to make lookups symmetrical. On a table this size the index is far cheaper than the duplicate rows."
+  },
+  "person_graph.duckdb":{
+    why:"The file the API actually serves. Built beside the live one and renamed into place only on success, so a failed rebuild leaves the previous graph answering.",
+    scar:"It also refuses to publish below a minimum edge count. An export that succeeds and produces almost nothing is the failure mode a rename-on-success alone won't catch."
+  },
+  "analytics.duckdb":{
+    why:"A standalone snapshot of the published marts, written after each successful nightly. The reports read this and never touch the warehouse — which is what makes the public report safe to leave open.",
+    scar:"Published the same way as the graph: built beside the target, renamed in. The reports builder watches the file's inode rather than a clock, so it cannot rebuild halfway through a publish."
+  },
+  "schema_snapshot.tsv":{
+    why:"Every silver and gold column and type, pinned in one checked-in file.",
+    scar:"CI fails if a model changes shape without this being regenerated, so a schema change arrives as a reviewable diff instead of as a surprise three weeks later in something downstream."
+  },
+  "deterministic keys":{
+    why:"Surrogate keys are computed from source identifiers, so rebuilding a table does not reissue them.",
+    scar:"This is what makes it safe for the exported graph and the analytics snapshot to hold keys of their own: a rebuild upstream cannot silently repoint them at somebody else."
+  },
+  "dbt tests":{
+    why:"About 260 of them, loaded automatically as orchestration-level asset checks — so a failing data-quality test shows up as a failed asset, next to the table it belongs to, rather than in a log nobody opens.",
+    scar:"Assertions about the data live here rather than in Python, because a failing dbt test can keep the offending rows in a table you can go and query. A Python check tells you the count was wrong; this tells you which rows were."
+  },
+  "catalog parity":{
+    why:"Sources, tables, jobs, schedules and dashboards are declared once as data in a Python catalog, and tests pin that catalog against dbt's manifest, the SQL DDL, and the loaded orchestration definitions.",
+    scar:"A new dbt model with no catalog entry doesn't misbehave — it becomes a stub, and the edge from ingestion to transformation quietly vanishes. Parity tests turn that silence back into a failing build."
+  }
 };
 
 document.getElementById('yr').textContent = new Date().getFullYear();
 
+/* =========================================================
+   The figure strip. Values come from stats.json, written by
+   the warehouse's own export script — typed in here they
+   would rot silently, and nothing would fail.
+
+   `qualifier` says how to read a value: approx prints ~,
+   min prints +, null prints exactly. `source` says where it
+   came from, which is what lets the provenance line below
+   the strip be honest about which figures are measurements
+   and which are still numbers somebody wrote down.
+   ========================================================= */
+const STRIP_KEYS = ["graph_edges","credits","titles","people","dbt_models","test_modules"];
+
+function formatValue(value){
+  if(typeof value !== 'number') return String(value);
+  if(value >= 1e9) return (value/1e9).toFixed(value >= 1e10 ? 0 : 1).replace(/\.0$/,'') + 'B';
+  if(value >= 1e6) return (value/1e6).toFixed(value >= 1e7 ? 0 : 1).replace(/\.0$/,'') + 'M';
+  if(value >= 1e4) return Math.round(value/1e3) + 'K';
+  return value.toLocaleString('en-US');
+}
+
+function renderStrip(stats){
+  const strip = document.getElementById('strip');
+  const prov  = document.getElementById('strip-prov');
+  const byKey = {};
+  (stats.figures||[]).forEach(function(f){ byKey[f.key] = f; });
+
+  const shown = STRIP_KEYS.map(function(k){ return byKey[k]; }).filter(Boolean);
+  if(!shown.length) return;
+
+  shown.forEach(function(f){
+    const mark = f.qualifier === 'approx' ? '~' : '';
+    const plus = f.qualifier === 'min' ? '+' : '';
+    const fig = document.createElement('div');
+    fig.className = 'fig';
+    const value = document.createElement('b');
+    if(mark){ const q = document.createElement('span'); q.className='q'; q.textContent=mark; value.appendChild(q); }
+    value.appendChild(document.createTextNode(formatValue(f.value) + plus));
+    const label = document.createElement('span');
+    label.textContent = f.label;
+    fig.appendChild(value);
+    fig.appendChild(label);
+    strip.appendChild(fig);
+  });
+
+  const estimated = shown.some(function(f){ return f.source === 'documented'; });
+  const parts = ['generated ' + (stats.generated_at||'').slice(0,10) + ' by the warehouse, not typed here'];
+  if(stats.warehouse_built_at) parts.push('gold last built ' + stats.warehouse_built_at.slice(0,10));
+  if(estimated) parts.push('~ marks a documented estimate awaiting its first measured export');
+  prov.textContent = parts.join(' · ');
+}
+
+fetch('stats.json')
+  .then(function(r){ return r.ok ? r.json() : null; })
+  .then(function(stats){ if(stats) renderStrip(stats); })
+  .catch(function(){ /* no strip is better than a wrong strip */ });
+
+/* ---------------------------------------------------------
+   Live surfaces
+   --------------------------------------------------------- */
 (function(){
   const wrap = document.getElementById('apps');
-  document.getElementById('apps-meta').textContent = APPS.length + (APPS.length===1?' app':' apps');
+  document.getElementById('apps-meta').textContent =
+    SURFACES.length + (SURFACES.length===1?' surface':' surfaces');
 
-  if(APPS.length === 0){
-    wrap.innerHTML = '<div class="empty">No apps published yet.</div>';
-    return;
-  }
-
-  APPS.forEach((app,i)=>{
+  SURFACES.forEach(function(surface,i){
     const num = String(i + 1).padStart(2,'0');
-    const tags = (app.tags||[]).map(t=>`<span>${t}</span>`).join('');
+    const tags = (surface.tags||[]).map(function(t){return `<span>${t}</span>`;}).join('');
     const a = document.createElement('a');
     a.className = 'entry';
-    a.href = app.url;
+    a.href = surface.url;
     a.target = '_blank';
     a.rel = 'noopener';
     a.innerHTML =
       `<div class="idx">${num}</div>
        <div class="body">
-         <h3>${app.title}</h3>
-         <p>${app.summary||''}</p>
+         <h3>${surface.title}</h3>
+         <p>${surface.summary||''}</p>
          ${tags?`<div class="tags">${tags}</div>`:''}
        </div>
-       <div class="right">${app.status||''}<span class="arr">↗</span></div>`;
+       <div class="right">${surface.status||''}<span class="arr">↗</span></div>`;
     wrap.appendChild(a);
   });
 })();
 
+/* ---------------------------------------------------------
+   Reports — the section stays hidden until there is one.
+   --------------------------------------------------------- */
 (function(){
+  if(!REPORTS.length) return;
+  document.getElementById('reports-sec').hidden = false;
+
   const wrap = document.getElementById('entries');
   document.getElementById('meta').textContent =
-    REPORTS.length ? REPORTS.length + (REPORTS.length===1?' report':' reports') : '';
+    REPORTS.length + (REPORTS.length===1?' report':' reports');
 
-  if(REPORTS.length === 0){
-    wrap.innerHTML = '<div class="empty">Coming soon.</div>';
-    return;
-  }
-
-  const sorted = REPORTS.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  sorted.forEach((r,i)=>{
+  const sorted = REPORTS.slice().sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+  sorted.forEach(function(r,i){
     const num = String(REPORTS.length - i).padStart(2,'0');
-    const tags = (r.tags||[]).map(t=>`<span>${t}</span>`).join('');
+    const tags = (r.tags||[]).map(function(t){return `<span>${t}</span>`;}).join('');
     const a = document.createElement('a');
     a.className = 'entry';
     a.href = r.file;
@@ -448,6 +905,145 @@ document.getElementById('yr').textContent = new Date().getFullYear();
        </div>
        <div class="right">${r.date||''}<span class="arr">↗</span></div>`;
     wrap.appendChild(a);
+  });
+})();
+
+/* =========================================================
+   The live degrees demo.
+
+   Calls the same public API the app does. Three things it
+   assumes rather than treats as errors:
+     · the API answers 503 while the graph is being rebuilt,
+       by design — so the fallback chain below is the
+       documented behaviour, not an error path;
+     · it is rate limited per IP, so this fires on submit
+       only, never per keystroke;
+     · it is a different origin, so it works only while the
+       deployment names this page as an allowed one.
+   ========================================================= */
+const API = 'https://plotline.mpdonovan.com/api/person-graph';
+const REQUEST_TIMEOUT_MS = 12000;
+
+/* An illustration of the shape of an answer, for when the API is asleep — not
+   a captured response, and labelled as an example wherever it is shown. A
+   stale answer presented as a live one would be worse than no answer at all. */
+const FALLBACK = {
+  a:"Toshiro Mifune",
+  b:"Harrison Ford",
+  hops:[
+    {person:"Toshiro Mifune", via:"Sh\u014dgun (1980)"},
+    {person:"John Rhys-Davies", via:"Raiders of the Lost Ark (1981)"},
+    {person:"Harrison Ford", via:null}
+  ]
+};
+
+(function(){
+  const form   = document.getElementById('demo-form');
+  const out    = document.getElementById('demo-out');
+  const status = document.getElementById('demo-status');
+  const go     = document.getElementById('demo-go');
+  if(!form) return;
+
+  function chip(text, cls){
+    const el = document.createElement('span');
+    el.className = cls;
+    el.textContent = text;
+    return el;
+  }
+
+  function renderChain(hops){
+    out.textContent = '';
+    const chain = document.createElement('div');
+    chain.className = 'chain';
+    hops.forEach(function(hop){
+      chain.appendChild(chip(hop.person, 'who'));
+      if(hop.via) chain.appendChild(chip(hop.via, 'via'));
+    });
+    out.appendChild(chain);
+  }
+
+  function say(text, stale){
+    status.textContent = text;
+    status.classList.toggle('stale', !!stale);
+  }
+
+  function showFallback(reason){
+    document.getElementById('demo-a').value = FALLBACK.a;
+    document.getElementById('demo-b').value = FALLBACK.b;
+    renderChain(FALLBACK.hops);
+    say(reason + ' — showing the example above instead. The API answers 503 while the graph is being rebuilt, which is deliberate: a failed rebuild leaves the previous graph serving rather than taking the site down.', true);
+  }
+
+  function ask(path){
+    const controller = new AbortController();
+    const timer = setTimeout(function(){ controller.abort(); }, REQUEST_TIMEOUT_MS);
+    return fetch(API + path, {signal:controller.signal})
+      .then(function(r){
+        if(!r.ok) throw new Error('http ' + r.status);
+        return r.json();
+      })
+      .finally(function(){ clearTimeout(timer); });
+  }
+
+  function firstMatch(name){
+    return ask('/search?q=' + encodeURIComponent(name) + '&limit=1').then(function(rows){
+      if(!rows.length) throw new Error('no match for “' + name + '”');
+      return rows[0];
+    });
+  }
+
+  /* Seed with the saved answer so the section is never an empty box, and say
+     plainly that it is saved. Running it on load instead would fire a
+     cross-origin request at the box for every visitor who scrolls past. */
+  renderChain(FALLBACK.hops);
+  say('An example of the shape of an answer. Press connect to run the search live against the API on the box.');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const a = document.getElementById('demo-a').value.trim();
+    const b = document.getElementById('demo-b').value.trim();
+    if(!a || !b) return;
+
+    go.disabled = true;
+    out.textContent = '';
+    say('searching…');
+
+    Promise.all([firstMatch(a), firstMatch(b)])
+      .then(function(people){
+        const [start, end] = people;
+        return ask('/path?start_id=' + start.person_id + '&end_id=' + end.person_id + '&mode=shortest')
+          .then(function(result){ return {start:start, end:end, result:result}; });
+      })
+      .then(function(found){
+        const result = found.result;
+        if(!result.found){
+          out.textContent = '';
+          say(result.not_found_reason === 'budget_exceeded'
+            ? 'Gave up before finding one. The search is bounded on purpose — an unbounded one on a graph this size is a way to take the box down.'
+            : 'No chain exists between those two.');
+          return;
+        }
+        renderChain(result.hops.map(function(hop){
+          return {
+            person: hop.person_name,
+            via: hop.title_name
+              ? hop.title_name + (hop.start_year ? ' (' + hop.start_year + ')' : '')
+              : null
+          };
+        }));
+        say(result.degrees + (result.degrees === 1 ? ' degree' : ' degrees') +
+            ' of separation · answered live by the API on the box.');
+      })
+      .catch(function(err){
+        const message = String(err && err.message || err);
+        if(/no match/.test(message)){
+          out.textContent = '';
+          say(message + '. Try a name as IMDb spells it.');
+        } else {
+          showFallback('The graph API is not answering right now');
+        }
+      })
+      .finally(function(){ go.disabled = false; });
   });
 })();
 </script>
