@@ -412,44 +412,34 @@
     </div>
   </section>
 
-  <!-- ============================================================
-       Try it. The page's one interactive claim: the same public API the app
-       uses, called straight from here. It is rate limited, and it is designed
-       to answer 503 while the graph is being rebuilt — so a pre-rendered chain
-       is the documented fallback, not an error path.
-       ============================================================ -->
-  <section class="sec">
-    <div class="sec-head">
-      <span class="tick">&sect;</span>
-      <h2>Try it</h2>
-      <span class="meta">live, from this page</span>
-    </div>
-    <p class="legend">
-      <i>Two names, one chain of people who have appeared together. Same public API the app uses, called from this page.</i>
-    </p>
-    <div class="demo">
-      <form class="pair" id="demo-form">
-        <label class="sr-only" for="demo-a">First person</label>
-        <input id="demo-a" name="a" type="text" autocomplete="off" spellcheck="false" value="Toshiro Mifune">
-        <span class="joiner" aria-hidden="true">&mdash;&mdash;&#9654;</span>
-        <label class="sr-only" for="demo-b">Second person</label>
-        <input id="demo-b" name="b" type="text" autocomplete="off" spellcheck="false" value="Harrison Ford">
-        <button type="submit" id="demo-go">connect</button>
-      </form>
-      <div class="out" id="demo-out" aria-live="polite"></div>
-      <p class="status" id="demo-status"></p>
-    </div>
-  </section>
-
   <!-- Four public surfaces, not one app. Three of them existed for months
-       before anything on this page linked to them. -->
+       before anything on this page linked to them.
+
+       The live demo used to be a section of its own between the deployment
+       diagram and this one, which broke the run of diagrams for something
+       that is really just the first entry below, playable. It is now moved
+       under that entry at render time. -->
   <section class="sec">
     <div class="sec-head">
       <span class="tick">&sect;</span>
       <h2>Live surfaces</h2>
       <span class="meta" id="apps-meta"></span>
     </div>
-    <div class="entries" id="apps"></div>
+    <div class="entries" id="apps">
+      <div class="demo" id="demo" hidden>
+        <p class="demo-lead">Or try it here &mdash; two names, one chain of people who have appeared together, answered by the same public API the app uses.</p>
+        <form class="pair" id="demo-form">
+          <label class="sr-only" for="demo-a">First person</label>
+          <input id="demo-a" name="a" type="text" autocomplete="off" spellcheck="false" value="Toshiro Mifune">
+          <span class="joiner" aria-hidden="true">&mdash;&mdash;&#9654;</span>
+          <label class="sr-only" for="demo-b">Second person</label>
+          <input id="demo-b" name="b" type="text" autocomplete="off" spellcheck="false" value="Timoth&eacute;e Chalamet">
+          <button type="submit" id="demo-go">connect</button>
+        </form>
+        <div class="out" id="demo-out" aria-live="polite"></div>
+        <p class="status" id="demo-status"></p>
+      </div>
+    </div>
   </section>
 
   <!-- Rendered only when there is something in REPORTS. An empty section that
@@ -592,12 +582,11 @@ const NODE_NOTES = {
   },
   "Wikidata":{
     why:"The connective tissue: one place that already knows a film's IMDb, TMDB and Wikipedia identifiers are the same film, so cross-source matching is a lookup instead of a guess.",
-    scar:"The SPARQL endpoint is the obvious way in and the wrong one — it times out on anything the size of this, and it wants POST rather than GET for queries long enough to matter. Ingest streams the full JSON entity dump and decompresses it on the fly instead; SPARQL is kept for diagnostics only.",
+    scar:"The SPARQL endpoint is the obvious way in and the wrong one: ask it for every film identifier at once and it times out. Ingest streams the full JSON entity dump and decompresses it as it goes instead — a query that fails becomes a download that resumes. SPARQL stayed, for one-off questions.",
     href:"https://www.wikidata.org"
   },
   "MovieLens":{
-    why:"The classic ratings research dataset — clean, stable, and ready for recommender experiments without scraping anyone.",
-    scar:"Its five tables are one logical feed, so they share a single ingestion asset. That means duplicate source keys have to be explicitly allowed when dbt's sources are mapped onto Dagster assets, which is otherwise an error.",
+    why:"The classic ratings research dataset — clean, stable, and ready for recommender experiments without scraping anyone. Its five files are one feed and arrive as one asset.",
     href:"https://grouplens.org/datasets/movielens/"
   },
   "MusicBrainz":{
@@ -620,7 +609,7 @@ const NODE_NOTES = {
   /* ------------------------------------------------ lakehouse */
   "DuckLake":{
     why:"A lakehouse format that puts the catalog in a real database rather than in a pile of metadata files: Parquet on disk for the data, PostgreSQL for what and where it all is. Table references, snapshots and schema evolution become transactions instead of directory listings.",
-    scar:"It also retires the rule that shaped the whole first version of this project — one writer per DuckDB file. Writes are now serialized by an orchestration-level pool and conflicting writers retry with backoff, which is what makes a nightly build and an ad-hoc query able to coexist on one box.",
+    scar:"It also retires the rule that shaped the first version of this project: one writer per DuckDB file. Writes are serialized by a pool in the orchestrator and conflicting writers retry with backoff, so the nightly build and an ad-hoc query can now run at once. Before, one of them simply lost.",
     href:"https://ducklake.select"
   },
   "DuckDB":{
@@ -630,14 +619,14 @@ const NODE_NOTES = {
   },
   "PostgreSQL":{
     why:"Two jobs, one boring and correct engine: the DuckLake catalog, and a separate operational database holding the things a pipeline needs to be restartable — worklists, watermarks, a dead-letter queue, and distributed rate-limit buckets.",
-    scar:"Keeping the operational plane out of the warehouse is the point. Retry state that lives in the thing being rebuilt is not retry state.",
+    scar:"Two separate databases, on purpose. Retry state that lives inside the thing being rebuilt is not retry state.",
     href:"https://www.postgresql.org"
   },
 
   /* ------------------------------------------------ transform */
   "dbt":{
     why:"SQL transforms with tests, docs and lineage — it keeps bronze → silver → gold declarative and reviewable, and generates the column-level documentation this site links to.",
-    scar:"Every silver and gold column and type is pinned in a checked-in snapshot file, so a schema change cannot land as a surprise: it lands as a diff somebody has to approve. Building a subset also needed dbt's test selection loosened — the default eagerly pulls in tests declared on models that have never been built, which fails on any fresh warehouse.",
+    scar:"Every silver and gold column and type is pinned in a checked-in file. A schema change can no longer surface three weeks later in something downstream — it surfaces as a diff, and somebody has to approve it.",
     href:"https://www.getdbt.com",
     live:{url:"https://plotline.mpdonovan.com/dbt-docs/",label:"my dbt docs + lineage"}
   },
@@ -692,7 +681,7 @@ const NODE_NOTES = {
   /* -------------------------------------------------- runtime */
   "Caddy":{
     why:"One binary for TLS, HTTP/2 and reverse proxying, with automatic certificates — no renewal cron job to forget. It fronts everything on one origin: app, API, reports, Dagster and dbt docs.",
-    scar:"One origin means one blast radius, so the routing is where the safety rules live. Read-only Dagster and the dbt docs are rate-limited because both issue expensive queries against the same PostgreSQL that backs the catalog — a crawler should degrade the page, not the warehouse. The reports aren't limited at all: they're files. Self-identifying AI crawlers are refused outright.",
+    scar:"One origin means one blast radius, so the routing is where the safety rules live. Read-only Dagster and the dbt docs are rate-limited, because both query the same PostgreSQL that backs the catalog and a crawler should degrade the page rather than the warehouse. The reports are not limited at all — they are files, with nothing behind them to overload.",
     href:"https://caddyserver.com"
   },
   "Docker":{
@@ -779,7 +768,7 @@ const NODE_NOTES = {
   },
   "deterministic keys":{
     why:"Surrogate keys are computed from source identifiers, so rebuilding a table does not reissue them.",
-    scar:"This is what makes it safe for the exported graph and the analytics snapshot to hold keys of their own: a rebuild upstream cannot silently repoint them at somebody else."
+    scar:"That is what lets the exported graph and the analytics snapshot store those keys and stay correct. With a row counter instead, a rebuild would hand the same number to a different person, and every copy already made would quietly be about somebody else."
   },
   "dbt tests":{
     why:"About 260 of them, loaded automatically as orchestration-level asset checks — so a failing data-quality test shows up as a failed asset, next to the table it belongs to, rather than in a log nobody opens.",
@@ -858,6 +847,11 @@ fetch('stats.json')
   document.getElementById('apps-meta').textContent =
     SURFACES.length + (SURFACES.length===1?' surface':' surfaces');
 
+  /* The widget belongs to the first entry, so it is parked in the markup and
+     moved under that entry once the entries exist. Hidden until then: an
+     input box above an empty list would be a form for nothing. */
+  const demo = document.getElementById('demo');
+
   SURFACES.forEach(function(surface,i){
     const num = String(i + 1).padStart(2,'0');
     const tags = (surface.tags||[]).map(function(t){return `<span>${t}</span>`;}).join('');
@@ -876,6 +870,14 @@ fetch('stats.json')
        <div class="right">${surface.status||''}<span class="arr">↗</span></div>`;
     wrap.appendChild(a);
   });
+
+  if(demo){
+    /* before the *second* entry, i.e. after the first — anchored on .entry
+       rather than on child index, since the widget is itself a child. */
+    const entries = wrap.querySelectorAll('.entry');
+    demo.hidden = false;
+    wrap.insertBefore(demo, entries[1] || null);
+  }
 })();
 
 /* ---------------------------------------------------------
@@ -929,11 +931,12 @@ const REQUEST_TIMEOUT_MS = 12000;
    stale answer presented as a live one would be worse than no answer at all. */
 const FALLBACK = {
   a:"Toshiro Mifune",
-  b:"Harrison Ford",
+  b:"Timoth\u00e9e Chalamet",
   hops:[
     {person:"Toshiro Mifune", via:"Sh\u014dgun (1980)"},
-    {person:"John Rhys-Davies", via:"Raiders of the Lost Ark (1981)"},
-    {person:"Harrison Ford", via:null}
+    {person:"John Rhys-Davies", via:"The Lord of the Rings: The Fellowship of the Ring (2001)"},
+    {person:"Cate Blanchett", via:"Don't Look Up (2021)"},
+    {person:"Timoth\u00e9e Chalamet", via:null}
   ]
 };
 
