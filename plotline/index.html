@@ -661,7 +661,7 @@ const NODE_NOTES = {
   /* -------------------------------------------- orchestration */
   "Dagster":{
     why:"Asset-based orchestration fits a warehouse: every table is a declared asset with lineage, retries and schedules attached, and the UI doubles as documentation — which is why it is public and read-only rather than hidden behind a login.",
-    scar:"Asset checks on gold models must be keyed with the schema prefix. An unprefixed key doesn't error — Dagster quietly invents a stub asset, and the check never runs with the build it was written to guard. Silent no-ops are the expensive kind of bug, so a test now pins every key.",
+    scar:"A data-quality check has to name the table it guards, schema prefix and all. Name it slightly wrong and nothing complains: Dagster reads the name as a new table, invents an empty one to hang the check on, and the table you meant to guard goes unwatched — with no failure anywhere to say so. Every name is now pinned by a test, because a mistake that produces silence rather than an error is the expensive kind.",
     href:"https://dagster.io",
     live:{url:"https://plotline.mpdonovan.com/dagster",label:"my asset graph, read-only"}
   },
@@ -880,7 +880,7 @@ const HEADLINE_SCARS = [
      pulls opens "That choice is load-bearing", and out of the popover the
      antecedent has to come from somewhere. */
   {chip:"title_xref", title:"Surrogate keys are derived, not counted out"},
-  {chip:"Dagster",    title:"The check that was quietly a no-op"}
+  {chip:"Dagster",    title:"A check that guarded nothing"}
 ];
 
 (function(){
