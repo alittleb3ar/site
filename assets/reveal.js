@@ -1,8 +1,11 @@
-/* shared scroll-reveal: adds .in to .proj / .entry / .lane / .host / .clock
-   as they enter view */
+/* shared scroll-reveal: adds .in to .proj / .entry / .lane / .host / .clock /
+   .scar-card as they enter view.
+
+   Cards inside a hidden tab panel never intersect, so they are never revealed
+   here — the tab controller hands them their .in when it opens the panel. */
 (function(){
     function reveal(){
-      var els = document.querySelectorAll('.proj, .entry, .lane, .host, .clock');
+      var els = document.querySelectorAll('.proj, .entry, .lane, .host, .clock, .scar-card');
       if(!('IntersectionObserver' in window)){
         els.forEach(function(e){e.classList.add('in');});
         return;

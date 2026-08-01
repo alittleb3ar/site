@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>plotline</title>
-<meta name="description" content="A data analytics stack for analyzing any and all entertainment data, with the IMDb bulk dataset at its core.">
+<meta name="description" content="A self-hosted film, TV and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, served as a ~195M-edge co-star graph. Built to run unattended on one 16 GB box.">
 <link rel="canonical" href="https://mpdonovan.com/plotline/">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 
@@ -28,6 +28,11 @@
 <script>
   /* apply the saved theme before first paint so there's no light/dark flash */
   (function(){
+    /* marks the document as scripted, before first paint. the tab strip in
+       "How it's built" is shown only under .js — without script the panels
+       are never hidden, so a tab strip that could not switch them would be
+       a row of dead buttons. */
+    document.documentElement.classList.add('js');
     try{
       var t=localStorage.getItem('theme');
       if(t==='dark'||t==='light') document.documentElement.setAttribute('data-theme',t);
@@ -79,7 +84,34 @@
   <p class="crumb"><a href="../index.html">work</a> / plotline</p>
   <span class="stamp"><span class="pulse"></span> active</span>
   <h1>plotline.</h1>
-  <p class="tag">A data analytics stack for analyzing <b>any and all entertainment data</b>, with the IMDb bulk dataset as its core. Everything downstream of it — live apps, generated reports — gets published here as it ships.</p>
+  <p class="tag">A self-hosted film, TV and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, and served as a <b>~195M-edge co-star graph</b>. Built to run unattended on <b>one 16&nbsp;GB box</b>, which is why half the decisions further down look the way they do.</p>
+
+  <!-- the two things a reader wants first: the thing running, and the code
+       behind it. the second is rendered from SOURCE rather than hard-coded,
+       so a private repo says so in a line instead of leaving a gap — on a
+       portfolio page, no code link and no explanation reads as "no code". -->
+  <div class="cta" id="cta">
+    <a class="primary" href="https://plotline.mpdonovan.com" target="_blank" rel="noopener">Open the app <span class="arr">&#8599;</span></a>
+  </div>
+
+  <!-- The demo is the hero's evidence, not a section of its own. It used to
+       sit five sections down, behind four diagrams — which put every drawing
+       of the system ahead of the one thing that shows the system runs.
+       Hidden in the markup and unhidden by its own script: without JS this
+       is a form that cannot submit. -->
+  <div class="demo" id="demo" hidden>
+    <p class="demo-lead">Two names, one chain of people who have appeared together &mdash; answered live by the same public API the app uses.</p>
+    <form class="pair" id="demo-form">
+      <label class="sr-only" for="demo-a">First person</label>
+      <input id="demo-a" name="a" type="text" autocomplete="off" spellcheck="false" value="Toshiro Mifune">
+      <span class="joiner" aria-hidden="true">&mdash;&mdash;&#9654;</span>
+      <label class="sr-only" for="demo-b">Second person</label>
+      <input id="demo-b" name="b" type="text" autocomplete="off" spellcheck="false" value="Timoth&eacute;e Chalamet">
+      <button type="submit" id="demo-go">connect</button>
+    </form>
+    <div class="out" id="demo-out" aria-live="polite"></div>
+    <p class="status" id="demo-status"></p>
+  </div>
 
   <!-- figures come from plotline/stats.json, written by the warehouse's own
        scripts/export_site_stats.py. typed in by hand they would rot silently;
@@ -90,19 +122,75 @@
 
 <main class="wrap">
 
-  <section class="sec">
+  <!-- ============================================================
+       What it cost. Not new copy: each card pulls its prose straight out
+       of NODE_NOTES, so a scar edited on a chip is edited here too. These
+       are promoted out of the popovers because the popovers are opt-in,
+       one at a time, on diagrams a skimmer never reaches — and this is the
+       part of the page worth reading if you only read one part.
+       ============================================================ -->
+  <section class="sec" id="cost">
     <div class="sec-head">
-      <span class="tick">§</span>
-      <h2>Architecture</h2>
+      <span class="tick">&sect;</span>
+      <h2>What it cost</h2>
+      <span class="meta">four things that broke</span>
+    </div>
+    <div class="scars" id="scars"></div>
+    <p class="note">Chips marked <span class="ast">&#10034;</span> on the diagrams below carry one of these. The four here are the ones worth reading first.</p>
+  </section>
+
+  <!-- Four public surfaces, not one app. Three of them existed for months
+       before anything on this page linked to them.
+
+       Moved above the diagrams: the things you can open should come before
+       the drawings of how they were built. -->
+  <section class="sec" id="surfaces">
+    <div class="sec-head">
+      <span class="tick">&sect;</span>
+      <h2>Live surfaces</h2>
+      <span class="meta" id="apps-meta"></span>
+    </div>
+    <div class="entries" id="apps"></div>
+  </section>
+
+  <!-- ============================================================
+       How it's built — four views of one system, tabbed rather than
+       stacked. Three of them share the same lane/flow grammar, so read
+       one after another they read as repetition rather than as depth;
+       and the source chips appeared twice, identically, in two of them.
+       One frame, four views, and that stops being true.
+
+       Panels stay in the DOM at all times — hidden, not absent, so
+       Ctrl-F and crawlers still reach every chip. Nothing is hidden in
+       the markup: script hides the inactive ones, and the tab strip is
+       shown only under .js, so the two can never disagree.
+       ============================================================ -->
+  <section class="sec" id="build">
+    <div class="sec-head">
+      <span class="tick">&sect;</span>
+      <h2>How it&rsquo;s built</h2>
       <span class="meta">click a chip</span>
     </div>
-    <!-- the notes existed before this legend did, on the diagram furthest down
-         the page, with nothing anywhere saying a chip could be clicked. -->
-    <p class="legend">
-      <i><span class="dot">dotted</span> why it&rsquo;s here</i>
-      <i><span class="pip"></span> something of mine running at the other end</i>
-      <i><span class="ast">&#10034;</span> what it cost</i>
-    </p>
+
+    <div class="tabs" id="build-tabs">
+      <div class="tablist" role="tablist" aria-label="How it&rsquo;s built">
+        <button type="button" role="tab" data-panel="stack"  id="tab-stack"  aria-controls="panel-stack">Stack</button>
+        <button type="button" role="tab" data-panel="data"   id="tab-data"   aria-controls="panel-data">Data model</button>
+        <button type="button" role="tab" data-panel="day"    id="tab-day"    aria-controls="panel-day">The day</button>
+        <button type="button" role="tab" data-panel="deploy" id="tab-deploy" aria-controls="panel-deploy">Deployment</button>
+      </div>
+
+      <!-- the notes existed before this legend did, on the diagram furthest down
+           the page, with nothing anywhere saying a chip could be clicked. it now
+           sits above all four views, and hides itself on the one with no chips. -->
+      <p class="legend" id="chip-legend">
+        <i><span class="dot">dotted</span> why it&rsquo;s here</i>
+        <i><span class="pip"></span> something of mine running at the other end</i>
+        <i><span class="ast">&#10034;</span> what it cost</i>
+      </p>
+
+    <div class="panel" id="panel-stack" role="tabpanel" aria-labelledby="tab-stack" data-panel="stack">
+    <p class="panel-lead">Sources in at the top, a browser at the bottom, every layer between named for what it does rather than what it is. The two dashed bands wrap the stack rather than sitting inside it.</p>
     <div class="diagram">
       <div class="lane">
         <h4>Sources<span class="role">public dumps, REST &amp; SPARQL</span></h4>
@@ -147,7 +235,6 @@
           <span class="node" style="--brand:#009688"><svg class="lg" aria-hidden="true"><use href="#i-fastapi"></use></svg><span>FastAPI</span></span>
           <span class="node"><span>Uvicorn</span></span>
           <span class="node" style="--brand:#999000"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></span>
-          <span class="node" style="--brand:#3A92DF"><svg class="lg" aria-hidden="true"><use href="#i-metabase"></use></svg><span>Metabase</span></span>
           <span class="node"><span>Evidence</span></span>
         </div>
       </div>
@@ -189,19 +276,15 @@
       </div>
     </div>
     <p class="note">Logo marks belong to their respective owners · glyphs from <a href="https://simpleicons.org" target="_blank" rel="noopener">Simple Icons</a> and <a href="https://selfh.st/icons" target="_blank" rel="noopener">selfh.st/icons</a>.</p>
-  </section>
+    </div><!-- /panel-stack -->
 
-  <!-- ============================================================
-       The data model. Same lane/flow grammar as the stack diagram above,
-       but the chips are tables rather than vendors — which is the thing a
-       warehouse actually is, and the thing the page used to leave out.
-       ============================================================ -->
-  <section class="sec">
-    <div class="sec-head">
-      <span class="tick">&sect;</span>
-      <h2>Data model</h2>
-      <span class="meta">bronze &rarr; silver &rarr; gold</span>
-    </div>
+    <!-- ============================================================
+         The data model. Same lane/flow grammar as the stack view, but the
+         chips are tables rather than vendors — which is the thing a
+         warehouse actually is, and the thing the page used to leave out.
+         ============================================================ -->
+    <div class="panel" id="panel-data" role="tabpanel" aria-labelledby="tab-data" data-panel="data">
+    <p class="panel-lead">bronze &rarr; silver &rarr; gold. Same grammar as the Stack view, but every chip here is a table rather than a vendor.</p>
     <div class="diagram">
       <div class="lane">
         <h4>Bronze<span class="role">ingested, unmodelled, one table per feed</span></h4>
@@ -268,19 +351,16 @@
       </div>
     </div>
     <p class="note">Every table above is declared once in a Python catalog and cross-checked against dbt&rsquo;s manifest, the SQL DDL, and the loaded Dagster definitions &mdash; a model that exists in only one of them fails CI.</p>
-  </section>
+    </div><!-- /panel-data -->
 
-  <!-- ============================================================
-       The day. Marks sit at the UTC hour each thing fires; read down the
-       column and they march across the day. This is the only picture on the
-       page that says the warehouse runs without anyone watching it.
-       ============================================================ -->
-  <section class="sec">
-    <div class="sec-head">
-      <span class="tick">&sect;</span>
-      <h2>The day</h2>
-      <span class="meta">UTC</span>
-    </div>
+    <!-- ============================================================
+         The day. Marks sit at the UTC hour each thing fires; read down the
+         column and they march across the day. This is the only view here
+         that says the warehouse runs without anyone watching it — and the
+         only one with no chips, hence data-chips="none".
+         ============================================================ -->
+    <div class="panel" id="panel-day" role="tabpanel" aria-labelledby="tab-day" data-panel="day" data-chips="none">
+    <p class="panel-lead">Every scheduled thing, placed at the UTC hour it fires. Nothing here is triggered by hand except the one row that says so.</p>
     <div class="clock">
       <div class="hours" aria-hidden="true">
         <i style="--at:0">00</i><i style="--at:6">06</i><i style="--at:12">12</i><i style="--at:18">18</i><i style="--at:24">24</i>
@@ -320,13 +400,10 @@
         </li>
       </ol>
     </div>
-  </section>
+    </div><!-- /panel-day -->
 
-  <section class="sec">
-    <div class="sec-head">
-      <span class="tick">§</span>
-      <h2>Deployment</h2>
-    </div>
+    <div class="panel" id="panel-deploy" role="tabpanel" aria-labelledby="tab-deploy" data-panel="deploy">
+    <p class="panel-lead">Two boxes: one runs everything, the other watches it from outside &mdash; because a monitor on the machine it monitors tells you nothing when that machine is the problem.</p>
     <div class="topo">
       <div class="lane">
         <h4>Upstream data sources<span class="role">pulled by VPS 01</span></h4>
@@ -353,7 +430,6 @@
             <div class="node" style="--brand:#4169E1"><svg class="lg" aria-hidden="true"><use href="#i-postgresql"></use></svg><span>PostgreSQL</span></div>
             <div class="node" style="--brand:#999000"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></div>
             <div class="node" style="--brand:#FF4F2C"><svg class="lg" aria-hidden="true"><use href="#i-dbt"></use></svg><span>dbt</span></div>
-            <div class="node" style="--brand:#3A92DF"><svg class="lg" aria-hidden="true"><use href="#i-metabase"></use></svg><span>Metabase</span></div>
             <div class="node" style="--brand:#1B91EC"><svg class="lg" aria-hidden="true"><use href="#i-docker"></use></svg><span>Docker</span></div>
             <div class="node"><span>restic</span></div>
             <div class="node"><span>beszel-agent</span></div>
@@ -410,36 +486,8 @@
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- Four public surfaces, not one app. Three of them existed for months
-       before anything on this page linked to them.
-
-       The live demo used to be a section of its own between the deployment
-       diagram and this one, which broke the run of diagrams for something
-       that is really just the first entry below, playable. It is now moved
-       under that entry at render time. -->
-  <section class="sec">
-    <div class="sec-head">
-      <span class="tick">&sect;</span>
-      <h2>Live surfaces</h2>
-      <span class="meta" id="apps-meta"></span>
-    </div>
-    <div class="entries" id="apps">
-      <div class="demo" id="demo" hidden>
-        <p class="demo-lead">Or try it here &mdash; two names, one chain of people who have appeared together, answered by the same public API the app uses.</p>
-        <form class="pair" id="demo-form">
-          <label class="sr-only" for="demo-a">First person</label>
-          <input id="demo-a" name="a" type="text" autocomplete="off" spellcheck="false" value="Toshiro Mifune">
-          <span class="joiner" aria-hidden="true">&mdash;&mdash;&#9654;</span>
-          <label class="sr-only" for="demo-b">Second person</label>
-          <input id="demo-b" name="b" type="text" autocomplete="off" spellcheck="false" value="Timoth&eacute;e Chalamet">
-          <button type="submit" id="demo-go">connect</button>
-        </form>
-        <div class="out" id="demo-out" aria-live="polite"></div>
-        <p class="status" id="demo-status"></p>
-      </div>
-    </div>
+    </div><!-- /panel-deploy -->
+    </div><!-- /tabs -->
   </section>
 
   <!-- Rendered only when there is something in REPORTS. An empty section that
@@ -478,7 +526,6 @@
   <symbol id="i-pytest" viewBox="0 0 24 24"><path d="M2.6152 0v.8867h3.8399V0zm5.0215 0v.8867h3.8418V0zm4.957 0v.8867h3.8418V0zm4.9356 0v.8867h3.8418V0zM2.4473 1.8945a.935.935 0 0 0-.9356.9356c0 .517.4185.9375.9356.9375h19.1054c.5171 0 .9356-.4204.9356-.9375a.935.935 0 0 0-.9356-.9356zm.168 2.8477V24H6.455V4.7422zm5.0214 0V20.543h3.8418V4.7422zm4.957 0V15.291h3.8497V4.7422zm4.9356 0v6.4941h3.8418V4.7422z"/></symbol>
   <symbol id="i-ruff" viewBox="0 0 24 24"><path d="M3 0C1.338 0 0 1.338 0 3v18c0 1.662 1.338 3 3 3h18c1.662 0 3-1.338 3-3V3c0-1.662-1.338-3-3-3Zm4.2 7.2h8.641c.53 0 .959.43.959.959v3.266c0 .53-.43.959-.959.959h-.961v.768h1.92V16.8h-4.416v-2.88h-.768v2.88H7.2Zm3.648 3.648v.768h2.304v-.768z"/></symbol>
   <symbol id="i-fastapi" viewBox="0 0 24 24"><path d="M12 .0387C5.3729.0384.0003 5.3931 0 11.9988c-.001 6.6066 5.372 11.9628 12 11.9625 6.628.0003 12.001-5.3559 12-11.9625-.0003-6.6057-5.3729-11.9604-12-11.96m-.829 5.4153h7.55l-7.5805 5.3284h5.1828L5.279 18.5436q2.9466-6.5444 5.892-13.0896"/></symbol>
-  <symbol id="i-metabase" viewBox="0 0 24 24"><path d="M5.385 6.136c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.654 1.438 1.461zm-1.438 2.63c-.794 0-1.438.654-1.438 1.461s.644 1.461 1.438 1.461 1.438-.654 1.438-1.461-.644-1.461-1.438-1.461zm5.465-2.63c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.654 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.499-1.088 1.111.488 1.111 1.088 1.111 1.088-.498 1.088-1.111zm-1.088 5.592c.794 0 1.438-.654 1.438-1.461s-.644-1.461-1.438-1.461-1.438.654-1.438 1.461.643 1.461 1.438 1.461zm5.464-5.592c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.654 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.498-1.088 1.111S11.4 7.247 12 7.247s1.088-.498 1.088-1.111zm.35-4.675c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461S11.206 0 12 0s1.438.654 1.438 1.461zm-.35 0C13.088.848 12.6.35 12 .35s-1.088.498-1.088 1.111S11.4 2.572 12 2.572s1.088-.498 1.088-1.111zm.35 8.806c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.654 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.498-1.088 1.111.488 1.111 1.088 1.111 1.088-.499 1.088-1.111zm4.376-4.131c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.654 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.498-1.088 1.111.488 1.111 1.088 1.111 1.088-.498 1.088-1.111zm2.939 1.461c.794 0 1.438-.654 1.438-1.461s-.644-1.461-1.438-1.461-1.438.654-1.438 1.461.644 1.461 1.438 1.461zm-4.027 1.209c-.794 0-1.438.654-1.438 1.461s.644 1.461 1.438 1.461 1.438-.654 1.438-1.461-.643-1.461-1.438-1.461zm4.027 0c-.794 0-1.438.654-1.438 1.461s.644 1.461 1.438 1.461 1.438-.654 1.438-1.461-.644-1.461-1.438-1.461zM3.947 12.857a1.45 1.45 0 0 0-1.438 1.461c0 .807.644 1.461 1.438 1.461s1.438-.654 1.438-1.461a1.45 1.45 0 0 0-1.438-1.461zm5.465 1.5c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.655 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.498-1.088 1.111.488 1.111 1.088 1.111 1.088-.498 1.088-1.111zM12 12.896c-.794 0-1.438.654-1.438 1.461s.644 1.461 1.438 1.461 1.438-.654 1.438-1.461-.644-1.461-1.438-1.461zm5.464 1.461c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.655 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.498-1.088 1.111.488 1.111 1.088 1.111 1.088-.498 1.088-1.111zm2.939-1.461c-.794 0-1.438.654-1.438 1.461s.644 1.461 1.438 1.461 1.438-.654 1.438-1.461-.644-1.461-1.438-1.461zM3.947 16.948c-.794 0-1.438.654-1.438 1.461s.644 1.461 1.438 1.461 1.438-.654 1.438-1.461-.644-1.461-1.438-1.461zm5.465 1.5c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.654 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.498-1.088 1.111.488 1.111 1.088 1.111 1.088-.498 1.088-1.111zm4.376 0c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.654 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.498-1.088 1.111.488 1.111 1.088 1.111 1.088-.498 1.088-1.111zm.35 4.091c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.654 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.498-1.088 1.111S11.4 23.65 12 23.65s1.088-.498 1.088-1.111zm4.376-4.091c0 .807-.644 1.461-1.438 1.461s-1.438-.654-1.438-1.461.644-1.461 1.438-1.461 1.438.654 1.438 1.461zm-.35 0c0-.613-.488-1.111-1.088-1.111s-1.088.498-1.088 1.111.488 1.111 1.088 1.111 1.088-.498 1.088-1.111zm2.939-1.461c-.794 0-1.438.654-1.438 1.461s.644 1.461 1.438 1.461 1.438-.654 1.438-1.461-.644-1.461-1.438-1.461z"/></symbol>
   <symbol id="i-react" viewBox="0 0 24 24"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"/></symbol>
   <symbol id="i-typescript" viewBox="0 0 24 24"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"/></symbol>
   <symbol id="i-vite" viewBox="0 0 24 24"><path d="M13.056 23.238a.57.57 0 0 1-1.02-.355v-5.202c0-.63-.512-1.143-1.144-1.143H5.148a.57.57 0 0 1-.464-.903l3.777-5.29c.54-.753 0-1.804-.93-1.804H.57a.574.574 0 0 1-.543-.746.6.6 0 0 1 .08-.157L5.008.78a.57.57 0 0 1 .467-.24h14.589a.57.57 0 0 1 .466.903l-3.778 5.29c-.54.755 0 1.806.93 1.806h5.745c.238 0 .424.138.513.322a.56.56 0 0 1-.063.603z"/></symbol>
@@ -531,6 +578,19 @@ const SURFACES = [
     tags:["dbt"]
   },
 ];
+
+/* =========================================================
+   THE SOURCE. Point this at the plotline repository:
+
+     const SOURCE = {url:"https://github.com/…/plotline"};
+
+   Left null, the hero prints a line saying the source is
+   private instead of rendering a button that goes nowhere.
+   Either is fine; a page with no code link and no mention of
+   one is not — on a portfolio page silence reads as "there
+   is no code", which is the wrong thing for this to say.
+   ========================================================= */
+const SOURCE = null;
 
 /* =========================================================
    ADD A REPORT: append an object to this list.
@@ -601,7 +661,7 @@ const NODE_NOTES = {
   /* -------------------------------------------- orchestration */
   "Dagster":{
     why:"Asset-based orchestration fits a warehouse: every table is a declared asset with lineage, retries and schedules attached, and the UI doubles as documentation — which is why it is public and read-only rather than hidden behind a login.",
-    scar:"Asset checks on gold models must be keyed with the schema prefix. An unprefixed key doesn't error — Dagster quietly invents a stub asset, and the check never runs with the build it was written to guard. Silent no-ops are the expensive kind of bug, so a test now pins every key.",
+    scar:"A data-quality check has to name the table it guards, schema prefix and all. Name it slightly wrong and nothing complains: Dagster reads the name as a new table, invents an empty one to hang the check on, and the table you meant to guard goes unwatched — with no failure anywhere to say so. Every name is now pinned by a test, because a mistake that produces silence rather than an error is the expensive kind.",
     href:"https://dagster.io",
     live:{url:"https://plotline.mpdonovan.com/dagster",label:"my asset graph, read-only"}
   },
@@ -651,10 +711,6 @@ const NODE_NOTES = {
     why:"The ASGI server under FastAPI. Notable only for what it makes necessary: path searches are synchronous and expensive, so they run on a threadpool and are gated to a handful at a time.",
     scar:"Without that gate, a few hub-to-hub searches were enough to occupy every worker and stall the rest of the site. Shedding load with a 503 is a better answer than a server that has quietly stopped answering.",
     href:"https://www.uvicorn.org"
-  },
-  "Metabase":{
-    why:"Point-and-click BI over the gold tables, for the questions that aren't worth codifying — dashboards without hand-building a frontend for each one.",
-    href:"https://www.metabase.com"
   },
   "Evidence":{
     why:"The reports site: SQL files and markdown, built into a static page. Its dashboards aren't authored here — they're declared in the warehouse's own catalog and rendered from it, so a card that drifts from its declaration fails CI.",
@@ -782,6 +838,169 @@ const NODE_NOTES = {
 
 document.getElementById('yr').textContent = new Date().getFullYear();
 
+/* ---------------------------------------------------------
+   Hero: the source link, or an honest sentence instead of one
+   --------------------------------------------------------- */
+(function(){
+  const cta = document.getElementById('cta');
+  if(!cta) return;
+  if(SOURCE && SOURCE.url){
+    const a = document.createElement('a');
+    a.href = SOURCE.url;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = SOURCE.label || 'Read the code';
+    const arr = document.createElement('span');
+    arr.className = 'arr';
+    arr.textContent = '↗';
+    a.appendChild(document.createTextNode(' '));
+    a.appendChild(arr);
+    cta.appendChild(a);
+  } else {
+    const said = document.createElement('span');
+    said.className = 'none';
+    said.textContent = 'Source is private — happy to walk through it.';
+    cta.appendChild(said);
+  }
+})();
+
+/* =========================================================
+   What it cost.
+
+   The prose is not repeated here — each card reads its body
+   straight out of NODE_NOTES, so a scar edited on a chip is
+   edited in both places at once. Only the headline is new.
+   A key that stops existing drops its card rather than
+   rendering the word "undefined" onto the page.
+   ========================================================= */
+const HEADLINE_SCARS = [
+  {chip:"DuckDB",     title:"20 GB, then thirteen seconds"},
+  {chip:"FastAPI",    title:"Failing closed took the whole site down"},
+  /* this headline is doing grammatical work as well as editorial: the scar it
+     pulls opens "That choice is load-bearing", and out of the popover the
+     antecedent has to come from somewhere. */
+  {chip:"title_xref", title:"Surrogate keys are derived, not counted out"},
+  {chip:"Dagster",    title:"A check that guarded nothing"}
+];
+
+(function(){
+  const wrap = document.getElementById('scars');
+  if(!wrap) return;
+  HEADLINE_SCARS.forEach(function(item){
+    const note = NODE_NOTES[item.chip];
+    if(!note || !note.scar) return;
+    const card = document.createElement('article');
+    card.className = 'scar-card';
+
+    const who = document.createElement('div');
+    who.className = 'who';
+    who.textContent = '✲ ' + item.chip;
+
+    const head = document.createElement('h3');
+    head.textContent = item.title;
+
+    const body = document.createElement('p');
+    body.textContent = note.scar;
+
+    card.appendChild(who);
+    card.appendChild(head);
+    card.appendChild(body);
+    wrap.appendChild(card);
+  });
+})();
+
+/* =========================================================
+   How it's built — the tab strip.
+
+   Two details carry this:
+
+     · reveal.js adds .in to .lane / .host / .clock when they
+       intersect the viewport, and a hidden panel never
+       intersects. A panel opened later therefore has its
+       cards revealed outright, or they would sit at opacity
+       0 forever and the tab would look empty.
+
+     · the hash is a deep link (#data, #deploy…), written with
+       replaceState so that switching views doesn't fill the
+       back button with four copies of the same page. A hash
+       typed or pasted into the bar still works, via
+       hashchange.
+
+   Nothing is hidden in the markup — this hides the inactive
+   panels itself, and the strip is only visible under .js. The
+   two therefore cannot disagree about what is showing.
+   ========================================================= */
+(function(){
+  const root = document.getElementById('build-tabs');
+  if(!root) return;
+  const tabs   = Array.prototype.slice.call(root.querySelectorAll('[role="tab"]'));
+  const panels = Array.prototype.slice.call(root.querySelectorAll('.panel'));
+  const legend = document.getElementById('chip-legend');
+  if(!tabs.length || !panels.length) return;
+
+  const NAMES = tabs.map(function(t){ return t.dataset.panel; });
+
+  function show(name, opts){
+    opts = opts || {};
+    if(NAMES.indexOf(name) < 0) name = NAMES[0];
+
+    tabs.forEach(function(tab){
+      const on = tab.dataset.panel === name;
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.tabIndex = on ? 0 : -1;               /* roving: one stop for the strip */
+      if(on && opts.focus) tab.focus();
+    });
+
+    let active = null;
+    panels.forEach(function(panel){
+      const on = panel.dataset.panel === name;
+      panel.hidden = !on;
+      if(!on) return;
+      active = panel;
+      /* it was hidden, so it never intersected, so reveal.js never reached
+         it — hand it its .in rather than animating something nobody saw */
+      if(!opts.first){
+        panel.querySelectorAll('.lane,.host,.clock').forEach(function(el){
+          el.classList.add('in');
+        });
+      }
+    });
+
+    /* the legend explains chips; one view has none to explain */
+    if(legend) legend.hidden = !!(active && active.dataset.chips === 'none');
+
+    if(opts.hash){ try{ history.replaceState(null,'','#'+name); }catch(e){} }
+  }
+
+  tabs.forEach(function(tab, i){
+    tab.addEventListener('click', function(){
+      show(tab.dataset.panel, {hash:true});
+    });
+    /* arrow keys move between tabs, as a tablist is expected to */
+    tab.addEventListener('keydown', function(e){
+      let next = null;
+      if(e.key === 'ArrowRight' || e.key === 'ArrowDown')     next = (i + 1) % tabs.length;
+      else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp')   next = (i - 1 + tabs.length) % tabs.length;
+      else if(e.key === 'Home')                               next = 0;
+      else if(e.key === 'End')                                next = tabs.length - 1;
+      if(next === null) return;
+      e.preventDefault();
+      show(tabs[next].dataset.panel, {focus:true, hash:true});
+    });
+  });
+
+  window.addEventListener('hashchange', function(){
+    const name = location.hash.replace('#','');
+    if(NAMES.indexOf(name) >= 0) show(name);
+  });
+
+  /* first paint: an unknown or absent hash opens the first view */
+  const asked = location.hash.replace('#','');
+  const known = NAMES.indexOf(asked) >= 0;
+  show(known ? asked : NAMES[0], {first:true});
+  if(known) document.getElementById('build').scrollIntoView();
+})();
+
 /* =========================================================
    The figure strip. Values come from stats.json, written by
    the warehouse's own export script — typed in here they
@@ -847,11 +1066,6 @@ fetch('stats.json')
   document.getElementById('apps-meta').textContent =
     SURFACES.length + (SURFACES.length===1?' surface':' surfaces');
 
-  /* The widget belongs to the first entry, so it is parked in the markup and
-     moved under that entry once the entries exist. Hidden until then: an
-     input box above an empty list would be a form for nothing. */
-  const demo = document.getElementById('demo');
-
   SURFACES.forEach(function(surface,i){
     const num = String(i + 1).padStart(2,'0');
     const tags = (surface.tags||[]).map(function(t){return `<span>${t}</span>`;}).join('');
@@ -870,14 +1084,6 @@ fetch('stats.json')
        <div class="right">${surface.status||''}<span class="arr">↗</span></div>`;
     wrap.appendChild(a);
   });
-
-  if(demo){
-    /* before the *second* entry, i.e. after the first — anchored on .entry
-       rather than on child index, since the widget is itself a child. */
-    const entries = wrap.querySelectorAll('.entry');
-    demo.hidden = false;
-    wrap.insertBefore(demo, entries[1] || null);
-  }
 })();
 
 /* ---------------------------------------------------------
@@ -946,6 +1152,10 @@ const FALLBACK = {
   const status = document.getElementById('demo-status');
   const go     = document.getElementById('demo-go');
   if(!form) return;
+
+  /* the widget is hidden in the markup and revealed here, so that without
+     script the hero carries no form that cannot be submitted */
+  document.getElementById('demo').hidden = false;
 
   function chip(text, cls){
     const el = document.createElement('span');

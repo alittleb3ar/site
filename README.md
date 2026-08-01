@@ -20,8 +20,8 @@ HTML, one shared stylesheet, and a little vanilla JavaScript.
 │   ├── index.html          # notebook index (lazy-loaded iframes)
 │   └── notebooks/          # nbconvert HTML exports
 ├── plotline/
-│   ├── index.html          # architecture, data model, schedule, deployment,
-│   │                       #   live demo, surfaces, reports
+│   ├── index.html          # hero + live demo, what it cost, surfaces,
+│   │                       #   how it's built (tabbed), reports
 │   └── stats.json          # generated in the plotline repo — see below
 ├── CNAME                   # custom domain for GitHub Pages
 └── .nojekyll               # serve files as-is, skip Jekyll
@@ -47,6 +47,13 @@ HTML — edit the array, no templating required.
   reports, read-only Dagster, the dbt docs. The Reports section stays hidden
   while `REPORTS` is empty; an empty section that says "coming soon" reads as
   abandoned.
+- **A headline scar** (plotline, "What it cost"): add an entry to
+  `HEADLINE_SCARS` in `plotline/index.html` — `{chip, title}`. The body is
+  *not* written there: it is read from that chip's `scar` in `NODE_NOTES`, so
+  a scar edited on a chip is edited in both places at once. An entry whose
+  chip has no `scar` drops its card rather than rendering "undefined". Mind
+  that a scar written to sit under a chip's `why` may open with a dangling
+  "that" once lifted out — the card's `title` is the antecedent it gets.
 - **A chip note**: add an entry to `NODE_NOTES` in `plotline/index.html`, keyed
   by the chip's label text (trailing version numbers are stripped, so `React 19`
   finds `React`). One entry annotates that chip on *every* diagram. Each entry
@@ -54,6 +61,38 @@ HTML — edit the array, no templating required.
   the chip with an asterisk), an optional `href`, and an optional
   `live: {url, label}` for an instance actually running, which marks the chip
   with a teal pip.
+
+## The plotline page shape
+
+The page runs at three altitudes, deliberately: **claim** (hero — tagline, the
+one-box constraint, the demo, the figure strip), **proof** ("What it cost" and
+the live surfaces), then **depth** ("How it's built"). The demo used to be the
+fifth section, behind four diagrams; anyone skimming left before reaching the
+one thing that shows the system runs.
+
+"How it's built" is four views in one tab strip rather than four stacked
+sections — three of them share the same lane/flow grammar, so read one after
+another they read as repetition rather than as depth. Some mechanics worth
+knowing before editing it:
+
+- Panels are **hidden, never absent** — Ctrl-F and crawlers still reach every
+  chip. Nothing is hidden in the markup: script hides the inactive panels and
+  the tab strip is shown only under `.js`, so the two cannot disagree.
+- `[hidden]{display:none!important}` in `style.css` is load-bearing.
+  `.diagram`, `.topo` and `.entries` all set `display`, which otherwise
+  silently defeats the plain `hidden` attribute.
+- `reveal.js` adds `.in` on intersection, and a hidden panel never intersects.
+  The tab controller therefore hands `.in` to the cards in a panel it opens —
+  without that they sit at `opacity:0` and the tab looks empty.
+- Each view is deep-linkable (`#stack`, `#data`, `#day`, `#deploy`), written
+  with `replaceState` so switching views doesn't fill the back button with
+  four copies of the same page.
+
+The `SOURCE` constant near `SURFACES` is the link to the plotline repository.
+Left `null` the hero prints "Source is private — happy to walk through it."
+rather than a button that goes nowhere. Set it or leave it, but don't delete
+the line: a portfolio page with no code link and no mention of one reads as
+though there is no code.
 
 ## The plotline figure strip
 
@@ -78,8 +117,9 @@ If the fetch fails the strip simply doesn't render. No strip beats a wrong one.
 
 ## The live degrees demo
 
-The widget lives in the Live surfaces list, moved under the first entry at
-render time — it is that entry, playable, rather than a section of its own.
+The widget sits in the hero, as its evidence. It is hidden in the markup and
+unhidden by its own script, so that without JavaScript the page carries no
+form that cannot be submitted.
 
 It calls `plotline.mpdonovan.com/api/person-graph` directly. That
 is a cross-origin call, so it works only while the plotline deployment sets
