@@ -60,6 +60,10 @@
     background-size:26px 26px}
   ::selection{background:var(--accent);color:#fff}
   a{color:inherit;text-decoration:none}
+  /* .diagram, .topo and .entries all set display, which silently defeats the
+     plain [hidden] attribute — a hidden panel would lay itself out anyway.
+     everything on this site that hides by attribute depends on this line. */
+  [hidden]{display:none!important}
   .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
   .mono{font-family:var(--mono)}
   
@@ -126,6 +130,24 @@
   .hero .tag b{color:var(--ink);font-weight:500}
   .hero .crumb{font-family:var(--mono);font-size:13px;color:var(--mute);margin-bottom:20px}
   .hero .crumb a{color:var(--accent)}
+  /* ---- hero call to action (project sub-pages) ----
+     the running thing and the code behind it, before any diagram of either */
+  .hero .cta{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:28px}
+  .hero .cta a{font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--paper);
+    border:1px solid var(--line);border-radius:6px;padding:10px 16px;
+    display:inline-flex;align-items:center;gap:8px;
+    transition:border-color .25s,color .25s,opacity .25s}
+  .hero .cta a:hover{border-color:var(--accent);color:var(--accent)}
+  .hero .cta a.primary{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+  .hero .cta a.primary:hover{opacity:.88;color:var(--paper)}
+  .hero .cta a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .hero .cta .arr{transition:transform .25s}
+  .hero .cta a:hover .arr{transform:translate(3px,-3px)}
+  /* the no-repo case: a sentence, not a dead button */
+  .hero .cta .none{font-family:var(--mono);font-size:12px;color:var(--mute)}
+  /* the demo sits in the hero as its evidence, not in the surfaces list */
+  .hero .demo{margin-top:30px;max-width:780px}
+  @media(prefers-reduced-motion:reduce){.hero .cta .arr{transition:none}}
   
   /* ---- section head ---- */
   .sec{padding:96px 0 0}
@@ -283,7 +305,9 @@
     font-family:var(--mono);font-size:11.5px;color:var(--mute);line-height:1.5}
   .legend i{font-style:normal;display:inline-flex;align-items:center;gap:6px}
   .legend .pip{width:5px;height:5px;border-radius:50%;background:var(--accent);flex:none}
-  .legend .ast{color:var(--warn)}
+  /* not scoped to .legend: the same glyph is referred to in prose elsewhere,
+     and it should be the same ochre wherever it appears */
+  .ast{color:var(--warn)}
   .legend .dot{border-bottom:1px dotted var(--mute);padding-bottom:1px}
 
   /* connector between lanes */
@@ -485,12 +509,6 @@
      does, and falls back to a pre-rendered chain when that API is asleep —
      which it is designed to be whenever the graph is mid-rebuild. */
   .demo{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 22px}
-  /* sitting in the surfaces list, under the entry it belongs to: indented and
-     tied to it by a border, so it reads as part of that entry rather than as a
-     fifth surface. */
-  .entries .demo{margin-left:34px;border-left:2px solid var(--accent-soft);
-    border-top-left-radius:0;border-bottom-left-radius:0}
-  @media(max-width:600px){.entries .demo{margin-left:0}}
   .demo .demo-lead{font-family:var(--mono);font-size:12px;color:var(--mute);
     line-height:1.6;margin-bottom:14px}
   .demo .pair{display:grid;grid-template-columns:1fr auto 1fr auto;gap:10px;align-items:center}
@@ -520,8 +538,54 @@
     margin-top:12px;line-height:1.6}
   .demo .status.stale{color:var(--warn)}
 
-  /* the reveal/motion rules above list every card type by name; the two new
+  /* ---- what it cost (scar cards) ----
+     the same prose the chip popovers carry, promoted onto the page. the
+     popovers are opt-in, one at a time, on diagrams a skimmer never
+     reaches — so the ochre ink comes out to where it gets read. */
+  .scars{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  @media(max-width:780px){.scars{grid-template-columns:1fr}}
+  .scar-card{position:relative;background:var(--paper);border:1px solid var(--line);
+    border-radius:10px;padding:20px 22px 22px 26px;overflow:hidden;
+    opacity:0;transform:translateY(16px);
+    transition:opacity .3s,transform .3s,border-color .25s,box-shadow .25s}
+  .scar-card.in{opacity:1;transform:none}
+  .scar-card:hover{border-color:var(--warn);box-shadow:0 14px 32px -24px rgba(162,97,26,.5)}
+  /* the second ink, down the edge — these cards are the ochre ones */
+  .scar-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;
+    background:var(--warn);opacity:.6}
+  .scar-card .who{font-family:var(--mono);font-size:11px;color:var(--warn);
+    letter-spacing:.07em;text-transform:uppercase}
+  .scar-card h3{font-family:var(--disp);font-weight:600;font-size:18px;
+    letter-spacing:-.01em;line-height:1.3;margin:9px 0 9px}
+  .scar-card p{font-size:14px;color:var(--mute);line-height:1.65}
+
+  /* ---- how it's built: one frame, four views ----
+     three of these diagrams share the lane/flow grammar, so stacked they
+     read as repetition rather than depth. the strip is gated on .js: with
+     no script nothing hides the panels, and a strip that couldn't switch
+     them would be a row of dead buttons. */
+  .tabs .tablist{display:none;flex-wrap:wrap;gap:2px;
+    border-bottom:1px solid var(--line);margin-bottom:20px}
+  .js .tabs .tablist{display:flex}
+  .tabs .tablist button{font-family:var(--mono);font-size:12.5px;color:var(--mute);
+    background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;
+    padding:9px 15px;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    transition:color .2s,border-color .2s}
+  .tabs .tablist button:hover{color:var(--ink)}
+  .tabs .tablist button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+  .tabs .tablist button:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:4px}
+  @media(max-width:520px){.tabs .tablist button{padding:9px 11px;font-size:12px}}
+  /* the legend's negative top margin exists to tuck it under a section head;
+     under the tab strip it just collides with the underline. */
+  .tabs .legend{margin-top:0}
+  /* one line of orientation per view, replacing the section head each of
+     these used to have */
+  .panel-lead{font-family:var(--mono);font-size:12px;color:var(--mute);
+    line-height:1.6;margin-bottom:18px;max-width:78ch}
+
+  /* the reveal/motion rules above list every card type by name; the new
      ones join them rather than being animated by accident. */
   @media(prefers-reduced-motion:reduce){
     .clock{opacity:1!important;transform:none!important}
+    .scar-card{opacity:1!important;transform:none!important}
   }
