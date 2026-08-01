@@ -78,7 +78,10 @@ If the fetch fails the strip simply doesn't render. No strip beats a wrong one.
 
 ## The live degrees demo
 
-The plotline page calls `plotline.mpdonovan.com/api/person-graph` directly. That
+The widget lives in the Live surfaces list, moved under the first entry at
+render time — it is that entry, playable, rather than a section of its own.
+
+It calls `plotline.mpdonovan.com/api/person-graph` directly. That
 is a cross-origin call, so it works only while the plotline deployment sets
 `PORTFOLIO_ORIGIN=https://mpdonovan.com`. Without it — or while the person graph
 is mid-rebuild, when the API answers 503 by design — the widget shows a labelled

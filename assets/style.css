@@ -485,6 +485,14 @@
      does, and falls back to a pre-rendered chain when that API is asleep —
      which it is designed to be whenever the graph is mid-rebuild. */
   .demo{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:20px 22px}
+  /* sitting in the surfaces list, under the entry it belongs to: indented and
+     tied to it by a border, so it reads as part of that entry rather than as a
+     fifth surface. */
+  .entries .demo{margin-left:34px;border-left:2px solid var(--accent-soft);
+    border-top-left-radius:0;border-bottom-left-radius:0}
+  @media(max-width:600px){.entries .demo{margin-left:0}}
+  .demo .demo-lead{font-family:var(--mono);font-size:12px;color:var(--mute);
+    line-height:1.6;margin-bottom:14px}
   .demo .pair{display:grid;grid-template-columns:1fr auto 1fr auto;gap:10px;align-items:center}
   @media(max-width:680px){.demo .pair{grid-template-columns:1fr;gap:8px}}
   .demo input{font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--bg);
