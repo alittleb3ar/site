@@ -123,24 +123,28 @@
 <main class="wrap">
 
   <!-- ============================================================
-       What it cost. Not new copy: each card pulls its prose straight out
-       of NODE_NOTES, so a scar edited on a chip is edited here too. These
-       are promoted out of the popovers because the popovers are opt-in,
-       one at a time, on diagrams a skimmer never reaches — and this is the
-       part of the page worth reading if you only read one part.
+       What I built. Every chip on the diagrams below is something that
+       was chosen; read only those and the project looks like an
+       assembly of other people's software. These four are the parts
+       that had to be written.
+
+       Unlike the scar cards that stood here before, this copy lives
+       here rather than being lifted out of NODE_NOTES. A card and a
+       chip note can now say different things, and neither breaks the
+       other. The cost of that is the obvious one: nothing keeps them
+       agreeing except reading both.
        ============================================================ -->
-  <section class="sec" id="cost">
+  <section class="sec" id="made">
     <div class="sec-head">
       <span class="tick">&sect;</span>
-      <h2>What it cost</h2>
-      <span class="meta">four things that broke</span>
+      <h2>What I built</h2>
+      <span class="meta">four pieces</span>
     </div>
-    <div class="scars" id="scars"></div>
-    <p class="note">Chips marked <span class="ast">&#10034;</span> on the diagrams below carry one of these. The four here are the ones worth reading first.</p>
+    <div class="built" id="built"></div>
   </section>
 
-  <!-- Four public surfaces, not one app. Three of them existed for months
-       before anything on this page linked to them.
+  <!-- Five public surfaces, and two of them are apps. Most existed for
+       months before anything on this page linked to them.
 
        Moved above the diagrams: the things you can open should come before
        the drawings of how they were built. -->
@@ -545,16 +549,24 @@
 /* =========================================================
    ADD A SURFACE: append an object to this list, pointing
    'url' at wherever it's deployed. These are the things you
-   can actually open — the app, the reports, the read-only
-   Dagster, the dbt docs — not the things it's built from.
+   can actually open — the two apps, the reports, the
+   read-only Dagster, the dbt docs — not the things it's
+   built from.
    ========================================================= */
 const SURFACES = [
   {
     title:"However Many Degrees of Whoever",
     summary:"Chain together co-stars to connect any two people — find the shortest path, or hunt for one of an exact length. (As long as they're on IMDb.)",
-    url:"https://plotline.mpdonovan.com",
+    url:"https://plotline.mpdonovan.com/however-many-degrees",
     status:"app",
     tags:["FastAPI","React","TypeScript"]
+  },
+  {
+    title:"The Missing Link",
+    summary:"One puzzle a day: two actors, and a chain of co-stars to build between them. The most-travelled links are banned, so it's a question about films rather than about who has been in everything. Every past day stays playable at /link/&lt;date&gt;.",
+    url:"https://plotline.mpdonovan.com/link",
+    status:"app",
+    tags:["React","TypeScript"]
   },
   {
     title:"Data overview",
@@ -607,6 +619,53 @@ const REPORTS = [
   //   date:"2026-02-01",
   //   tags:["anime","rankings"]
   // },
+];
+
+/* =========================================================
+   ADD A CARD ("What I built"): append an object to this list.
+
+     kind   short mono kicker over the headline — the layer it
+            belongs to, not a repeat of the headline
+     title  the claim, in one line
+     body   a string, or an array of strings for more than one
+            paragraph. Plain text: it is set with textContent,
+            so markup here would render as markup, visibly.
+     tags   optional, small mono chips under the body
+     link   optional {url,label} for a thing you can go and open
+
+   This is the one place on the page where the prose is written
+   rather than pulled from somewhere else. A card with no title
+   drops rather than rendering the word "undefined".
+   ========================================================= */
+const BUILT = [
+  {
+    kind:"The catalog DSL",
+    title:"One declaration, five things generated",
+    body:"Ninety-three tables, twenty-three sources, sixteen jobs and every schedule are declared once, as frozen Python dataclasses, and compiled into Dagster asset keys, the DuckDB DDL behind the graph export, DuckLake-qualified SQL, the analytics snapshot, and the report site. It replaced a rate limit that lived in three places and a list of gold models copied into four. A test walks the package's own syntax tree and fails if it imports anything outside the standard library — which is what lets the API read the same catalog without dragging in dbt, Dagster or DuckDB.",
+    tags:["Python","stdlib only"]
+  },
+  {
+    kind:"The warehouse",
+    title:"Two stores, because one of them can't take a lock",
+    body:"Bronze, silver and gold live in DuckLake: the catalog in PostgreSQL, Parquet on disk, and a disposable in-memory DuckDB as the engine. It has no primary keys, no unique constraints and no sequences — fine for tables whose uniqueness dbt already proves, useless for a worklist that has to be claimed by one worker and nobody else. So the worklists, the leases, the rate-limit buckets and the dead letters stayed in a relational PostgreSQL beside it. The two never share a transaction: the merge is idempotent, so a crash between them is a retry rather than a repair.",
+    tags:["DuckLake","PostgreSQL","Dagster"]
+  },
+  {
+    kind:"The graph build",
+    title:"195 million rows through a 4 GB engine",
+    body:[
+      "The co-star table is a self-join over a hundred million credits, and the planner can't be trusted to pick a build side — DuckLake's scan estimates are weak enough to invert it. So both sides and the aggregate are filtered to the same hash bucket and the whole thing is unioned eight times over: whatever plan comes out, no hash table can exceed an eighth of the data. Rows sharing a title share a bucket, so the buckets hold whole groups and the counts stay exact.",
+      "The model feeding it was ephemeral until the first full-volume build, when inlining rebuilt two hundred-million-row dedup structures on both sides of the join at once and exhausted the entire spill allowance."
+    ],
+    tags:["dbt","DuckDB"]
+  },
+  {
+    kind:"The daily puzzle",
+    title:"Difficulty measured, not guessed",
+    body:"The Missing Link picks a pair of actors and then bans the corridor between them — the people and titles the most paths run through — so the obvious answer stops working while the corridor stays wide enough to still have others. Par is re-measured after those bans, so the number published is the one the player actually faces. The thresholds behind all of it come from running two hundred real pairs and reading the distribution, rather than picking a number that sounded about right.",
+    tags:["Dagster","DuckDB"],
+    link:{url:"https://plotline.mpdonovan.com/link",label:"Today's puzzle"}
+  }
 ];
 
 /* =========================================================
@@ -865,46 +924,69 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 })();
 
 /* =========================================================
-   What it cost.
+   What I built. Rendered from BUILT, near the top of this
+   script with the other content arrays.
 
-   The prose is not repeated here — each card reads its body
-   straight out of NODE_NOTES, so a scar edited on a chip is
-   edited in both places at once. Only the headline is new.
-   A key that stops existing drops its card rather than
-   rendering the word "undefined" onto the page.
+   Every field is set with textContent rather than innerHTML:
+   the copy is hand-written a few hundred lines up rather than
+   fetched from anywhere, but "I wrote it myself" is not a
+   sanitiser, and an em-dash typed as an entity should show up
+   as a mistake rather than quietly work.
    ========================================================= */
-const HEADLINE_SCARS = [
-  {chip:"DuckDB",     title:"20 GB, then thirteen seconds"},
-  {chip:"FastAPI",    title:"Failing closed took the whole site down"},
-  /* this headline is doing grammatical work as well as editorial: the scar it
-     pulls opens "That choice is load-bearing", and out of the popover the
-     antecedent has to come from somewhere. */
-  {chip:"title_xref", title:"Surrogate keys are derived, not counted out"},
-  {chip:"Dagster",    title:"A check that guarded nothing"}
-];
-
 (function(){
-  const wrap = document.getElementById('scars');
+  const wrap = document.getElementById('built');
   if(!wrap) return;
-  HEADLINE_SCARS.forEach(function(item){
-    const note = NODE_NOTES[item.chip];
-    if(!note || !note.scar) return;
+  BUILT.forEach(function(item){
+    /* a half-written card drops rather than rendering "undefined" */
+    if(!item || !item.title) return;
     const card = document.createElement('article');
-    card.className = 'scar-card';
+    card.className = 'build-card';
 
-    const who = document.createElement('div');
-    who.className = 'who';
-    who.textContent = '✲ ' + item.chip;
+    if(item.kind){
+      const kind = document.createElement('div');
+      kind.className = 'kind';
+      kind.textContent = item.kind;
+      card.appendChild(kind);
+    }
 
     const head = document.createElement('h3');
     head.textContent = item.title;
-
-    const body = document.createElement('p');
-    body.textContent = note.scar;
-
-    card.appendChild(who);
     card.appendChild(head);
-    card.appendChild(body);
+
+    /* body takes a string or a list of them, so a card that needs a
+       second paragraph gets one without markup in a data field */
+    [].concat(item.body || []).forEach(function(par){
+      const p = document.createElement('p');
+      p.textContent = par;
+      card.appendChild(p);
+    });
+
+    if(item.tags && item.tags.length){
+      const tags = document.createElement('div');
+      tags.className = 'tags';
+      item.tags.forEach(function(t){
+        const s = document.createElement('span');
+        s.textContent = t;
+        tags.appendChild(s);
+      });
+      card.appendChild(tags);
+    }
+
+    if(item.link && item.link.url){
+      const a = document.createElement('a');
+      a.className = 'more';
+      a.href = item.link.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.textContent = item.link.label || 'Open';
+      const arr = document.createElement('span');
+      arr.className = 'arr';
+      arr.textContent = '↗';
+      a.appendChild(document.createTextNode(' '));
+      a.appendChild(arr);
+      card.appendChild(a);
+    }
+
     wrap.appendChild(card);
   });
 })();
