@@ -20,8 +20,7 @@ HTML, one shared stylesheet, and a little vanilla JavaScript.
 │   ├── index.html          # notebook index (lazy-loaded iframes)
 │   └── notebooks/          # nbconvert HTML exports
 ├── plotline/
-│   ├── index.html          # hero + live demo, what it cost, surfaces,
-│   │                       #   how it's built (tabbed), reports
+│   ├── index.html          # the plotline project page — shape described below
 │   └── stats.json          # generated in the plotline repo — see below
 ├── CNAME                   # custom domain for GitHub Pages
 └── .nojekyll               # serve files as-is, skip Jekyll
@@ -43,17 +42,21 @@ HTML — edit the array, no templating required.
   the HTML in `pyloseq/notebooks/`, then add an entry to `NOTEBOOKS` in
   `pyloseq/index.html` pointing `file` at it.
 - **A plotline surface / report**: append to `SURFACES` or `REPORTS` in
-  `plotline/index.html`. `SURFACES` is for things you can open — the app, the
-  reports, read-only Dagster, the dbt docs. The Reports section stays hidden
-  while `REPORTS` is empty; an empty section that says "coming soon" reads as
-  abandoned.
-- **A headline scar** (plotline, "What it cost"): add an entry to
-  `HEADLINE_SCARS` in `plotline/index.html` — `{chip, title}`. The body is
-  *not* written there: it is read from that chip's `scar` in `NODE_NOTES`, so
-  a scar edited on a chip is edited in both places at once. An entry whose
-  chip has no `scar` drops its card rather than rendering "undefined". Mind
-  that a scar written to sit under a chip's `why` may open with a dangling
-  "that" once lifted out — the card's `title` is the antecedent it gets.
+  `plotline/index.html`. `SURFACES` is for things you can open — the two apps
+  (However Many Degrees of Whoever, The Missing Link), the reports, read-only
+  Dagster, the dbt docs. The count beside the section head is `SURFACES.length`
+  and the row numbers are the index, so both follow on their own. Note that
+  `summary` is written into the row with `innerHTML`, so a literal `<` in it
+  has to be an entity. The Reports section stays hidden while `REPORTS` is
+  empty; an empty section that says "coming soon" reads as abandoned.
+- **A build card** (plotline, "What I built"): add an entry to `BUILT` in
+  `plotline/index.html` — `{kind, title, body, tags?, link?}`. `body` is a
+  string, or an array of them for more than one paragraph. Unlike everything
+  else on that page, this copy is written *there* rather than pulled out of
+  `NODE_NOTES` — a card and a chip note can say different things and neither
+  breaks the other, which also means nothing keeps them agreeing except
+  reading both. Every field is set with `textContent`, so markup in one shows
+  up as markup. A card with no `title` drops rather than rendering "undefined".
 - **A chip note**: add an entry to `NODE_NOTES` in `plotline/index.html`, keyed
   by the chip's label text (trailing version numbers are stripped, so `React 19`
   finds `React`). One entry annotates that chip on *every* diagram. Each entry
@@ -65,10 +68,15 @@ HTML — edit the array, no templating required.
 ## The plotline page shape
 
 The page runs at three altitudes, deliberately: **claim** (hero — tagline, the
-one-box constraint, the demo, the figure strip), **proof** ("What it cost" and
+one-box constraint, the demo, the figure strip), **proof** ("What I built" and
 the live surfaces), then **depth** ("How it's built"). The demo used to be the
 fifth section, behind four diagrams; anyone skimming left before reaching the
 one thing that shows the system runs.
+
+"What I built" replaced a section that promoted four chip scars onto the page.
+The scars are still there, on the chips, marked ✲ — but every chip is a tool
+that was *chosen*, and a page made only of those reads as an assembly of other
+people's software. The four cards name the parts that had to be written.
 
 "How it's built" is four views in one tab strip rather than four stacked
 sections — three of them share the same lane/flow grammar, so read one after
