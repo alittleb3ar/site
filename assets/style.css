@@ -153,8 +153,10 @@
   .sec{padding:96px 0 0}
   /* fixed nav would otherwise cover the head of any section jumped to by hash */
   .sec[id]{scroll-margin-top:76px}
-  /* home: the hero sits right on top of the project list */
-  #work{padding-top:44px}
+  /* home: the hero sits right on top of whatever section comes first.
+     this follows that section rather than naming a particular one — it
+     was on #work while the project list led the page. */
+  #about{padding-top:44px}
   .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:34px;
     border-bottom:1px solid var(--line);padding-bottom:14px}
   .sec-head .tick{font-family:var(--mono);font-size:13px;color:var(--accent)}
