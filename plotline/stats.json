@@ -1,91 +1,70 @@
 {
-  "generated_at": "2026-07-31T00:00:00Z",
+  "generated_at": "2026-08-10T14:00:59Z",
   "generated_by": "scripts/export_site_stats.py",
-  "warehouse_built_at": null,
+  "warehouse_built_at": "2026-08-02T12:24:50.156481+00:00",
   "figures": [
     {
       "key": "source_feeds",
-      "label": "ingest feeds",
+      "label": "upstream data feeds",
       "value": 23,
       "qualifier": null,
       "source": "catalog"
     },
     {
-      "key": "dbt_models",
-      "label": "dbt models",
-      "value": 39,
-      "qualifier": null,
-      "source": "catalog"
-    },
-    {
-      "key": "dbt_seeds",
-      "label": "seeds",
-      "value": 9,
-      "qualifier": null,
-      "source": "catalog"
-    },
-    {
-      "key": "schedules",
-      "label": "schedules",
-      "value": 4,
-      "qualifier": null,
-      "source": "catalog"
-    },
-    {
-      "key": "warehouse_schemas",
-      "label": "warehouse schemas",
-      "value": 5,
-      "qualifier": null,
-      "source": "catalog"
-    },
-    {
-      "key": "test_modules",
-      "label": "test modules",
-      "value": 50,
-      "qualifier": null,
-      "source": "repository"
-    },
-    {
-      "key": "graph_edges",
-      "label": "co-star edges",
-      "value": 195000000,
-      "qualifier": "approx",
-      "source": "documented"
-    },
-    {
-      "key": "graph_people",
-      "label": "people in the graph",
-      "value": 3400000,
-      "qualifier": "approx",
-      "source": "documented"
-    },
-    {
-      "key": "graph_titles",
-      "label": "titles in the graph",
-      "value": 1200000,
-      "qualifier": "approx",
-      "source": "documented"
-    },
-    {
-      "key": "credits",
-      "label": "credit rows",
-      "value": 100000000,
-      "qualifier": "min",
-      "source": "documented"
-    },
-    {
       "key": "titles",
       "label": "titles",
-      "value": 10000000,
-      "qualifier": "min",
-      "source": "documented"
+      "value": 12672946,
+      "qualifier": null,
+      "source": "snapshot"
     },
     {
       "key": "people",
       "label": "people",
-      "value": 10000000,
-      "qualifier": "min",
-      "source": "documented"
+      "value": 15526439,
+      "qualifier": null,
+      "source": "snapshot"
+    },
+    {
+      "key": "credits",
+      "label": "credit rows",
+      "value": 125221355,
+      "qualifier": null,
+      "source": "snapshot"
+    },
+    {
+      "key": "mart_rows",
+      "label": "rows across the marts",
+      "value": 156887216,
+      "qualifier": null,
+      "source": "snapshot"
+    },
+    {
+      "key": "graph_edges",
+      "label": "credited collaborations",
+      "value": 717407501,
+      "qualifier": null,
+      "source": "person graph"
+    },
+    {
+      "key": "graph_cast_edges",
+      "label": "on-screen pairings",
+      "value": 219250564,
+      "qualifier": null,
+      "source": "person graph"
+    },
+    {
+      "key": "graph_people",
+      "label": "people in the graph",
+      "value": 3496464,
+      "qualifier": null,
+      "source": "person graph"
+    },
+    {
+      "key": "graph_titles",
+      "label": "titles and episodes in the graph",
+      "value": 6608184,
+      "qualifier": null,
+      "source": "person graph"
     }
   ]
 }
