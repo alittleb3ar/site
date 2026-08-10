@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>plotline</title>
-<meta name="description" content="A self-hosted film, TV and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, served as a ~195M-edge co-star graph. Built to run unattended on one 16 GB box.">
+<meta name="description" content="A self-hosted film, TV and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, served as a ~717M-edge collaboration graph. Built to run unattended on one 16 GB box.">
 <link rel="canonical" href="https://mpdonovan.com/plotline/">
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://mpdonovan.com/plotline/">
 <meta property="og:title" content="plotline">
-<meta property="og:description" content="A self-hosted film, TV, and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, served as a ~195M-edge co-star graph.">
+<meta property="og:description" content="A self-hosted film, TV, and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, served as a ~717M-edge collaboration graph.">
 <meta property="og:image" content="https://mpdonovan.com/assets/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -84,7 +84,7 @@
   <p class="crumb"><a href="../index.html">work</a> / plotline</p>
   <span class="stamp"><span class="pulse"></span> active</span>
   <h1>plotline.</h1>
-  <p class="tag">A self-hosted film, TV and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, and served as a <b>~195M-edge co-star graph</b>. Built to run unattended on <b>one 16&nbsp;GB box</b>, which is why half the decisions further down look the way they do.</p>
+  <p class="tag">A self-hosted film, TV and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, and served as a <b>~717M-edge collaboration graph</b>, 219M of them on-screen pairings. Built to run unattended on <b>one 16&nbsp;GB box</b>, which is why half the decisions further down look the way they do.</p>
 
   <!-- the two things a reader wants first: the thing running, and the code
        behind it. the second is rendered from SOURCE rather than hard-coded,
@@ -331,7 +331,7 @@
           <span class="node"><span>fact_rating</span></span>
           <span class="node"><span>fact_award</span></span>
           <span class="node"><span>fact_box_office</span></span>
-          <span class="node dim"><span>&hellip;23 in all</span></span>
+          <span class="node dim"><span>&hellip;25 in all</span></span>
         </div>
       </div>
       <div class="flow"></div>
@@ -652,9 +652,9 @@ const BUILT = [
   },
   {
     kind:"The graph build",
-    title:"195 million rows through a 4 GB engine",
+    title:"717 million rows through a 4 GB engine",
     body:[
-      "The co-star table is a self-join over a hundred million credits, and the planner can't be trusted to pick a build side — DuckLake's scan estimates are weak enough to invert it. So both sides and the aggregate are filtered to the same hash bucket and the whole thing is unioned eight times over: whatever plan comes out, no hash table can exceed an eighth of the data. Rows sharing a title share a bucket, so the buckets hold whole groups and the counts stay exact.",
+      "The collaboration table is a self-join over a hundred and twenty-five million credits, and the planner can't be trusted to pick a build side — DuckLake's scan estimates are weak enough to invert it. So both sides and the aggregate are filtered to the same hash bucket and the whole thing is unioned eight times over: whatever plan comes out, no hash table can exceed an eighth of the data. Rows sharing a title share a bucket, so the buckets hold whole groups and the counts stay exact.",
       "The model feeding it was ephemeral until the first full-volume build, when inlining rebuilt two hundred-million-row dedup structures on both sides of the join at once and exhausted the entire spill allowance."
     ],
     tags:["dbt","DuckDB"]
@@ -866,7 +866,7 @@ const NODE_NOTES = {
     scar:"Deduplication happens one model later, by confidence. Keeping the two steps apart means you can always ask why a credit was dropped."
   },
   "person_graph_edges":{
-    why:"Who has appeared with whom: roughly 195 million co-appearance pairs, derived from gold and exported to a standalone file the API opens read-only.",
+    why:"Who has worked with whom: roughly 717 million credited collaborations over 3.5 million people, of which 219 million are on-screen pairings — derived from gold and exported to a standalone file the API opens read-only.",
     scar:"Edges are stored undirected, with the lower identifier first, and both columns indexed — rather than storing each pair twice to make lookups symmetrical. On a table this size the index is far cheaper than the duplicate rows."
   },
   "person_graph.duckdb":{
@@ -1094,7 +1094,7 @@ document.getElementById('yr').textContent = new Date().getFullYear();
    the strip be honest about which figures are measurements
    and which are still numbers somebody wrote down.
    ========================================================= */
-const STRIP_KEYS = ["graph_edges","credits","titles","people","dbt_models","test_modules"];
+const STRIP_KEYS = ["graph_edges","graph_cast_edges","credits","mart_rows","titles","people"];
 
 function formatValue(value){
   if(typeof value !== 'number') return String(value);
