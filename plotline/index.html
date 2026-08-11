@@ -337,17 +337,19 @@ const DOORS = [
 ];
 
 /* =========================================================
-   THE SOURCE. Point this at the plotline repository:
+   THE SOURCE. The repository behind the hero's second button.
 
-     const SOURCE = {url:"https://github.com/…/plotline"};
+   Set back to null and the hero prints a line saying the
+   source is private instead of rendering a button. Either is
+   fine; a page with no code link and no mention of one is not
+   — on a portfolio page silence reads as "there is no code",
+   which is the wrong thing for this to say.
 
-   Left null, the hero prints a line saying the source is
-   private instead of rendering a button that goes nowhere.
-   Either is fine; a page with no code link and no mention of
-   one is not — on a portfolio page silence reads as "there
-   is no code", which is the wrong thing for this to say.
+   NOTE: while the repository is private, this button is a
+   404 for anyone without access. That is a deliberate trade
+   — the link is right for everyone who has been given it.
    ========================================================= */
-const SOURCE = null;
+const SOURCE = {url:"https://github.com/alittleb3ar/plotline"};
 
 /* =========================================================
    ADD A REPORT: append an object to this list.
@@ -386,33 +388,29 @@ const BUILT = [
   {
     kind:"The catalog DSL",
     title:"One declaration, five things generated",
-    body:"Ninety-three tables, twenty-three sources, sixteen jobs and every schedule are declared once, as frozen Python dataclasses, and compiled into Dagster asset keys, the DuckDB DDL behind the graph export, DuckLake-qualified SQL, the analytics snapshot, and the report site. It replaced a rate limit that lived in three places and a list of gold models copied into four. A test walks the package's own syntax tree and fails if it imports anything outside the standard library — which is what lets the API read the same catalog without dragging in dbt, Dagster or DuckDB.",
+    body:"93 tables, 23 sources and 16 jobs are declared once as frozen dataclasses, then compiled into Dagster asset keys, DuckDB DDL, DuckLake SQL, the analytics snapshot and the report site. A test fails the build on any import outside the standard library, so the API can read the same catalog without dragging in dbt, Dagster or DuckDB.",
     tags:["Python","stdlib only"]
   },
   {
     kind:"The warehouse",
     title:"Two stores, because one of them can't take a lock",
-    body:"Bronze, silver and gold live in DuckLake: the catalog in PostgreSQL, Parquet on disk, and a disposable in-memory DuckDB as the engine. It has no primary keys, no unique constraints and no sequences — fine for tables whose uniqueness dbt already proves, useless for a worklist that has to be claimed by one worker and nobody else. So the worklists, the leases, the rate-limit buckets and the dead letters stayed in a relational PostgreSQL beside it. The two never share a transaction: the merge is idempotent, so a crash between them is a retry rather than a repair.",
+    body:"Bronze, silver and gold live in DuckLake: Parquet on disk, catalog in PostgreSQL. It has no primary keys and no sequences \u2014 fine for tables dbt already proves unique, useless for a worklist one worker has to claim and nobody else. So the worklists, leases and dead letters stayed in a relational PostgreSQL beside it, and the two never share a transaction: the merge is idempotent, so a crash between them is a retry.",
     tags:["DuckLake","PostgreSQL","Dagster"]
   },
   {
     kind:"The graph build",
     title:"717 million rows through a 4 GB engine",
-    body:[
-      "The collaboration table is a self-join over a hundred and twenty-five million credits, and the planner can't be trusted to pick a build side — DuckLake's scan estimates are weak enough to invert it. So both sides and the aggregate are filtered to the same hash bucket and the whole thing is unioned eight times over: whatever plan comes out, no hash table can exceed an eighth of the data. Rows sharing a title share a bucket, so the buckets hold whole groups and the counts stay exact.",
-      "The model feeding it was ephemeral until the first full-volume build, when inlining rebuilt two hundred-million-row dedup structures on both sides of the join at once and exhausted the entire spill allowance."
-    ],
+    body:"A self-join over 125 million credits, where the planner can't be trusted to pick a build side \u2014 DuckLake's scan estimates are weak enough to invert it. So both sides are filtered to the same hash bucket and unioned eight times over: whatever plan comes out, no hash table exceeds an eighth of the data. The model feeding it was ephemeral until the first full-volume build exhausted the spill allowance in one go.",
     tags:["dbt","DuckDB"]
   },
   {
     kind:"The daily puzzle",
     title:"Difficulty measured, not guessed",
-    body:"The Missing Link picks a pair of actors and then bans the corridor between them — the people and titles the most paths run through — so the obvious answer stops working while the corridor stays wide enough to still have others. Par is re-measured after those bans, so the number published is the one the player actually faces. The thresholds behind all of it come from running two hundred real pairs and reading the distribution, rather than picking a number that sounded about right.",
+    body:"The Missing Link picks a pair of actors and bans the corridor between them \u2014 the people and titles the most paths run through \u2014 so the obvious answer stops working while enough others survive. Par is re-measured after those bans, so the number published is the one the player actually faces, and the thresholds behind it come from 200 real pairs rather than a number that sounded about right.",
     tags:["Dagster","DuckDB"],
     link:{url:"https://plotline.mpdonovan.com/link",label:"Today's puzzle"}
   }
 ];
-
 /* =========================================================
    CHIP NOTES, keyed by a chip's label text (trailing version
    numbers are stripped before lookup, so "React 19" finds
