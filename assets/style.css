@@ -60,8 +60,8 @@
     background-size:26px 26px}
   ::selection{background:var(--accent);color:#fff}
   a{color:inherit;text-decoration:none}
-  /* .diagram, .topo and .entries all set display, which silently defeats the
-     plain [hidden] attribute — a hidden panel would lay itself out anyway.
+  /* .topo, .doors and .entries all set display, which silently defeats the
+     plain [hidden] attribute — a hidden block would lay itself out anyway.
      everything on this site that hides by attribute depends on this line. */
   [hidden]{display:none!important}
   .wrap{max-width:1080px;margin:0 auto;padding:0 28px}
@@ -145,6 +145,17 @@
   .hero .cta a:hover .arr{transform:translate(3px,-3px)}
   /* the no-repo case: a sentence, not a dead button */
   .hero .cta .none{font-family:var(--mono);font-size:12px;color:var(--mute)}
+
+  /* ---- the side doors ----
+     the public surfaces the app itself doesn't link to. deliberately the
+     same chip the deployment diagram uses (.node, styled further down):
+     these are the same claim in both places — something of mine running
+     at the other end — so they should not be two different objects. */
+  .doors{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:16px}
+  .doors-lead{font-family:var(--mono);font-size:11px;color:var(--mute);
+    letter-spacing:.06em;text-transform:uppercase;margin-right:2px}
+  .doors .node{padding:6px 11px}
+  .doors .node:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
   /* the demo sits in the hero as its evidence, not in the surfaces list */
   .hero .demo{margin-top:30px;max-width:780px}
   @media(prefers-reduced-motion:reduce){.hero .cta .arr{transition:none}}
@@ -220,10 +231,10 @@
     .entry .right .arr{display:inline;margin-left:8px}
   }
   
-  /* ---- stack diagram (project sub-pages) ----
-     lanes flow top-to-bottom; each .node carries its own --brand hex,
-     shown on hover.  logo glyphs come from the inline <symbol> sprite. */
-  .diagram{display:flex;flex-direction:column}
+  /* ---- lanes (project sub-pages) ----
+     a lane is one horizontal band of chips; each .node carries its own
+     --brand hex, shown on hover. logo glyphs come from the inline
+     <symbol> sprite. */
   .lane{display:grid;grid-template-columns:152px 1fr;gap:20px;align-items:center;
     background:var(--paper);border:1px solid var(--line);border-radius:10px;
     padding:16px 20px;transition:border-color .25s,box-shadow .25s;
@@ -236,9 +247,9 @@
     text-transform:none;letter-spacing:0;line-height:1.45;margin-top:5px}
   .lane .nodes{display:flex;gap:8px;flex-wrap:wrap}
   /* the note popover is inserted beside the chip that opened it, so it needs
-     a positioned ancestor to be placed against. both diagrams, hence both. */
-  .diagram .nodes,.topo .nodes{position:relative}
-  /* cross-cutting band: wraps the stack rather than sitting under it */
+     a positioned ancestor to be placed against. */
+  .topo .nodes{position:relative}
+  /* cross-cutting band: wraps the topology rather than sitting inside it */
   .lane.cross{border-style:dashed;background:transparent;margin-top:26px}
   .lane.cross:hover{box-shadow:none}
 
@@ -465,47 +476,6 @@
   .strip-prov code{color:var(--accent)}
   @media(max-width:600px){.strip .fig{flex:1 1 44%}}
 
-  /* ---- the day (schedule ruler) ----
-     every row is one scheduled thing, its mark placed at the hour it fires on
-     a 0–24 UTC track. read down the column and the marks march across the day;
-     that is the only picture on the page that says "this runs without me". */
-  .clock{background:var(--paper);border:1px solid var(--line);border-radius:10px;
-    padding:18px 22px 8px;opacity:0;transform:translateY(16px);
-    transition:opacity .3s,transform .3s,border-color .25s,box-shadow .25s}
-  .clock.in{opacity:1;transform:none}
-  .clock:hover{border-color:var(--accent);box-shadow:0 14px 32px -24px rgba(13,138,122,.5)}
-  .clock .hours{position:relative;height:15px;margin-bottom:6px}
-  .clock .hours i{position:absolute;top:0;left:calc(var(--at) / 24 * 100%);
-    transform:translateX(-50%);font-family:var(--mono);font-style:normal;
-    font-size:10px;color:var(--mute);letter-spacing:.04em}
-  /* the two ends would otherwise hang half outside the card */
-  .clock .hours i:first-child{transform:none}
-  .clock .hours i:last-child{transform:translateX(-100%)}
-  .clock ol{list-style:none;margin:0;padding:0}
-  .clock li{padding:11px 0 12px;border-top:1px dashed var(--line)}
-  .clock .bar{position:relative;height:11px}
-  .clock .bar::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;
-    background:var(--line)}
-  .clock .mark{position:absolute;top:50%;left:calc(var(--at) / 24 * 100%);
-    transform:translate(-50%,-50%);width:8px;height:8px;border-radius:50%;
-    background:var(--accent);box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--accent-soft)}
-  /* things that are not a moment in the day: a band for the ones always
-     running, a hollow mark for the one that only ever runs when I say so. */
-  .clock .mark.band{left:0;width:100%;height:3px;border-radius:2px;transform:translateY(-50%);
-    background:linear-gradient(90deg,var(--accent-soft),var(--accent),var(--accent-soft));
-    box-shadow:none}
-  /* not at any hour: no mark at all. a dot at left:0 would read as "runs at
-     midnight", and a dashed line competes with the row rules — an empty track
-     against the rows that do carry a mark says it by itself. */
-  .clock .mark.manual{display:none}
-  .clock .row{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 12px;margin-top:9px}
-  .clock .when{font-family:var(--mono);font-size:12px;color:var(--accent);min-width:82px}
-  .clock .when.off{color:var(--mute)}
-  .clock .row b{font-family:var(--mono);font-weight:500;font-size:12.5px;color:var(--ink)}
-  .clock .row em{font-style:normal;font-family:var(--mono);font-size:11.5px;color:var(--mute);
-    line-height:1.5;flex:1 1 240px}
-  @media(max-width:600px){.clock{padding:16px 16px 6px}.clock .when{min-width:0}}
-
   /* ---- live degrees demo ----
      the page's one interactive claim. it calls the same public API the app
      does, and falls back to a pre-rendered chain when that API is asleep —
@@ -570,33 +540,14 @@
   .build-card .more .arr{transition:transform .2s}
   .build-card .more:hover .arr{transform:translate(3px,-3px)}
 
-  /* ---- how it's built: one frame, four views ----
-     three of these diagrams share the lane/flow grammar, so stacked they
-     read as repetition rather than depth. the strip is gated on .js: with
-     no script nothing hides the panels, and a strip that couldn't switch
-     them would be a row of dead buttons. */
-  .tabs .tablist{display:none;flex-wrap:wrap;gap:2px;
-    border-bottom:1px solid var(--line);margin-bottom:20px}
-  .js .tabs .tablist{display:flex}
-  .tabs .tablist button{font-family:var(--mono);font-size:12.5px;color:var(--mute);
-    background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;
-    padding:9px 15px;cursor:pointer;-webkit-tap-highlight-color:transparent;
-    transition:color .2s,border-color .2s}
-  .tabs .tablist button:hover{color:var(--ink)}
-  .tabs .tablist button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent)}
-  .tabs .tablist button:focus-visible{outline:2px solid var(--accent);outline-offset:-3px;border-radius:4px}
-  @media(max-width:520px){.tabs .tablist button{padding:9px 11px;font-size:12px}}
-  /* the legend's negative top margin exists to tuck it under a section head;
-     under the tab strip it just collides with the underline. */
-  .tabs .legend{margin-top:0}
-  /* one line of orientation per view, replacing the section head each of
-     these used to have */
+  /* ---- how it's built ----
+     one diagram now, not four: the lead line that used to orient each view
+     orients the section. */
   .panel-lead{font-family:var(--mono);font-size:12px;color:var(--mute);
     line-height:1.6;margin-bottom:18px;max-width:78ch}
 
   /* the reveal/motion rules above list every card type by name; the new
      ones join them rather than being animated by accident. */
   @media(prefers-reduced-motion:reduce){
-    .clock{opacity:1!important;transform:none!important}
     .build-card{opacity:1!important;transform:none!important}
   }

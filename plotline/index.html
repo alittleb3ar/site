@@ -28,11 +28,6 @@
 <script>
   /* apply the saved theme before first paint so there's no light/dark flash */
   (function(){
-    /* marks the document as scripted, before first paint. the tab strip in
-       "How it's built" is shown only under .js — without script the panels
-       are never hidden, so a tab strip that could not switch them would be
-       a row of dead buttons. */
-    document.documentElement.classList.add('js');
     try{
       var t=localStorage.getItem('theme');
       if(t==='dark'||t==='light') document.documentElement.setAttribute('data-theme',t);
@@ -84,7 +79,7 @@
   <p class="crumb"><a href="../index.html">work</a> / plotline</p>
   <span class="stamp"><span class="pulse"></span> active</span>
   <h1>plotline.</h1>
-  <p class="tag">A self-hosted film, TV and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, and served as a <b>~717M-edge collaboration graph</b>, 219M of them on-screen pairings. Built to run unattended on <b>one 16&nbsp;GB box</b>, which is why half the decisions further down look the way they do.</p>
+  <p class="tag">A self-hosted film, TV and anime lakehouse — public datasets pulled nightly by Dagster, modelled with dbt into DuckLake, and served as a <b>~717M-edge collaboration graph</b>. Built to run unattended on <b>one 16&nbsp;GB box</b>, which is why half the decisions below look the way they do.</p>
 
   <!-- the two things a reader wants first: the thing running, and the code
        behind it. the second is rendered from SOURCE rather than hard-coded,
@@ -93,6 +88,14 @@
   <div class="cta" id="cta">
     <a class="primary" href="https://plotline.mpdonovan.com" target="_blank" rel="noopener">Open the app <span class="arr">&#8599;</span></a>
   </div>
+
+  <!-- The side doors. The apps link to each other, so listing them here as
+       cards said twice what the app says once; what the app does *not* show
+       is the machinery behind it, which is public too. Rendered as the same
+       chip the deployment diagram uses, because they are the same idea:
+       a logo linking to dagster.io is a logo, a logo linking to mine is
+       evidence. -->
+  <div class="doors" id="doors"></div>
 
   <!-- The demo is the hero's evidence, not a section of its own. It used to
        sit five sections down, behind four diagrams — which put every drawing
@@ -143,31 +146,15 @@
     <div class="built" id="built"></div>
   </section>
 
-  <!-- Five public surfaces, and two of them are apps. Most existed for
-       months before anything on this page linked to them.
-
-       Moved above the diagrams: the things you can open should come before
-       the drawings of how they were built. -->
-  <section class="sec" id="surfaces">
-    <div class="sec-head">
-      <span class="tick">&sect;</span>
-      <h2>Live surfaces</h2>
-      <span class="meta" id="apps-meta"></span>
-    </div>
-    <div class="entries" id="apps"></div>
-  </section>
-
   <!-- ============================================================
-       How it's built — four views of one system, tabbed rather than
-       stacked. Three of them share the same lane/flow grammar, so read
-       one after another they read as repetition rather than as depth;
-       and the source chips appeared twice, identically, in two of them.
-       One frame, four views, and that stops being true.
+       How it's built — one diagram, the deployment topology.
 
-       Panels stay in the DOM at all times — hidden, not absent, so
-       Ctrl-F and crawlers still reach every chip. Nothing is hidden in
-       the markup: script hides the inactive ones, and the tab strip is
-       shown only under .js, so the two can never disagree.
+       There were four views here: a stack, the data model, the daily
+       schedule, and this. The stack named the same chips this does, one
+       lane at a time instead of one host at a time; the data model and
+       the schedule are documentation the warehouse already publishes
+       itself, in Dagster and the dbt docs, both linked from the hero.
+       Four drawings of one system is three too many.
        ============================================================ -->
   <section class="sec" id="build">
     <div class="sec-head">
@@ -176,237 +163,14 @@
       <span class="meta">click a chip</span>
     </div>
 
-    <div class="tabs" id="build-tabs">
-      <div class="tablist" role="tablist" aria-label="How it&rsquo;s built">
-        <button type="button" role="tab" data-panel="stack"  id="tab-stack"  aria-controls="panel-stack">Stack</button>
-        <button type="button" role="tab" data-panel="data"   id="tab-data"   aria-controls="panel-data">Data model</button>
-        <button type="button" role="tab" data-panel="day"    id="tab-day"    aria-controls="panel-day">The day</button>
-        <button type="button" role="tab" data-panel="deploy" id="tab-deploy" aria-controls="panel-deploy">Deployment</button>
-      </div>
+    <!-- the notes came before this legend did, with nothing anywhere saying a
+         chip could be clicked. -->
+    <p class="legend" id="chip-legend">
+      <i><span class="dot">dotted</span> why it&rsquo;s here</i>
+      <i><span class="pip"></span> something of mine running at the other end</i>
+      <i><span class="ast">&#10034;</span> what it cost</i>
+    </p>
 
-      <!-- the notes existed before this legend did, on the diagram furthest down
-           the page, with nothing anywhere saying a chip could be clicked. it now
-           sits above all four views, and hides itself on the one with no chips. -->
-      <p class="legend" id="chip-legend">
-        <i><span class="dot">dotted</span> why it&rsquo;s here</i>
-        <i><span class="pip"></span> something of mine running at the other end</i>
-        <i><span class="ast">&#10034;</span> what it cost</i>
-      </p>
-
-    <div class="panel" id="panel-stack" role="tabpanel" aria-labelledby="tab-stack" data-panel="stack">
-    <p class="panel-lead">Sources in at the top, a browser at the bottom, every layer between named for what it does rather than what it is. The two dashed bands wrap the stack rather than sitting inside it.</p>
-    <div class="diagram">
-      <div class="lane">
-        <h4>Sources<span class="role">public dumps, REST &amp; SPARQL</span></h4>
-        <div class="nodes">
-          <span class="node" style="--brand:#AF8A08"><svg class="lg" aria-hidden="true"><use href="#i-imdb"></use></svg><span>IMDb</span></span>
-          <span class="node" style="--brand:#0198C0"><svg class="lg" aria-hidden="true"><use href="#i-tmdb"></use></svg><span>TMDB</span></span>
-          <span class="node" style="--brand:#006699"><svg class="lg" aria-hidden="true"><use href="#i-wikidata"></use></svg><span>Wikidata</span></span>
-          <span class="node"><span>MovieLens</span></span>
-          <span class="node" style="--brand:#BA478F"><svg class="lg" aria-hidden="true"><use href="#i-musicbrainz"></use></svg><span>MusicBrainz</span></span>
-          <span class="node" style="--brand:#181717"><svg class="lg" aria-hidden="true"><use href="#i-github"></use></svg><span>anime-offline-database</span></span>
-        </div>
-      </div>
-      <div class="flow"></div>
-      <div class="lane">
-        <h4>Orchestration<span class="role">ingest, retry, schedule</span></h4>
-        <div class="nodes">
-          <span class="node" style="--brand:#4F43DD"><svg class="lg" aria-hidden="true"><use href="#i-dagster"></use></svg><span>Dagster</span></span>
-        </div>
-      </div>
-      <div class="flow"></div>
-      <div class="lane">
-        <h4>Lakehouse<span class="role">Postgres catalog + Parquet</span></h4>
-        <div class="nodes">
-          <span class="node"><span>DuckLake</span></span>
-          <span class="node" style="--brand:#999000"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></span>
-          <span class="node" style="--brand:#4169E1"><svg class="lg" aria-hidden="true"><use href="#i-postgresql"></use></svg><span>PostgreSQL 17</span></span>
-        </div>
-      </div>
-      <div class="flow"></div>
-      <div class="lane">
-        <h4>Transform<span class="role">bronze &rarr; silver &rarr; gold</span></h4>
-        <div class="nodes">
-          <span class="node" style="--brand:#FF4F2C"><svg class="lg" aria-hidden="true"><use href="#i-dbt"></use></svg><span>dbt</span></span>
-          <span class="node" style="--brand:#150458"><svg class="lg" aria-hidden="true"><use href="#i-pandas"></use></svg><span>pandas</span></span>
-          <span class="node" style="--brand:#CD792C"><svg class="lg" aria-hidden="true"><use href="#i-polars"></use></svg><span>Polars</span></span>
-        </div>
-      </div>
-      <div class="flow"></div>
-      <div class="lane">
-        <h4>Serve<span class="role">read-only query layer</span></h4>
-        <div class="nodes">
-          <span class="node" style="--brand:#009688"><svg class="lg" aria-hidden="true"><use href="#i-fastapi"></use></svg><span>FastAPI</span></span>
-          <span class="node"><span>Uvicorn</span></span>
-          <span class="node" style="--brand:#999000"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></span>
-          <span class="node"><span>Evidence</span></span>
-        </div>
-      </div>
-      <div class="flow"></div>
-      <div class="lane">
-        <h4>Web<span class="role">single-page app</span></h4>
-        <div class="nodes">
-          <span class="node" style="--brand:#059AC3"><svg class="lg" aria-hidden="true"><use href="#i-react"></use></svg><span>React 19</span></span>
-          <span class="node" style="--brand:#3178C6"><svg class="lg" aria-hidden="true"><use href="#i-typescript"></use></svg><span>TypeScript</span></span>
-          <span class="node" style="--brand:#646CFF"><svg class="lg" aria-hidden="true"><use href="#i-vite"></use></svg><span>Vite</span></span>
-        </div>
-      </div>
-      <div class="flow"></div>
-      <div class="lane">
-        <h4>Runtime<span class="role">containers, TLS, one origin</span></h4>
-        <div class="nodes">
-          <span class="node" style="--brand:#1F88C0"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></span>
-          <span class="node" style="--brand:#1B91EC"><svg class="lg" aria-hidden="true"><use href="#i-docker"></use></svg><span>Docker</span></span>
-        </div>
-      </div>
-      <div class="lane cross">
-        <h4>CI / CD<span class="role">test, build, deploy</span></h4>
-        <div class="nodes">
-          <span class="node" style="--brand:#2088FF"><svg class="lg" aria-hidden="true"><use href="#i-gha"></use></svg><span>GitHub Actions</span></span>
-          <span class="node" style="--brand:#0A97D2"><svg class="lg" aria-hidden="true"><use href="#i-pytest"></use></svg><span>pytest</span></span>
-          <span class="node" style="--brand:#709700"><svg class="lg" aria-hidden="true"><use href="#i-ruff"></use></svg><span>Ruff</span></span>
-        </div>
-      </div>
-      <div class="lane cross">
-        <h4>Ops<span class="role">alerting &amp; backups</span></h4>
-        <div class="nodes">
-          <span class="node" style="--brand:#362D59"><svg class="lg" aria-hidden="true"><use href="#i-sentry"></use></svg><span>Sentry</span></span>
-          <span class="node" style="--brand:#317F6F"><svg class="lg" aria-hidden="true"><use href="#i-ntfy"></use></svg><span>ntfy</span></span>
-          <span class="node" style="--brand:#22A250"><svg class="lg" aria-hidden="true"><use href="#i-uptimekuma"></use></svg><span>Uptime Kuma</span></span>
-          <span class="node" style="--brand:#000000"><svg class="lg" aria-hidden="true"><use href="#i-umami"></use></svg><span>Umami</span></span>
-          <span class="node"><span>restic</span></span>
-          <span class="node" style="--brand:#E21E29"><svg class="lg" aria-hidden="true"><use href="#i-backblaze"></use></svg><span>Backblaze B2</span></span>
-        </div>
-      </div>
-    </div>
-    <p class="note">Logo marks belong to their respective owners · glyphs from <a href="https://simpleicons.org" target="_blank" rel="noopener">Simple Icons</a> and <a href="https://selfh.st/icons" target="_blank" rel="noopener">selfh.st/icons</a>.</p>
-    </div><!-- /panel-stack -->
-
-    <!-- ============================================================
-         The data model. Same lane/flow grammar as the stack view, but the
-         chips are tables rather than vendors — which is the thing a
-         warehouse actually is, and the thing the page used to leave out.
-         ============================================================ -->
-    <div class="panel" id="panel-data" role="tabpanel" aria-labelledby="tab-data" data-panel="data">
-    <p class="panel-lead">bronze &rarr; silver &rarr; gold. Same grammar as the Stack view, but every chip here is a table rather than a vendor.</p>
-    <div class="diagram">
-      <div class="lane">
-        <h4>Bronze<span class="role">ingested, unmodelled, one table per feed</span></h4>
-        <div class="nodes">
-          <span class="node"><span>imdb_title_basics</span></span>
-          <span class="node"><span>imdb_title_principals</span></span>
-          <span class="node"><span>imdb_name_basics</span></span>
-          <span class="node"><span>tmdb_movie</span></span>
-          <span class="node"><span>tmdb_tv</span></span>
-          <span class="node"><span>tmdb_imdb_lookup</span></span>
-          <span class="node"><span>wikidata_title_external_ids</span></span>
-          <span class="node"><span>movielens_ratings</span></span>
-          <span class="node"><span>anime_offline_db</span></span>
-          <span class="node dim"><span>&hellip;22 in all</span></span>
-        </div>
-      </div>
-      <div class="flow"></div>
-      <div class="lane">
-        <h4>Silver<span class="role">conformed, deduplicated, keyed</span></h4>
-        <div class="nodes">
-          <span class="node"><span>title_xref</span></span>
-          <span class="node"><span>person_xref</span></span>
-          <span class="node"><span>title</span></span>
-          <span class="node"><span>episode</span></span>
-          <span class="node"><span>credit</span></span>
-          <span class="node"><span>credit_tmdb</span></span>
-          <span class="node"><span>credit_tmdb_tv</span></span>
-          <span class="node"><span>anime_title</span></span>
-          <span class="node dim"><span>&hellip;16 in all</span></span>
-        </div>
-      </div>
-      <div class="flow"></div>
-      <div class="lane">
-        <h4>Gold<span class="role">dimensional: facts, dimensions, bridges</span></h4>
-        <div class="nodes">
-          <span class="node"><span>dim_title</span></span>
-          <span class="node"><span>dim_person</span></span>
-          <span class="node"><span>bridge_credit</span></span>
-          <span class="node"><span>v_credit_consolidated</span></span>
-          <span class="node"><span>fact_rating</span></span>
-          <span class="node"><span>fact_award</span></span>
-          <span class="node"><span>fact_box_office</span></span>
-          <span class="node dim"><span>&hellip;25 in all</span></span>
-        </div>
-      </div>
-      <div class="flow"></div>
-      <div class="lane">
-        <h4>Exports<span class="role">what leaves the warehouse</span></h4>
-        <div class="nodes">
-          <span class="node"><span>person_graph_edges</span></span>
-          <span class="node"><span>person_graph.duckdb</span></span>
-          <span class="node"><span>analytics.duckdb</span></span>
-          <span class="node"><span>meta.mart_inventory</span></span>
-        </div>
-      </div>
-      <div class="lane cross">
-        <h4>Contracts<span class="role">what stops the shape drifting</span></h4>
-        <div class="nodes">
-          <span class="node"><span>schema_snapshot.tsv</span></span>
-          <span class="node"><span>dbt tests</span></span>
-          <span class="node"><span>catalog parity</span></span>
-          <span class="node"><span>deterministic keys</span></span>
-        </div>
-      </div>
-    </div>
-    <p class="note">Every table above is declared once in a Python catalog and cross-checked against dbt&rsquo;s manifest, the SQL DDL, and the loaded Dagster definitions &mdash; a model that exists in only one of them fails CI.</p>
-    </div><!-- /panel-data -->
-
-    <!-- ============================================================
-         The day. Marks sit at the UTC hour each thing fires; read down the
-         column and they march across the day. This is the only view here
-         that says the warehouse runs without anyone watching it — and the
-         only one with no chips, hence data-chips="none".
-         ============================================================ -->
-    <div class="panel" id="panel-day" role="tabpanel" aria-labelledby="tab-day" data-panel="day" data-chips="none">
-    <p class="panel-lead">Every scheduled thing, placed at the UTC hour it fires. Nothing here is triggered by hand except the one row that says so.</p>
-    <div class="clock">
-      <div class="hours" aria-hidden="true">
-        <i style="--at:0">00</i><i style="--at:6">06</i><i style="--at:12">12</i><i style="--at:18">18</i><i style="--at:24">24</i>
-      </div>
-      <ol>
-        <li>
-          <div class="bar"><span class="mark band"></span></div>
-          <div class="row"><span class="when off">continuous</span><b>tmdb_changes_sensor</b><em>Polls TMDB&rsquo;s change feed and enqueues what moved. Page-capped per tick with a resume cursor, so a busy day costs more ticks rather than one unbounded one.</em></div>
-        </li>
-        <li style="--at:4.5">
-          <div class="bar"><span class="mark"></span></div>
-          <div class="row"><span class="when">04:30</span><b>restic snapshot</b><em>Encrypted, deduplicated, incremental, shipped to Backblaze B2 &mdash; followed by a heartbeat, so a backup that silently stops running trips the dead-man&rsquo;s switch on the monitoring box.</em></div>
-        </li>
-        <li style="--at:14">
-          <div class="bar"><span class="mark"></span></div>
-          <div class="row"><span class="when">14:00</span><b>imdb_daily_ingest</b><em>The day&rsquo;s IMDb dumps into bronze. A freshness sensor also triggers it early whenever a new upstream snapshot appears, so the clock is a floor and not the only trigger.</em></div>
-        </li>
-        <li style="--at:19">
-          <div class="bar"><span class="mark"></span></div>
-          <div class="row"><span class="when">19:00</span><b>warehouse_nightly</b><em>Every silver and gold model, plus the 260-odd dbt tests loaded as Dagster asset checks. Excludes the person-graph models by name &mdash; see below.</em></div>
-        </li>
-        <li style="--at:19.6">
-          <div class="bar"><span class="mark"></span></div>
-          <div class="row"><span class="when">on success</span><b>publish_analytics</b><em>Chained onto the nightly by a sensor rather than a second cron, so it cannot race it. Snapshots the marts into a standalone file, built beside the target and renamed in. The reports rebuild watches that file&rsquo;s inode.</em></div>
-        </li>
-        <li style="--at:2">
-          <div class="bar"><span class="mark"></span></div>
-          <div class="row"><span class="when">Sun 02:00</span><b>ops_license_audit</b><em>Re-checks that every source is still being used within the licence it was ingested under.</em></div>
-        </li>
-        <li style="--at:3">
-          <div class="bar"><span class="mark"></span></div>
-          <div class="row"><span class="when">Sun 03:00</span><b>ducklake_maintenance</b><em>Bounded compaction and snapshot expiry. Bounded because an unbounded compaction on this box is indistinguishable from an outage.</em></div>
-        </li>
-        <li>
-          <div class="bar"><span class="mark manual"></span></div>
-          <div class="row"><span class="when off">by hand</span><b>person_graph_rebuild</b><em>Deliberately unscheduled. It is long and memory-heavy, and the box has 16&nbsp;GB &mdash; so the graph is rebuilt when I ask for it, and the nightly excludes it rather than gambling nightly on the machine that serves everything else.</em></div>
-        </li>
-      </ol>
-    </div>
-    </div><!-- /panel-day -->
-
-    <div class="panel" id="panel-deploy" role="tabpanel" aria-labelledby="tab-deploy" data-panel="deploy">
     <p class="panel-lead">Two boxes: one runs everything, the other watches it from outside &mdash; because a monitor on the machine it monitors tells you nothing when that machine is the problem.</p>
     <div class="topo">
       <div class="lane">
@@ -429,11 +193,14 @@
           <div class="nodes">
             <div class="node" style="--brand:#1F88C0"><svg class="lg" aria-hidden="true"><use href="#i-caddy"></use></svg><span>Caddy</span></div>
             <div class="node" style="--brand:#009688"><svg class="lg" aria-hidden="true"><use href="#i-fastapi"></use></svg><span>FastAPI</span></div>
+            <div class="node"><span>Uvicorn</span></div>
             <div class="node" style="--brand:#059AC3"><svg class="lg" aria-hidden="true"><use href="#i-react"></use></svg><span>React</span></div>
+            <div class="node"><span>Evidence</span></div>
             <div class="node" style="--brand:#4F43DD"><svg class="lg" aria-hidden="true"><use href="#i-dagster"></use></svg><span>Dagster</span></div>
+            <div class="node" style="--brand:#FF4F2C"><svg class="lg" aria-hidden="true"><use href="#i-dbt"></use></svg><span>dbt</span></div>
+            <div class="node"><span>DuckLake</span></div>
             <div class="node" style="--brand:#4169E1"><svg class="lg" aria-hidden="true"><use href="#i-postgresql"></use></svg><span>PostgreSQL</span></div>
             <div class="node" style="--brand:#999000"><svg class="lg" aria-hidden="true"><use href="#i-duckdb"></use></svg><span>DuckDB</span></div>
-            <div class="node" style="--brand:#FF4F2C"><svg class="lg" aria-hidden="true"><use href="#i-dbt"></use></svg><span>dbt</span></div>
             <div class="node" style="--brand:#1B91EC"><svg class="lg" aria-hidden="true"><use href="#i-docker"></use></svg><span>Docker</span></div>
             <div class="node"><span>restic</span></div>
             <div class="node"><span>beszel-agent</span></div>
@@ -489,9 +256,18 @@
           <div class="node" style="--brand:#362D59"><svg class="lg" aria-hidden="true"><use href="#i-sentry"></use></svg><span>Sentry</span></div>
         </div>
       </div>
-    </div>
-    </div><!-- /panel-deploy -->
-    </div><!-- /tabs -->
+      <!-- the one part of the old stack view the topology had no room for, and
+           the only one that isn't a box: what puts the containers on VPS 01. -->
+      <div class="lane cross">
+        <h4>CI / CD<span class="role">test, build, ship to VPS 01</span></h4>
+        <div class="nodes">
+          <div class="node" style="--brand:#2088FF"><svg class="lg" aria-hidden="true"><use href="#i-gha"></use></svg><span>GitHub Actions</span></div>
+          <div class="node" style="--brand:#0A97D2"><svg class="lg" aria-hidden="true"><use href="#i-pytest"></use></svg><span>pytest</span></div>
+          <div class="node" style="--brand:#709700"><svg class="lg" aria-hidden="true"><use href="#i-ruff"></use></svg><span>Ruff</span></div>
+        </div>
+      </div>
+    </div><!-- /topo -->
+    <p class="note">Logo marks belong to their respective owners &middot; glyphs from <a href="https://simpleicons.org" target="_blank" rel="noopener">Simple Icons</a> and <a href="https://selfh.st/icons" target="_blank" rel="noopener">selfh.st/icons</a>.</p>
   </section>
 
   <!-- Rendered only when there is something in REPORTS. An empty section that
@@ -525,14 +301,10 @@
   <symbol id="i-duckdb" viewBox="0 0 24 24"><path d="M12 0C5.363 0 0 5.363 0 12s5.363 12 12 12 12-5.363 12-12S18.637 0 12 0zM9.502 7.03a4.974 4.974 0 0 1 4.97 4.97 4.974 4.974 0 0 1-4.97 4.97A4.974 4.974 0 0 1 4.532 12a4.974 4.974 0 0 1 4.97-4.97zm6.563 3.183h2.351c.98 0 1.787.782 1.787 1.762s-.807 1.789-1.787 1.789h-2.351v-3.551z"/></symbol>
   <symbol id="i-postgresql" viewBox="0 0 24 24"><path d="M23.5594 14.7228a.5269.5269 0 0 0-.0563-.1191c-.139-.2632-.4768-.3418-1.0074-.2321-1.6533.3411-2.2935.1312-2.5256-.0191 1.342-2.0482 2.445-4.522 3.0411-6.8297.2714-1.0507.7982-3.5237.1222-4.7316a1.5641 1.5641 0 0 0-.1509-.235C21.6931.9086 19.8007.0248 17.5099.0005c-1.4947-.0158-2.7705.3461-3.1161.4794a9.449 9.449 0 0 0-.5159-.0816 8.044 8.044 0 0 0-1.3114-.1278c-1.1822-.0184-2.2038.2642-3.0498.8406-.8573-.3211-4.7888-1.645-7.2219.0788C.9359 2.1526.3086 3.8733.4302 6.3043c.0409.818.5069 3.334 1.2423 5.7436.4598 1.5065.9387 2.7019 1.4334 3.582.553.9942 1.1259 1.5933 1.7143 1.7895.4474.1491 1.1327.1441 1.8581-.7279.8012-.9635 1.5903-1.8258 1.9446-2.2069.4351.2355.9064.3625 1.39.3772a.0569.0569 0 0 0 .0004.0041 11.0312 11.0312 0 0 0-.2472.3054c-.3389.4302-.4094.5197-1.5002.7443-.3102.064-1.1344.2339-1.1464.8115-.0025.1224.0329.2309.0919.3268.2269.4231.9216.6097 1.015.6331 1.3345.3335 2.5044.092 3.3714-.6787-.017 2.231.0775 4.4174.3454 5.0874.2212.5529.7618 1.9045 2.4692 1.9043.2505 0 .5263-.0291.8296-.0941 1.7819-.3821 2.5557-1.1696 2.855-2.9059.1503-.8707.4016-2.8753.5388-4.1012.0169-.0703.0357-.1207.057-.1362.0007-.0005.0697-.0471.4272.0307a.3673.3673 0 0 0 .0443.0068l.2539.0223.0149.001c.8468.0384 1.9114-.1426 2.5312-.4308.6438-.2988 1.8057-1.0323 1.5951-1.6698zM2.371 11.8765c-.7435-2.4358-1.1779-4.8851-1.2123-5.5719-.1086-2.1714.4171-3.6829 1.5623-4.4927 1.8367-1.2986 4.8398-.5408 6.108-.13-.0032.0032-.0066.0061-.0098.0094-2.0238 2.044-1.9758 5.536-1.9708 5.7495-.0002.0823.0066.1989.0162.3593.0348.5873.0996 1.6804-.0735 2.9184-.1609 1.1504.1937 2.2764.9728 3.0892.0806.0841.1648.1631.2518.2374-.3468.3714-1.1004 1.1926-1.9025 2.1576-.5677.6825-.9597.5517-1.0886.5087-.3919-.1307-.813-.5871-1.2381-1.3223-.4796-.839-.9635-2.0317-1.4155-3.5126zm6.0072 5.0871c-.1711-.0428-.3271-.1132-.4322-.1772.0889-.0394.2374-.0902.4833-.1409 1.2833-.2641 1.4815-.4506 1.9143-1.0002.0992-.126.2116-.2687.3673-.4426a.3549.3549 0 0 0 .0737-.1298c.1708-.1513.2724-.1099.4369-.0417.156.0646.3078.26.3695.4752.0291.1016.0619.2945-.0452.4444-.9043 1.2658-2.2216 1.2494-3.1676 1.0128zm2.094-3.988-.0525.141c-.133.3566-.2567.6881-.3334 1.003-.6674-.0021-1.3168-.2872-1.8105-.8024-.6279-.6551-.9131-1.5664-.7825-2.5004.1828-1.3079.1153-2.4468.079-3.0586-.005-.0857-.0095-.1607-.0122-.2199.2957-.2621 1.6659-.9962 2.6429-.7724.4459.1022.7176.4057.8305.928.5846 2.7038.0774 3.8307-.3302 4.7363-.084.1866-.1633.3629-.2311.5454zm7.3637 4.5725c-.0169.1768-.0358.376-.0618.5959l-.146.4383a.3547.3547 0 0 0-.0182.1077c-.0059.4747-.054.6489-.115.8693-.0634.2292-.1353.4891-.1794 1.0575-.11 1.4143-.8782 2.2267-2.4172 2.5565-1.5155.3251-1.7843-.4968-2.0212-1.2217a6.5824 6.5824 0 0 0-.0769-.2266c-.2154-.5858-.1911-1.4119-.1574-2.5551.0165-.5612-.0249-1.9013-.3302-2.6462.0044-.2932.0106-.5909.019-.8918a.3529.3529 0 0 0-.0153-.1126 1.4927 1.4927 0 0 0-.0439-.208c-.1226-.4283-.4213-.7866-.7797-.9351-.1424-.059-.4038-.1672-.7178-.0869.067-.276.1831-.5875.309-.9249l.0529-.142c.0595-.16.134-.3257.213-.5012.4265-.9476 1.0106-2.2453.3766-5.1772-.2374-1.0981-1.0304-1.6343-2.2324-1.5098-.7207.0746-1.3799.3654-1.7088.5321a5.6716 5.6716 0 0 0-.1958.1041c.0918-1.1064.4386-3.1741 1.7357-4.4823a4.0306 4.0306 0 0 1 .3033-.276.3532.3532 0 0 0 .1447-.0644c.7524-.5706 1.6945-.8506 2.802-.8325.4091.0067.8017.0339 1.1742.081 1.939.3544 3.2439 1.4468 4.0359 2.3827.8143.9623 1.2552 1.9315 1.4312 2.4543-1.3232-.1346-2.2234.1268-2.6797.779-.9926 1.4189.543 4.1729 1.2811 5.4964.1353.2426.2522.4522.2889.5413.2403.5825.5515.9713.7787 1.2552.0696.087.1372.1714.1885.245-.4008.1155-1.1208.3825-1.0552 1.717-.0123.1563-.0423.4469-.0834.8148-.0461.2077-.0702.4603-.0994.7662zm.8905-1.6211c-.0405-.8316.2691-.9185.5967-1.0105a2.8566 2.8566 0 0 0 .135-.0406 1.202 1.202 0 0 0 .1342.103c.5703.3765 1.5823.4213 3.0068.1344-.2016.1769-.5189.3994-.9533.6011-.4098.1903-1.0957.333-1.7473.3636-.7197.0336-1.0859-.0807-1.1721-.151zm.5695-9.2712c-.0059.3508-.0542.6692-.1054 1.0017-.055.3576-.112.7274-.1264 1.1762-.0142.4368.0404.8909.0932 1.3301.1066.887.216 1.8003-.2075 2.7014a3.5272 3.5272 0 0 1-.1876-.3856c-.0527-.1276-.1669-.3326-.3251-.6162-.6156-1.1041-2.0574-3.6896-1.3193-4.7446.3795-.5427 1.3408-.5661 2.1781-.463zm.2284 7.0137a12.3762 12.3762 0 0 0-.0853-.1074l-.0355-.0444c.7262-1.1995.5842-2.3862.4578-3.4385-.0519-.4318-.1009-.8396-.0885-1.2226.0129-.4061.0666-.7543.1185-1.0911.0639-.415.1288-.8443.1109-1.3505.0134-.0531.0188-.1158.0118-.1902-.0457-.4855-.5999-1.938-1.7294-3.253-.6076-.7073-1.4896-1.4972-2.6889-2.0395.5251-.1066 1.2328-.2035 2.0244-.1859 2.0515.0456 3.6746.8135 4.8242 2.2824a.908.908 0 0 1 .0667.1002c.7231 1.3556-.2762 6.2751-2.9867 10.5405zm-8.8166-6.1162c-.025.1794-.3089.4225-.6211.4225a.5821.5821 0 0 1-.0809-.0056c-.1873-.026-.3765-.144-.5059-.3156-.0458-.0605-.1203-.178-.1055-.2844.0055-.0401.0261-.0985.0925-.1488.1182-.0894.3518-.1226.6096-.0867.3163.0441.6426.1938.6113.4186zm7.9305-.4114c.0111.0792-.049.201-.1531.3102-.0683.0717-.212.1961-.4079.2232a.5456.5456 0 0 1-.075.0052c-.2935 0-.5414-.2344-.5607-.3717-.024-.1765.2641-.3106.5611-.352.297-.0414.6111.0088.6356.1851z"/></symbol>
   <symbol id="i-dbt" viewBox="0 0 24 24"><path d="M17.9004 9.3763a8.1488 8.1488 0 0 0-3.0421-3.1206l1.7708.8385a10.2874 10.2874 0 0 1 3.74 3.0007l3.234-5.9295a2.8546 2.8546 0 0 0-.0611-2.9604C22.7566.0371 21.2112-.3409 19.9754.3327l-5.8749 3.2101a4.3612 4.3612 0 0 1-4.1761 0L4.1769.408a2.8545 2.8545 0 0 0-2.9592.0632c-1.1673.7853-1.5452 2.33-.8723 3.5655L3.55 9.9106a4.3612 4.3612 0 0 1 0 4.1772l-3.1272 5.743a2.86 2.86 0 0 0 .085 2.9974c.794 1.1438 2.3225 1.5054 3.5448.8385l6.0581-3.3049a10.2877 10.2877 0 0 1-3.0051-3.7454l-.8374-1.7708a8.148 8.148 0 0 0 3.1206 3.0421l10.5832 5.779c1.2213.666 2.7481.3055 3.5426-.8363a2.8699 2.8699 0 0 0 .0796-3.0018L17.9004 9.3763zm3.3801-7.7351c.6022 0 1.0904.4882 1.0904 1.0904s-.4882 1.0904-1.0904 1.0904-1.0904-.4882-1.0904-1.0904.4882-1.0904 1.0904-1.0904zM2.7442 3.822c-.6022 0-1.0904-.4882-1.0904-1.0904s.4882-1.0904 1.0904-1.0904 1.0904.4882 1.0904 1.0904S3.3464 3.822 2.7442 3.822zm0 18.5363c-.6022 0-1.0904-.4882-1.0904-1.0904 0-.6022.4882-1.0904 1.0904-1.0904s1.0904.4882 1.0904 1.0904c0 .6022-.4882 1.0904-1.0904 1.0904zm10.3585-11.4489c-1.2008-.0035-2.177.9672-2.1805 2.1679a2.1738 2.1738 0 0 0 .7052 1.6091c-1.4872-.2091-2.5234-1.5843-2.3142-3.0716.2091-1.4872 1.5843-2.5234 3.0716-2.3142a2.7194 2.7194 0 0 1 2.3142 2.3142 2.1623 2.1623 0 0 0-1.5963-.7054zm8.1778 11.4489c-.6022 0-1.0904-.4882-1.0904-1.0904 0-.6022.4882-1.0904 1.0904-1.0904s1.0904.4882 1.0904 1.0904c0 .6022-.4882 1.0904-1.0904 1.0904z"/></symbol>
-  <symbol id="i-pandas" viewBox="0 0 24 24"><path d="M16.922 0h2.623v18.104h-2.623zm-4.126 12.94h2.623v2.57h-2.623zm0-7.037h2.623v5.446h-2.623zm0 11.197h2.623v5.446h-2.623zM4.456 5.896h2.622V24H4.455zm4.213 2.559h2.623v2.57H8.67zm0 4.151h2.623v5.447H8.67zm0-11.187h2.623v5.446H8.67Z"/></symbol>
-  <symbol id="i-polars" viewBox="0 0 24 24"><path d="M20.954 7.714h.434c.106 0 .193.087.193.197v3.726a.197.197 0 0 1-.193.193h-.434a.197.197 0 0 1-.197-.193V7.911c0-.11.087-.197.197-.197zm1.213 1.085h.435c.105 0 .192.087.192.196v2.521a.197.197 0 0 1-.192.193h-.435a.197.197 0 0 1-.197-.193v-2.52c0-.114.087-.197.197-.197zm1.206 1.383h.43c.11 0 .197.087.197.197v.718a.197.197 0 0 1-.197.192h-.43a.197.197 0 0 1-.197-.196v-.718a.189.189 0 0 1 .197-.19zm-3.629-2.827h.431a.197.197 0 0 1 .197.196v.719a.197.197 0 0 1-.197.189h-.435a.197.197 0 0 1-.196-.19v-.718a.197.197 0 0 1 .196-.196Zm0 1.444h.431a.197.197 0 0 1 .197.196v.658a.197.197 0 0 1-.197.193h-.435a.197.197 0 0 1-.196-.193v-.658a.197.197 0 0 1 .196-.196zm0 1.387h.431a.197.197 0 0 1 .197.193v1.08a.197.197 0 0 1-.197.193h-.435a.197.197 0 0 1-.196-.192v-1.081a.197.197 0 0 1 .196-.193zm-1.24-3.133h.435a.197.197 0 0 1 .193.196v1.138a.197.197 0 0 1-.193.196h-.434a.197.197 0 0 1-.197-.196V7.249a.197.197 0 0 1 .197-.196Zm0 1.927h.435a.197.197 0 0 1 .193.197v2.162a.197.197 0 0 1-.193.192h-.434a.197.197 0 0 1-.197-.192V9.177a.197.197 0 0 1 .197-.197ZM17.3 6.694h.435a.197.197 0 0 1 .196.192v4.574a.197.197 0 0 1-.196.192H17.3a.197.197 0 0 1-.197-.192V6.886a.197.197 0 0 1 .197-.192zm0 10.174h.435a.197.197 0 0 1 .196.197v.718a.197.197 0 0 1-.196.192H17.3a.197.197 0 0 1-.197-.196v-.718a.197.197 0 0 1 .197-.19zm-1.24-.964h.435a.197.197 0 0 1 .196.197v1.678a.197.197 0 0 1-.196.196h-.431a.197.197 0 0 1-.193-.196V16.1a.197.197 0 0 1 .193-.197zm0-5.117h.435a.197.197 0 0 1 .196.196v1.134a.197.197 0 0 1-.196.2h-.431a.197.197 0 0 1-.193-.196v-1.138a.197.197 0 0 1 .193-.196zm0-4.396h.435a.197.197 0 0 1 .196.197v3.605a.197.197 0 0 1-.196.197h-.431a.197.197 0 0 1-.193-.197V6.588a.197.197 0 0 1 .193-.197zm-1.22.06h.434a.197.197 0 0 1 .197.197V8.75a.197.197 0 0 1-.197.192h-.435a.197.197 0 0 1-.192-.192V6.648a.197.197 0 0 1 .192-.196zm0 2.892h.434a.197.197 0 0 1 .197.193v6.138a.197.197 0 0 1-.197.196h-.435a.197.197 0 0 1-.192-.196V9.536a.197.197 0 0 1 .192-.193Zm0 6.924h.434a.197.197 0 0 1 .197.193v1.14a.197.197 0 0 1-.197.193h-.435a.197.197 0 0 1-.192-.193v-1.14a.197.197 0 0 1 .192-.193zm-1.21-9.638h.43a.197.197 0 0 1 .197.2v4.925a.197.197 0 0 1-.196.197h-.435a.197.197 0 0 1-.193-.197V6.83a.197.197 0 0 1 .193-.197Zm0 5.722h.43a.197.197 0 0 1 .197.197v3.908a.197.197 0 0 1-.196.197h-.435a.197.197 0 0 1-.193-.197v-3.908a.197.197 0 0 1 .193-.197Zm-1.217-5.9h.435a.197.197 0 0 1 .192.197v3.179a.197.197 0 0 1-.192.196h-.435a.197.197 0 0 1-.197-.196V6.652a.197.197 0 0 1 .197-.197zm0 3.977h.435a.197.197 0 0 1 .192.192v2.646a.197.197 0 0 1-.192.193h-.435a.197.197 0 0 1-.197-.193V10.62a.197.197 0 0 1 .197-.192zm0 3.428h.435a.197.197 0 0 1 .192.196v1.198a.197.197 0 0 1-.192.197h-.435a.197.197 0 0 1-.197-.197v-1.198a.197.197 0 0 1 .197-.196zm-1.22-7.522h.434a.197.197 0 0 1 .196.19v1.443a.197.197 0 0 1-.196.193h-.439a.197.197 0 0 1-.196-.193v-1.44a.197.197 0 0 1 .196-.196zm0 2.227h.434a.197.197 0 0 1 .196.192v5.534a.197.197 0 0 1-.196.196h-.439a.197.197 0 0 1-.196-.196V8.753a.197.197 0 0 1 .196-.192Zm-1.225 8.182h.434a.197.197 0 0 1 .197.197v.835a.197.197 0 0 1-.197.197h-.434a.197.197 0 0 1-.193-.197v-.835a.197.197 0 0 1 .193-.197zm0-10.658h.434a.197.197 0 0 1 .197.197v5.113a.197.197 0 0 1-.197.193h-.434a.197.197 0 0 1-.193-.193v-5.11a.197.197 0 0 1 .193-.196Zm0 5.904h.434a.197.197 0 0 1 .197.192v2.102a.197.197 0 0 1-.197.196h-.434a.197.197 0 0 1-.193-.196V12.18a.197.197 0 0 1 .193-.192zm-1.221 3.855h.434a.197.197 0 0 1 .193.189v1.742a.197.197 0 0 1-.193.197h-.434a.197.197 0 0 1-.197-.197v-1.738a.197.197 0 0 1 .197-.197zm0-6.025h.434a.197.197 0 0 1 .193.197v4.27a.197.197 0 0 1-.193.193h-.434a.197.197 0 0 1-.197-.196v-4.267a.197.197 0 0 1 .197-.19Zm0-3.794h.434a.197.197 0 0 1 .193.196v3.005a.197.197 0 0 1-.193.196h-.434a.197.197 0 0 1-.197-.196V6.22a.197.197 0 0 1 .197-.196Zm-1.221.06h.435a.197.197 0 0 1 .196.197V7a.197.197 0 0 1-.196.192h-.435A.197.197 0 0 1 7.332 7v-.718a.197.197 0 0 1 .193-.197Zm0 1.448h.435a.197.197 0 0 1 .196.192v5.541a.197.197 0 0 1-.196.193h-.435a.197.197 0 0 1-.193-.193V7.73a.197.197 0 0 1 .193-.193Zm0 6.323h.435a.197.197 0 0 1 .196.193v1.5a.197.197 0 0 1-.196.197h-.435a.197.197 0 0 1-.193-.197v-1.5a.197.197 0 0 1 .193-.193zm0 2.286h.435a.197.197 0 0 1 .196.197v.956a.197.197 0 0 1-.196.197h-.435a.197.197 0 0 1-.193-.197v-.956a.197.197 0 0 1 .193-.197ZM6.305 6.57h.434a.197.197 0 0 1 .193.196v3.606a.197.197 0 0 1-.193.193h-.435a.197.197 0 0 1-.196-.193V6.765a.197.197 0 0 1 .196-.196Zm0 4.395h.434a.197.197 0 0 1 .193.193v.84a.197.197 0 0 1-.193.196h-.435a.197.197 0 0 1-.196-.197v-.839a.197.197 0 0 1 .196-.193Zm0 1.505h.43a.197.197 0 0 1 .197.196v3.727a.197.197 0 0 1-.197.196h-.43a.197.197 0 0 1-.197-.196v-3.727a.197.197 0 0 1 .196-.196ZM5.018 9.577h.56a.136.136 0 0 1 .132.136v2.763a.136.136 0 0 1-.132.136h-.556a.136.136 0 0 1-.136-.136V9.717a.136.136 0 0 1 .136-.14zm0 3.432h.56a.136.136 0 0 1 .132.136v2.483a.136.136 0 0 1-.132.136h-.556a.136.136 0 0 1-.136-.136v-2.475a.136.136 0 0 1 .136-.136zm0-5.96h.56a.136.136 0 0 1 .132.136v1.92a.136.136 0 0 1-.132.136h-.556a.136.136 0 0 1-.136-.136v-1.92a.136.136 0 0 1 .136-.136Zm-1.217.597h.552a.136.136 0 0 1 .136.132v2.884a.136.136 0 0 1-.136.132h-.552a.136.136 0 0 1-.136-.132V7.778a.136.136 0 0 1 .136-.132Zm0 3.5h.552a.136.136 0 0 1 .136.136v3.904a.136.136 0 0 1-.136.136h-.556a.136.136 0 0 1-.132-.136v-3.9a.136.136 0 0 1 .132-.136Zm-1.168 5.722h.435a.197.197 0 0 1 .197.197v.718a.197.197 0 0 1-.197.192h-.43a.197.197 0 0 1-.194-.196v-.718a.197.197 0 0 1 .193-.19zm-.06-2.562h.563a.136.136 0 0 1 .136.136v1.262a.136.136 0 0 1-.136.136h-.56a.136.136 0 0 1-.132-.136v-1.262a.136.136 0 0 1 .133-.136zm0-4.725h.563a.136.136 0 0 1 .136.132v4.075a.136.136 0 0 1-.136.136h-.56a.136.136 0 0 1-.132-.136V9.713a.136.136 0 0 1 .133-.132Zm-1.213 5.95h.555a.136.136 0 0 1 .136.135v2.173a.136.136 0 0 1-.136.136h-.56a.136.136 0 0 1-.135-.136v-2.173a.136.136 0 0 1 .136-.136zm.06-3.225h.431a.197.197 0 0 1 .197.193v2.506a.197.197 0 0 1-.197.196h-.435a.197.197 0 0 1-.196-.196v-2.506a.197.197 0 0 1 .196-.193ZM.14 15.001h.552c.075 0 .136.06.136.136v2.052c0 .076-.06.136-.136.136H.136A.136.136 0 0 1 0 17.19v-2.052c0-.076.06-.136.136-.136z"/></symbol>
   <symbol id="i-pytest" viewBox="0 0 24 24"><path d="M2.6152 0v.8867h3.8399V0zm5.0215 0v.8867h3.8418V0zm4.957 0v.8867h3.8418V0zm4.9356 0v.8867h3.8418V0zM2.4473 1.8945a.935.935 0 0 0-.9356.9356c0 .517.4185.9375.9356.9375h19.1054c.5171 0 .9356-.4204.9356-.9375a.935.935 0 0 0-.9356-.9356zm.168 2.8477V24H6.455V4.7422zm5.0214 0V20.543h3.8418V4.7422zm4.957 0V15.291h3.8497V4.7422zm4.9356 0v6.4941h3.8418V4.7422z"/></symbol>
   <symbol id="i-ruff" viewBox="0 0 24 24"><path d="M3 0C1.338 0 0 1.338 0 3v18c0 1.662 1.338 3 3 3h18c1.662 0 3-1.338 3-3V3c0-1.662-1.338-3-3-3Zm4.2 7.2h8.641c.53 0 .959.43.959.959v3.266c0 .53-.43.959-.959.959h-.961v.768h1.92V16.8h-4.416v-2.88h-.768v2.88H7.2Zm3.648 3.648v.768h2.304v-.768z"/></symbol>
   <symbol id="i-fastapi" viewBox="0 0 24 24"><path d="M12 .0387C5.3729.0384.0003 5.3931 0 11.9988c-.001 6.6066 5.372 11.9628 12 11.9625 6.628.0003 12.001-5.3559 12-11.9625-.0003-6.6057-5.3729-11.9604-12-11.96m-.829 5.4153h7.55l-7.5805 5.3284h5.1828L5.279 18.5436q2.9466-6.5444 5.892-13.0896"/></symbol>
   <symbol id="i-react" viewBox="0 0 24 24"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.41 0-.783.093-1.106.278-1.375.793-1.683 3.264-.973 6.365C1.98 8.917 0 10.42 0 12.004c0 1.59 1.99 3.097 5.043 4.03-.704 3.113-.39 5.588.988 6.38.32.187.69.275 1.102.275 1.345 0 3.107-.96 4.888-2.624 1.78 1.654 3.542 2.603 4.887 2.603.41 0 .783-.09 1.106-.275 1.374-.792 1.683-3.263.973-6.365C22.02 15.096 24 13.59 24 12.004c0-1.59-1.99-3.097-5.043-4.032.704-3.11.39-5.587-.988-6.38-.318-.184-.688-.277-1.092-.278zm-.005 1.09v.006c.225 0 .406.044.558.127.666.382.955 1.835.73 3.704-.054.46-.142.945-.25 1.44-.96-.236-2.006-.417-3.107-.534-.66-.905-1.345-1.727-2.035-2.447 1.592-1.48 3.087-2.292 4.105-2.295zm-9.77.02c1.012 0 2.514.808 4.11 2.28-.686.72-1.37 1.537-2.02 2.442-1.107.117-2.154.298-3.113.538-.112-.49-.195-.964-.254-1.42-.23-1.868.054-3.32.714-3.707.19-.09.4-.127.563-.132zm4.882 3.05c.455.468.91.992 1.36 1.564-.44-.02-.89-.034-1.345-.034-.46 0-.915.01-1.36.034.44-.572.895-1.096 1.345-1.565zM12 8.1c.74 0 1.477.034 2.202.093.406.582.802 1.203 1.183 1.86.372.64.71 1.29 1.018 1.946-.308.655-.646 1.31-1.013 1.95-.38.66-.773 1.288-1.18 1.87-.728.063-1.466.098-2.21.098-.74 0-1.477-.035-2.202-.093-.406-.582-.802-1.204-1.183-1.86-.372-.64-.71-1.29-1.018-1.946.303-.657.646-1.313 1.013-1.954.38-.66.773-1.286 1.18-1.868.728-.064 1.466-.098 2.21-.098zm-3.635.254c-.24.377-.48.763-.704 1.16-.225.39-.435.782-.635 1.174-.265-.656-.49-1.31-.676-1.947.64-.15 1.315-.283 2.015-.386zm7.26 0c.695.103 1.365.23 2.006.387-.18.632-.405 1.282-.66 1.933-.2-.39-.41-.783-.64-1.174-.225-.392-.465-.774-.705-1.146zm3.063.675c.484.15.944.317 1.375.498 1.732.74 2.852 1.708 2.852 2.476-.005.768-1.125 1.74-2.857 2.475-.42.18-.88.342-1.355.493-.28-.958-.646-1.956-1.1-2.98.45-1.017.81-2.01 1.085-2.964zm-13.395.004c.278.96.645 1.957 1.1 2.98-.45 1.017-.812 2.01-1.086 2.964-.484-.15-.944-.318-1.37-.5-1.732-.737-2.852-1.706-2.852-2.474 0-.768 1.12-1.742 2.852-2.476.42-.18.88-.342 1.356-.494zm11.678 4.28c.265.657.49 1.312.676 1.948-.64.157-1.316.29-2.016.39.24-.375.48-.762.705-1.158.225-.39.435-.788.636-1.18zm-9.945.02c.2.392.41.783.64 1.175.23.39.465.772.705 1.143-.695-.102-1.365-.23-2.006-.386.18-.63.406-1.282.66-1.933zM17.92 16.32c.112.493.2.968.254 1.423.23 1.868-.054 3.32-.714 3.708-.147.09-.338.128-.563.128-1.012 0-2.514-.807-4.11-2.28.686-.72 1.37-1.536 2.02-2.44 1.107-.118 2.154-.3 3.113-.54zm-11.83.01c.96.234 2.006.415 3.107.532.66.905 1.345 1.727 2.035 2.446-1.595 1.483-3.092 2.295-4.11 2.295-.22-.005-.406-.05-.553-.132-.666-.38-.955-1.834-.73-3.703.054-.46.142-.944.25-1.438zm4.56.64c.44.02.89.034 1.345.034.46 0 .915-.01 1.36-.034-.44.572-.895 1.095-1.345 1.565-.455-.47-.91-.993-1.36-1.565z"/></symbol>
-  <symbol id="i-typescript" viewBox="0 0 24 24"><path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z"/></symbol>
-  <symbol id="i-vite" viewBox="0 0 24 24"><path d="M13.056 23.238a.57.57 0 0 1-1.02-.355v-5.202c0-.63-.512-1.143-1.144-1.143H5.148a.57.57 0 0 1-.464-.903l3.777-5.29c.54-.753 0-1.804-.93-1.804H.57a.574.574 0 0 1-.543-.746.6.6 0 0 1 .08-.157L5.008.78a.57.57 0 0 1 .467-.24h14.589a.57.57 0 0 1 .466.903l-3.778 5.29c-.54.755 0 1.806.93 1.806h5.745c.238 0 .424.138.513.322a.56.56 0 0 1-.063.603z"/></symbol>
   <symbol id="i-docker" viewBox="0 0 24 24"><path d="M13.983 11.078h2.119a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.119a.185.185 0 00-.185.185v1.888c0 .102.083.185.185.185m-2.954-5.43h2.118a.186.186 0 00.186-.186V3.574a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m0 2.716h2.118a.187.187 0 00.186-.186V6.29a.186.186 0 00-.186-.185h-2.118a.185.185 0 00-.185.185v1.887c0 .102.082.185.185.186m-2.93 0h2.12a.186.186 0 00.184-.186V6.29a.185.185 0 00-.185-.185H8.1a.185.185 0 00-.185.185v1.887c0 .102.083.185.185.186m-2.964 0h2.119a.186.186 0 00.185-.186V6.29a.185.185 0 00-.185-.185H5.136a.186.186 0 00-.186.185v1.887c0 .102.084.185.186.186m5.893 2.715h2.118a.186.186 0 00.186-.185V9.006a.186.186 0 00-.186-.186h-2.118a.185.185 0 00-.185.185v1.888c0 .102.082.185.185.185m-2.93 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.083.185.185.185m-2.964 0h2.119a.185.185 0 00.185-.185V9.006a.185.185 0 00-.184-.186h-2.12a.186.186 0 00-.186.186v1.887c0 .102.084.185.186.185m-2.92 0h2.12a.185.185 0 00.184-.185V9.006a.185.185 0 00-.184-.186h-2.12a.185.185 0 00-.184.185v1.888c0 .102.082.185.185.185M23.763 9.89c-.065-.051-.672-.51-1.954-.51-.338.001-.676.03-1.01.087-.248-1.7-1.653-2.53-1.716-2.566l-.344-.199-.226.327c-.284.438-.49.922-.612 1.43-.23.97-.09 1.882.403 2.661-.595.332-1.55.413-1.744.42H.751a.751.751 0 00-.75.748 11.376 11.376 0 00.692 4.062c.545 1.428 1.355 2.48 2.41 3.124 1.18.723 3.1 1.137 5.275 1.137.983.003 1.963-.086 2.93-.266a12.248 12.248 0 003.823-1.389c.98-.567 1.86-1.288 2.61-2.136 1.252-1.418 1.998-2.997 2.553-4.4h.221c1.372 0 2.215-.549 2.68-1.009.309-.293.55-.65.707-1.046l.098-.288Z"/></symbol>
   <symbol id="i-caddy" viewBox="0 0 24 24"><path d="M11.094.47c-.842 0-1.696.092-2.552.288a11.37 11.37 0 0 0-4.87 2.423 10.632 10.632 0 0 0-2.36 2.826A10.132 10.132 0 0 0 .305 8.582c-.398 1.62-.4 3.336-.043 5.048.085.405.183.809.31 1.212a11.85 11.85 0 0 0 1.662 3.729 3.273 3.273 0 0 0-.086.427 3.323 3.323 0 0 0 2.848 3.71 3.279 3.279 0 0 0 1.947-.346c1.045.51 2.17.864 3.339 1.04a11.66 11.66 0 0 0 4.285-.155 11.566 11.566 0 0 0 4.936-2.485 10.643 10.643 0 0 0 2.352-2.894 11.164 11.164 0 0 0 1.356-4.424 11.214 11.214 0 0 0-.498-4.335c.175-.077.338-.175.486-.293a.444.444 89.992 0 0 .001 0c.402-.322.693-.794.777-1.342a2.146 2.146 0 0 0-1.79-2.434 2.115 2.115 0 0 0-1.205.171c-.038-.043-.078-.086-.113-.13a11.693 11.693 0 0 0-3.476-2.93 13.348 13.348 0 0 0-1.76-.81 13.55 13.55 0 0 0-2.06-.613A12.121 12.121 0 0 0 11.093.47Zm.714.328c.345-.004.688.01 1.028.042a9.892 9.892 0 0 1 2.743.639c.984.39 1.89.958 2.707 1.632.803.662 1.502 1.45 2.091 2.328.026.039.048.08.07.12a2.12 2.12 0 0 0-.435 2.646c-.158.114-.97.692-1.634 1.183-.414.308-.733.557-.733.557l.581.68s.296-.276.665-.638c.572-.562 1.229-1.233 1.395-1.403a2.122 2.122 0 0 0 1.907.677 11.229 11.229 0 0 1-.013 4.046 11.41 11.41 0 0 1-1.475 3.897 12.343 12.343 0 0 1-2.079 2.587c-1.19 1.125-2.633 2.022-4.306 2.531a10.826 10.826 0 0 1-3.973.484 11.04 11.04 0 0 1-3.057-.652 3.304 3.304 0 0 0 1.417-2.294 3.275 3.275 0 0 0-.294-1.842c.18-.162.403-.363.656-.6 1.015-.955 2.353-2.303 2.353-2.303l-.47-.599s-1.63.972-2.801 1.728c-.307.198-.573.378-.777.517a3.273 3.273 0 0 0-1.516-.611c-1.507-.198-2.927.672-3.487 2.017a10.323 10.323 0 0 1-.695-1.078A10.92 10.92 0 0 1 .728 14.8a10.35 10.35 0 0 1-.2-1.212c-.164-1.653.103-3.258.629-4.754a12.95 12.95 0 0 1 1.087-2.288c.57-.968 1.248-1.872 2.069-2.656A11.013 11.013 0 0 1 11.808.797Zm-.147 3.257a3.838 3.838 0 0 0-3.82 3.82v2.36h-.94c-.751 0-1.377.625-1.377 1.377v3.8h1.46v-3.718h9.354v6.264H10.02v1.46h6.4c.751 0 1.377-.625 1.377-1.377v-6.43c0-.751-.626-1.377-1.377-1.377h-.94v-2.36a3.838 3.838 0 0 0-3.82-3.819zm0 1.46a2.371 2.371 0 0 1 2.36 2.36v2.36H9.3v-2.36a2.372 2.372 0 0 1 2.36-2.36zm10.141.392a1.253 1.253 0 0 1 1.296 1.434c-.049.319-.217.59-.453.78-.266.213-.61.318-.968.264a1.253 1.253 0 0 1-1.045-1.42 1.255 1.255 0 0 1 1.17-1.058zM5.384 17.425a2.02 2.02 0 0 1 1.917 1.298c.116.3.159.628.114.967a2.015 2.015 0 0 1-2.249 1.728 2.016 2.016 0 0 1-1.727-2.25 2.017 2.017 0 0 1 1.945-1.743z"/></symbol>
   <symbol id="i-gha" viewBox="0 0 24 24"><path d="M10.984 13.836a.5.5 0 0 1-.353-.146l-.745-.743a.5.5 0 1 1 .706-.708l.392.391 1.181-1.18a.5.5 0 0 1 .708.707l-1.535 1.533a.504.504 0 0 1-.354.146zm9.353-.147l1.534-1.532a.5.5 0 0 0-.707-.707l-1.181 1.18-.392-.391a.5.5 0 1 0-.706.708l.746.743a.497.497 0 0 0 .706-.001zM4.527 7.452l2.557-1.585A1 1 0 0 0 7.09 4.17L4.533 2.56A1 1 0 0 0 3 3.406v3.196a1.001 1.001 0 0 0 1.527.85zm2.03-2.436L4 6.602V3.406l2.557 1.61zM24 12.5c0 1.93-1.57 3.5-3.5 3.5a3.503 3.503 0 0 1-3.46-3h-2.08a3.503 3.503 0 0 1-3.46 3 3.502 3.502 0 0 1-3.46-3h-.558c-.972 0-1.85-.399-2.482-1.042V17c0 1.654 1.346 3 3 3h.04c.244-1.693 1.7-3 3.46-3 1.93 0 3.5 1.57 3.5 3.5S13.43 24 11.5 24a3.502 3.502 0 0 1-3.46-3H8c-2.206 0-4-1.794-4-4V9.899A5.008 5.008 0 0 1 0 5c0-2.757 2.243-5 5-5s5 2.243 5 5a5.005 5.005 0 0 1-4.952 4.998A2.482 2.482 0 0 0 7.482 12h.558c.244-1.693 1.7-3 3.46-3a3.502 3.502 0 0 1 3.46 3h2.08a3.503 3.503 0 0 1 3.46-3c1.93 0 3.5 1.57 3.5 3.5zm-15 8c0 1.378 1.122 2.5 2.5 2.5s2.5-1.122 2.5-2.5-1.122-2.5-2.5-2.5S9 19.122 9 20.5zM5 9c2.206 0 4-1.794 4-4S7.206 1 5 1 1 2.794 1 5s1.794 4 4 4zm9 3.5c0-1.378-1.122-2.5-2.5-2.5S9 11.122 9 12.5s1.122 2.5 2.5 2.5 2.5-1.122 2.5-2.5zm9 0c0-1.378-1.122-2.5-2.5-2.5S18 11.122 18 12.5s1.122 2.5 2.5 2.5 2.5-1.122 2.5-2.5zm-13 8a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0zm2 0a.5.5 0 1 0 1 0 .5.5 0 0 0-1 0zm12 0c0 1.93-1.57 3.5-3.5 3.5a3.503 3.503 0 0 1-3.46-3.002c-.007.001-.013.005-.021.005l-.506.017h-.017a.5.5 0 0 1-.016-.999l.506-.017c.018-.002.035.006.052.007A3.503 3.503 0 0 1 20.5 17c1.93 0 3.5 1.57 3.5 3.5zm-1 0c0-1.378-1.122-2.5-2.5-2.5S18 19.122 18 20.5s1.122 2.5 2.5 2.5 2.5-1.122 2.5-2.5z"/></symbol>
@@ -547,62 +319,37 @@
 
 <script>
 /* =========================================================
-   ADD A SURFACE: append an object to this list, pointing
-   'url' at wherever it's deployed. These are the things you
-   can actually open — the two apps, the reports, the
-   read-only Dagster, the dbt docs — not the things it's
-   built from.
+   THE SIDE DOORS: the public things the app itself doesn't
+   link to. The two apps link to each other, so listing them
+   here said twice what the app says once — these are the
+   machinery behind it, which is public too.
+
+     label  what it is, in as few words as it takes
+     url    where it lives
+     icon   optional sprite id; without one the chip is text,
+            which is what a thing with no logo should be
+     brand  optional hex, shown on hover
    ========================================================= */
-const SURFACES = [
-  {
-    title:"However Many Degrees of Whoever",
-    summary:"Chain together co-stars to connect any two people — find the shortest path, or hunt for one of an exact length. (As long as they're on IMDb.)",
-    url:"https://plotline.mpdonovan.com/however-many-degrees",
-    status:"app",
-    tags:["FastAPI","React","TypeScript"]
-  },
-  {
-    title:"The Missing Link",
-    summary:"One puzzle a day: two actors, and a chain of co-stars to build between them. The most-travelled links are banned, so it's a question about films rather than about who has been in everything. Every past day stays playable at /link/&lt;date&gt;.",
-    url:"https://plotline.mpdonovan.com/link",
-    status:"app",
-    tags:["React","TypeScript"]
-  },
-  {
-    title:"Data overview",
-    summary:"Every published table with its row count and freshness, and the shape of what's inside them — coverage by source, titles by decade, the ratings histogram. Generated from the same catalog that builds the warehouse, so a new gold model appears here by being a gold model.",
-    url:"https://plotline.mpdonovan.com/reports/",
-    status:"report",
-    tags:["Evidence","DuckDB"]
-  },
-  {
-    title:"Dagster — the asset graph",
-    summary:"The real orchestrator, read-only and public: every table as a declared asset, its lineage, its last materialization, and the ~260 dbt tests loaded as asset checks. This is what the Architecture diagram is a drawing of.",
-    url:"https://plotline.mpdonovan.com/dagster",
-    status:"read-only",
-    tags:["Dagster"]
-  },
-  {
-    title:"dbt docs",
-    summary:"Column-level documentation and the full model lineage graph, generated from the project on every deploy. If you want to know what a column means rather than what a logo is, start here.",
-    url:"https://plotline.mpdonovan.com/dbt-docs/",
-    status:"read-only",
-    tags:["dbt"]
-  },
+const DOORS = [
+  {label:"Dagster",       url:"https://plotline.mpdonovan.com/dagster",   icon:"i-dagster", brand:"#4F43DD"},
+  {label:"dbt docs",      url:"https://plotline.mpdonovan.com/dbt-docs/", icon:"i-dbt",     brand:"#FF4F2C"},
+  {label:"Data overview", url:"https://plotline.mpdonovan.com/reports/"},
 ];
 
 /* =========================================================
-   THE SOURCE. Point this at the plotline repository:
+   THE SOURCE. The repository behind the hero's second button.
 
-     const SOURCE = {url:"https://github.com/…/plotline"};
+   Set back to null and the hero prints a line saying the
+   source is private instead of rendering a button. Either is
+   fine; a page with no code link and no mention of one is not
+   — on a portfolio page silence reads as "there is no code",
+   which is the wrong thing for this to say.
 
-   Left null, the hero prints a line saying the source is
-   private instead of rendering a button that goes nowhere.
-   Either is fine; a page with no code link and no mention of
-   one is not — on a portfolio page silence reads as "there
-   is no code", which is the wrong thing for this to say.
+   NOTE: while the repository is private, this button is a
+   404 for anyone without access. That is a deliberate trade
+   — the link is right for everyone who has been given it.
    ========================================================= */
-const SOURCE = null;
+const SOURCE = {url:"https://github.com/alittleb3ar/plotline"};
 
 /* =========================================================
    ADD A REPORT: append an object to this list.
@@ -641,33 +388,29 @@ const BUILT = [
   {
     kind:"The catalog DSL",
     title:"One declaration, five things generated",
-    body:"Ninety-three tables, twenty-three sources, sixteen jobs and every schedule are declared once, as frozen Python dataclasses, and compiled into Dagster asset keys, the DuckDB DDL behind the graph export, DuckLake-qualified SQL, the analytics snapshot, and the report site. It replaced a rate limit that lived in three places and a list of gold models copied into four. A test walks the package's own syntax tree and fails if it imports anything outside the standard library — which is what lets the API read the same catalog without dragging in dbt, Dagster or DuckDB.",
+    body:"93 tables, 23 sources and 16 jobs are declared once as frozen dataclasses, then compiled into Dagster asset keys, DuckDB DDL, DuckLake SQL, the analytics snapshot and the report site. A test fails the build on any import outside the standard library, so the API can read the same catalog without dragging in dbt, Dagster or DuckDB.",
     tags:["Python","stdlib only"]
   },
   {
     kind:"The warehouse",
     title:"Two stores, because one of them can't take a lock",
-    body:"Bronze, silver and gold live in DuckLake: the catalog in PostgreSQL, Parquet on disk, and a disposable in-memory DuckDB as the engine. It has no primary keys, no unique constraints and no sequences — fine for tables whose uniqueness dbt already proves, useless for a worklist that has to be claimed by one worker and nobody else. So the worklists, the leases, the rate-limit buckets and the dead letters stayed in a relational PostgreSQL beside it. The two never share a transaction: the merge is idempotent, so a crash between them is a retry rather than a repair.",
+    body:"Bronze, silver and gold live in DuckLake: Parquet on disk, catalog in PostgreSQL. It has no primary keys and no sequences \u2014 fine for tables dbt already proves unique, useless for a worklist one worker has to claim and nobody else. So the worklists, leases and dead letters stayed in a relational PostgreSQL beside it, and the two never share a transaction: the merge is idempotent, so a crash between them is a retry.",
     tags:["DuckLake","PostgreSQL","Dagster"]
   },
   {
     kind:"The graph build",
     title:"717 million rows through a 4 GB engine",
-    body:[
-      "The collaboration table is a self-join over a hundred and twenty-five million credits, and the planner can't be trusted to pick a build side — DuckLake's scan estimates are weak enough to invert it. So both sides and the aggregate are filtered to the same hash bucket and the whole thing is unioned eight times over: whatever plan comes out, no hash table can exceed an eighth of the data. Rows sharing a title share a bucket, so the buckets hold whole groups and the counts stay exact.",
-      "The model feeding it was ephemeral until the first full-volume build, when inlining rebuilt two hundred-million-row dedup structures on both sides of the join at once and exhausted the entire spill allowance."
-    ],
+    body:"A self-join over 125 million credits, where the planner can't be trusted to pick a build side \u2014 DuckLake's scan estimates are weak enough to invert it. So both sides are filtered to the same hash bucket and unioned eight times over: whatever plan comes out, no hash table exceeds an eighth of the data. The model feeding it was ephemeral until the first full-volume build exhausted the spill allowance in one go.",
     tags:["dbt","DuckDB"]
   },
   {
     kind:"The daily puzzle",
     title:"Difficulty measured, not guessed",
-    body:"The Missing Link picks a pair of actors and then bans the corridor between them — the people and titles the most paths run through — so the obvious answer stops working while the corridor stays wide enough to still have others. Par is re-measured after those bans, so the number published is the one the player actually faces. The thresholds behind all of it come from running two hundred real pairs and reading the distribution, rather than picking a number that sounded about right.",
+    body:"The Missing Link picks a pair of actors and bans the corridor between them \u2014 the people and titles the most paths run through \u2014 so the obvious answer stops working while enough others survive. Par is re-measured after those bans, so the number published is the one the player actually faces, and the thresholds behind it come from 200 real pairs rather than a number that sounded about right.",
     tags:["Dagster","DuckDB"],
     link:{url:"https://plotline.mpdonovan.com/link",label:"Today's puzzle"}
   }
 ];
-
 /* =========================================================
    CHIP NOTES, keyed by a chip's label text (trailing version
    numbers are stripped before lookup, so "React 19" finds
@@ -749,15 +492,6 @@ const NODE_NOTES = {
     href:"https://www.getdbt.com",
     live:{url:"https://plotline.mpdonovan.com/dbt-docs/",label:"my dbt docs + lineage"}
   },
-  "pandas":{
-    why:"The escape hatch for the one transform SQL couldn't hold. Not a default — a deliberate exception, used where a row-at-a-time streaming loop beats a set operation that cannot spill.",
-    scar:"That model streams Parquet 2,000 rows at a time, pulls the nested JSON apart in Python, and hands a flat frame back to DuckDB for the key lookups. The SQL version needed 20 GB and never finished. This one takes about thirteen seconds.",
-    href:"https://pandas.pydata.org"
-  },
-  "Polars":{
-    why:"Used where a bronze feed needs reshaping on the way in and the work is columnar and bounded — cheap to run, and it keeps the staging step out of the warehouse's memory budget.",
-    href:"https://pola.rs"
-  },
 
   /* ---------------------------------------------------- serve */
   "FastAPI":{
@@ -783,14 +517,6 @@ const NODE_NOTES = {
     why:"Boring in a good way — the biggest ecosystem, so every problem a component throws has already been solved by someone.",
     href:"https://react.dev",
     live:{url:"https://plotline.mpdonovan.com",label:"However Many Degrees of Whoever"}
-  },
-  "TypeScript":{
-    why:"The API's response shapes are typed on the Python side; typing them again on the client means a renamed field breaks the build instead of a page.",
-    href:"https://www.typescriptlang.org"
-  },
-  "Vite":{
-    why:"Fast dev server, static build, nothing to run in production — the frontend ends up as files the reverse proxy serves directly.",
-    href:"https://vite.dev"
   },
 
   /* -------------------------------------------------- runtime */
@@ -852,47 +578,6 @@ const NODE_NOTES = {
   "dozzle-agent":{ why:"Streams this host's container logs to Dozzle on the monitoring box." },
   "Dozzle":{ why:"Live tail of every container's logs in the browser — no ssh session, no log stack." },
 
-  /* ------------------------------------------- data model chips */
-  "title_xref":{
-    why:"The identifier spine. Every title's surrogate key is derived arithmetically from its IMDb identifier, not handed out by a row counter.",
-    scar:"That choice is load-bearing. Sequential surrogate keys would be reassigned on every full rebuild, silently repointing every snapshot and every exported graph that had already stored them. Derived keys survive a rebuild, so downstream copies stay valid — and a test exists purely to stop anyone helpfully reintroducing the counter."
-  },
-  "credit_tmdb_tv":{
-    why:"TV credits, where a person can hold several roles on one show and the source nests them in arrays — so it is the one model written in Python rather than SQL.",
-    scar:"It was SQL first, and it OOM'd at 20 GB: pulling apart nested JSON is not an operation DuckDB can spill to disk, so it grew until it died. Rewritten to stream 2,000 rows at a time, it runs in about thirteen seconds."
-  },
-  "bridge_credit":{
-    why:"One row per physical observation of a credit, unioned across all three credit sources — deliberately not deduplicated here, so disagreement between sources stays visible rather than being resolved invisibly.",
-    scar:"Deduplication happens one model later, by confidence. Keeping the two steps apart means you can always ask why a credit was dropped."
-  },
-  "person_graph_edges":{
-    why:"Who has worked with whom: roughly 717 million credited collaborations over 3.5 million people, of which 219 million are on-screen pairings — derived from gold and exported to a standalone file the API opens read-only.",
-    scar:"Edges are stored undirected, with the lower identifier first, and both columns indexed — rather than storing each pair twice to make lookups symmetrical. On a table this size the index is far cheaper than the duplicate rows."
-  },
-  "person_graph.duckdb":{
-    why:"The file the API actually serves. Built beside the live one and renamed into place only on success, so a failed rebuild leaves the previous graph answering.",
-    scar:"It also refuses to publish below a minimum edge count. An export that succeeds and produces almost nothing is the failure mode a rename-on-success alone won't catch."
-  },
-  "analytics.duckdb":{
-    why:"A standalone snapshot of the published marts, written after each successful nightly. The reports read this and never touch the warehouse — which is what makes the public report safe to leave open.",
-    scar:"Published the same way as the graph: built beside the target, renamed in. The reports builder watches the file's inode rather than a clock, so it cannot rebuild halfway through a publish."
-  },
-  "schema_snapshot.tsv":{
-    why:"Every silver and gold column and type, pinned in one checked-in file.",
-    scar:"CI fails if a model changes shape without this being regenerated, so a schema change arrives as a reviewable diff instead of as a surprise three weeks later in something downstream."
-  },
-  "deterministic keys":{
-    why:"Surrogate keys are computed from source identifiers, so rebuilding a table does not reissue them.",
-    scar:"That is what lets the exported graph and the analytics snapshot store those keys and stay correct. With a row counter instead, a rebuild would hand the same number to a different person, and every copy already made would quietly be about somebody else."
-  },
-  "dbt tests":{
-    why:"About 260 of them, loaded automatically as orchestration-level asset checks — so a failing data-quality test shows up as a failed asset, next to the table it belongs to, rather than in a log nobody opens.",
-    scar:"Assertions about the data live here rather than in Python, because a failing dbt test can keep the offending rows in a table you can go and query. A Python check tells you the count was wrong; this tells you which rows were."
-  },
-  "catalog parity":{
-    why:"Sources, tables, jobs, schedules and dashboards are declared once as data in a Python catalog, and tests pin that catalog against dbt's manifest, the SQL DDL, and the loaded orchestration definitions.",
-    scar:"A new dbt model with no catalog entry doesn't misbehave — it becomes a stub, and the edge from ingestion to transformation quietly vanishes. Parity tests turn that silence back into a failing build."
-  }
 };
 
 document.getElementById('yr').textContent = new Date().getFullYear();
@@ -992,98 +677,6 @@ document.getElementById('yr').textContent = new Date().getFullYear();
 })();
 
 /* =========================================================
-   How it's built — the tab strip.
-
-   Two details carry this:
-
-     · reveal.js adds .in to .lane / .host / .clock when they
-       intersect the viewport, and a hidden panel never
-       intersects. A panel opened later therefore has its
-       cards revealed outright, or they would sit at opacity
-       0 forever and the tab would look empty.
-
-     · the hash is a deep link (#data, #deploy…), written with
-       replaceState so that switching views doesn't fill the
-       back button with four copies of the same page. A hash
-       typed or pasted into the bar still works, via
-       hashchange.
-
-   Nothing is hidden in the markup — this hides the inactive
-   panels itself, and the strip is only visible under .js. The
-   two therefore cannot disagree about what is showing.
-   ========================================================= */
-(function(){
-  const root = document.getElementById('build-tabs');
-  if(!root) return;
-  const tabs   = Array.prototype.slice.call(root.querySelectorAll('[role="tab"]'));
-  const panels = Array.prototype.slice.call(root.querySelectorAll('.panel'));
-  const legend = document.getElementById('chip-legend');
-  if(!tabs.length || !panels.length) return;
-
-  const NAMES = tabs.map(function(t){ return t.dataset.panel; });
-
-  function show(name, opts){
-    opts = opts || {};
-    if(NAMES.indexOf(name) < 0) name = NAMES[0];
-
-    tabs.forEach(function(tab){
-      const on = tab.dataset.panel === name;
-      tab.setAttribute('aria-selected', on ? 'true' : 'false');
-      tab.tabIndex = on ? 0 : -1;               /* roving: one stop for the strip */
-      if(on && opts.focus) tab.focus();
-    });
-
-    let active = null;
-    panels.forEach(function(panel){
-      const on = panel.dataset.panel === name;
-      panel.hidden = !on;
-      if(!on) return;
-      active = panel;
-      /* it was hidden, so it never intersected, so reveal.js never reached
-         it — hand it its .in rather than animating something nobody saw */
-      if(!opts.first){
-        panel.querySelectorAll('.lane,.host,.clock').forEach(function(el){
-          el.classList.add('in');
-        });
-      }
-    });
-
-    /* the legend explains chips; one view has none to explain */
-    if(legend) legend.hidden = !!(active && active.dataset.chips === 'none');
-
-    if(opts.hash){ try{ history.replaceState(null,'','#'+name); }catch(e){} }
-  }
-
-  tabs.forEach(function(tab, i){
-    tab.addEventListener('click', function(){
-      show(tab.dataset.panel, {hash:true});
-    });
-    /* arrow keys move between tabs, as a tablist is expected to */
-    tab.addEventListener('keydown', function(e){
-      let next = null;
-      if(e.key === 'ArrowRight' || e.key === 'ArrowDown')     next = (i + 1) % tabs.length;
-      else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp')   next = (i - 1 + tabs.length) % tabs.length;
-      else if(e.key === 'Home')                               next = 0;
-      else if(e.key === 'End')                                next = tabs.length - 1;
-      if(next === null) return;
-      e.preventDefault();
-      show(tabs[next].dataset.panel, {focus:true, hash:true});
-    });
-  });
-
-  window.addEventListener('hashchange', function(){
-    const name = location.hash.replace('#','');
-    if(NAMES.indexOf(name) >= 0) show(name);
-  });
-
-  /* first paint: an unknown or absent hash opens the first view */
-  const asked = location.hash.replace('#','');
-  const known = NAMES.indexOf(asked) >= 0;
-  show(known ? asked : NAMES[0], {first:true});
-  if(known) document.getElementById('build').scrollIntoView();
-})();
-
-/* =========================================================
    The figure strip. Values come from stats.json, written by
    the warehouse's own export script — typed in here they
    would rot silently, and nothing would fail.
@@ -1141,29 +734,43 @@ fetch('stats.json')
   .catch(function(){ /* no strip is better than a wrong strip */ });
 
 /* ---------------------------------------------------------
-   Live surfaces
+   The side doors, under the hero CTA.
+
+   Same chip as the deployment diagram, deliberately: these
+   and those are the same claim — a logo that links to the
+   vendor is decoration, one that links to my instance is
+   evidence. Built with createElement rather than a template
+   string, so a label with an "&" in it stays a label.
    --------------------------------------------------------- */
 (function(){
-  const wrap = document.getElementById('apps');
-  document.getElementById('apps-meta').textContent =
-    SURFACES.length + (SURFACES.length===1?' surface':' surfaces');
+  const wrap = document.getElementById('doors');
+  if(!wrap || !DOORS.length) return;
 
-  SURFACES.forEach(function(surface,i){
-    const num = String(i + 1).padStart(2,'0');
-    const tags = (surface.tags||[]).map(function(t){return `<span>${t}</span>`;}).join('');
+  const lead = document.createElement('span');
+  lead.className = 'doors-lead';
+  lead.textContent = 'also public';
+  wrap.appendChild(lead);
+
+  DOORS.forEach(function(door){
+    if(!door || !door.url || !door.label) return;
     const a = document.createElement('a');
-    a.className = 'entry';
-    a.href = surface.url;
+    a.className = 'node';
+    a.href = door.url;
     a.target = '_blank';
     a.rel = 'noopener';
-    a.innerHTML =
-      `<div class="idx">${num}</div>
-       <div class="body">
-         <h3>${surface.title}</h3>
-         <p>${surface.summary||''}</p>
-         ${tags?`<div class="tags">${tags}</div>`:''}
-       </div>
-       <div class="right">${surface.status||''}<span class="arr">↗</span></div>`;
+    if(door.brand) a.style.setProperty('--brand', door.brand);
+    if(door.icon){
+      const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+      svg.setAttribute('class','lg');
+      svg.setAttribute('aria-hidden','true');
+      const use = document.createElementNS('http://www.w3.org/2000/svg','use');
+      use.setAttribute('href','#' + door.icon);
+      svg.appendChild(use);
+      a.appendChild(svg);
+    }
+    const label = document.createElement('span');
+    label.textContent = door.label;
+    a.appendChild(label);
     wrap.appendChild(a);
   });
 })();
