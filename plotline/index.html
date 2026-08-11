@@ -126,16 +126,16 @@
 <main class="wrap">
 
   <!-- ============================================================
-       What I built. Every chip on the diagrams below is something that
+       What I built. Every chip on the diagram below is something that
        was chosen; read only those and the project looks like an
        assembly of other people's software. These four are the parts
-       that had to be written.
+       that had to be written — and now the only place on the page
+       that says what any of it cost.
 
-       Unlike the scar cards that stood here before, this copy lives
-       here rather than being lifted out of NODE_NOTES. A card and a
-       chip note can now say different things, and neither breaks the
-       other. The cost of that is the obvious one: nothing keeps them
-       agreeing except reading both.
+       This copy lives here rather than being lifted out of NODE_NOTES.
+       A card and a chip note can say different things, and neither
+       breaks the other. The cost of that is the obvious one: nothing
+       keeps them agreeing except reading both.
        ============================================================ -->
   <section class="sec" id="made">
     <div class="sec-head">
@@ -168,7 +168,6 @@
     <p class="legend" id="chip-legend">
       <i><span class="dot">dotted</span> why it&rsquo;s here</i>
       <i><span class="pip"></span> something of mine running at the other end</i>
-      <i><span class="ast">&#10034;</span> what it cost</i>
     </p>
 
     <p class="panel-lead">Two boxes: one runs everything, the other watches it from outside &mdash; because a monitor on the machine it monitors tells you nothing when that machine is the problem.</p>
@@ -419,9 +418,6 @@ const BUILT = [
    assets/node-notes.js.
 
      why    what it's doing here, and why it and not something else
-     scar   optional — what it cost. Chips with one get an ochre
-            mark, so the diagrams read twice: once for what this
-            is built from, once for where it drew blood.
      href   the project's homepage
      live   optional — {url,label} for my instance of it. A logo
             linking to dagster.io is a logo. A logo linking to my
@@ -434,17 +430,14 @@ const NODE_NOTES = {
   /* ---------------------------------------------------- sources */
   "IMDb":{
     why:"The canonical film dataset — free daily TSV dumps covering titles, cast, and crew at a scale nothing else matches. It is the spine: every other source is joined onto an IMDb identifier, not the other way around.",
-    scar:"The dumps are re-published whole every day, so ingest streams and resumes by byte range instead of downloading them again. A restart mid-pull picks up where it stopped.",
     href:"https://developer.imdb.com/non-commercial-datasets/"
   },
   "TMDB":{
     why:"Fills the gaps IMDb's dumps leave out — artwork, overviews, watch providers — through a REST API, which means it is fetched one identifier at a time rather than downloaded.",
-    scar:"An API that must be walked needs a worklist, not a loop: identifiers are queued in PostgreSQL, claimed by drain jobs, retried with backoff, and dead-lettered when they keep failing. A rate limiter shared across workers keeps the whole box inside 40 requests per 10 seconds, however many drains happen to be running.",
     href:"https://www.themoviedb.org"
   },
   "Wikidata":{
     why:"The connective tissue: one place that already knows a film's IMDb, TMDB and Wikipedia identifiers are the same film, so cross-source matching is a lookup instead of a guess.",
-    scar:"The SPARQL endpoint is the obvious way in and the wrong one: ask it for every film identifier at once and it times out. Ingest streams the full JSON entity dump and decompresses it as it goes instead — a query that fails becomes a download that resumes. SPARQL stayed, for one-off questions.",
     href:"https://www.wikidata.org"
   },
   "MovieLens":{
@@ -463,7 +456,6 @@ const NODE_NOTES = {
   /* -------------------------------------------- orchestration */
   "Dagster":{
     why:"Asset-based orchestration fits a warehouse: every table is a declared asset with lineage, retries and schedules attached, and the UI doubles as documentation — which is why it is public and read-only rather than hidden behind a login.",
-    scar:"A data-quality check has to name the table it guards, schema prefix and all. Name it slightly wrong and nothing complains: Dagster reads the name as a new table, invents an empty one to hang the check on, and the table you meant to guard goes unwatched — with no failure anywhere to say so. Every name is now pinned by a test, because a mistake that produces silence rather than an error is the expensive kind.",
     href:"https://dagster.io",
     live:{url:"https://plotline.mpdonovan.com/dagster",label:"my asset graph, read-only"}
   },
@@ -471,24 +463,20 @@ const NODE_NOTES = {
   /* ------------------------------------------------ lakehouse */
   "DuckLake":{
     why:"A lakehouse format that puts the catalog in a real database rather than in a pile of metadata files: Parquet on disk for the data, PostgreSQL for what and where it all is. Table references, snapshots and schema evolution become transactions instead of directory listings.",
-    scar:"It also retires the rule that shaped the first version of this project: one writer per DuckDB file. Writes are serialized by a pool in the orchestrator and conflicting writers retry with backoff, so the nightly build and an ad-hoc query can now run at once. Before, one of them simply lost.",
     href:"https://ducklake.select"
   },
   "DuckDB":{
     why:"An OLAP engine that runs in-process — scans Parquet absurdly fast with no server to babysit. Ideal on a single box, and disposable: each run attaches the catalog, does its work, and exits.",
-    scar:"Fast is not the same as unbounded. Extracting nested JSON credits is not a spillable operation, so one model that looked like ordinary SQL climbed to 20 GB and died rather than spilling to disk. Knowing which operators can spill and which cannot is most of what running this on 16 GB consists of.",
     href:"https://duckdb.org"
   },
   "PostgreSQL":{
     why:"Two jobs, one boring and correct engine: the DuckLake catalog, and a separate operational database holding the things a pipeline needs to be restartable — worklists, watermarks, a dead-letter queue, and distributed rate-limit buckets.",
-    scar:"Two separate databases, on purpose. Retry state that lives inside the thing being rebuilt is not retry state.",
     href:"https://www.postgresql.org"
   },
 
   /* ------------------------------------------------ transform */
   "dbt":{
     why:"SQL transforms with tests, docs and lineage — it keeps bronze → silver → gold declarative and reviewable, and generates the column-level documentation this site links to.",
-    scar:"Every silver and gold column and type is pinned in a checked-in file. A schema change can no longer surface three weeks later in something downstream — it surfaces as a diff, and somebody has to approve it.",
     href:"https://www.getdbt.com",
     live:{url:"https://plotline.mpdonovan.com/dbt-docs/",label:"my dbt docs + lineage"}
   },
@@ -496,18 +484,15 @@ const NODE_NOTES = {
   /* ---------------------------------------------------- serve */
   "FastAPI":{
     why:"Typed Python endpoints with generated OpenAPI docs. The query layer stays small and self-describing, and it opens exactly one file: the exported graph, with no catalog, no extensions and no credentials — which is what keeps the internet-facing service isolated from the warehouse.",
-    scar:"It boots without a graph on purpose. Failing closed took the whole site down on a fresh deploy, because one reverse proxy fronts the frontend, the reports, Dagster and the dbt docs from the same origin — so a missing graph became a total outage. It now answers 503 for graph routes and connects lazily once the file appears, and its container healthcheck is liveness-only so an unhealthy API cannot block a deploy.",
     href:"https://fastapi.tiangolo.com",
     live:{url:"https://plotline.mpdonovan.com/api/health",label:"health endpoint"}
   },
   "Uvicorn":{
     why:"The ASGI server under FastAPI. Notable only for what it makes necessary: path searches are synchronous and expensive, so they run on a threadpool and are gated to a handful at a time.",
-    scar:"Without that gate, a few hub-to-hub searches were enough to occupy every worker and stall the rest of the site. Shedding load with a 503 is a better answer than a server that has quietly stopped answering.",
     href:"https://www.uvicorn.org"
   },
   "Evidence":{
     why:"The reports site: SQL files and markdown, built into a static page. Its dashboards aren't authored here — they're declared in the warehouse's own catalog and rendered from it, so a card that drifts from its declaration fails CI.",
-    scar:"It reads a standalone snapshot rather than the warehouse, so the public report has no database behind it to reach. That is what makes it safe to leave unauthenticated and unmetered while the read-only Dagster and dbt docs next to it are rate-limited.",
     href:"https://evidence.dev",
     live:{url:"https://plotline.mpdonovan.com/reports/",label:"the data overview"}
   },
@@ -522,24 +507,20 @@ const NODE_NOTES = {
   /* -------------------------------------------------- runtime */
   "Caddy":{
     why:"One binary for TLS, HTTP/2 and reverse proxying, with automatic certificates — no renewal cron job to forget. It fronts everything on one origin: app, API, reports, Dagster and dbt docs.",
-    scar:"One origin means one blast radius, so the routing is where the safety rules live. Read-only Dagster and the dbt docs are rate-limited, because both query the same PostgreSQL that backs the catalog and a crawler should degrade the page rather than the warehouse. The reports are not limited at all — they are files, with nothing behind them to overload.",
     href:"https://caddyserver.com"
   },
   "Docker":{
     why:"Every service is a container with a pinned version, and either host rebuilds from a single compose file.",
-    scar:"The dbt manifest is compiled at image-build time while the Python assets read their configuration at runtime, so restarting with an edited environment file and no rebuild silently desynchronises the two halves. A startup check now compares them and refuses to boot rather than building a warehouse that half-agrees with itself.",
     href:"https://www.docker.com"
   },
 
   /* --------------------------------------------------- ci / cd */
   "GitHub Actions":{
     why:"Lint, types, unit tests, and an integration run that builds every model against fixtures in a real DuckLake — then builds the images and deploys them to the box.",
-    scar:"The integration job also builds the warehouse twice, once with the optional sources on and once off, and asserts the schemas match. An optional model's empty branch has to agree with its populated one, or a table's shape quietly depends on which sources happened to be enabled.",
     href:"https://github.com/features/actions"
   },
   "pytest":{
     why:"Fifty test modules, and the interesting ones don't test functions — they test that the pieces still agree with each other: the catalog against dbt's manifest, the SQL DDL against the row builders, the loaded orchestration against the declared specs.",
-    scar:"Most of these exist because something failed silently once. The rule that stuck: if a mistake produces a no-op rather than an error, write the test that turns it back into an error.",
     href:"https://docs.pytest.org"
   },
   "Ruff":{
@@ -558,7 +539,6 @@ const NODE_NOTES = {
   },
   "Uptime Kuma":{
     why:"Self-hosted uptime checks with a public status page, watching production from the other box — because a monitor on the machine it monitors tells you nothing when that machine is the problem.",
-    scar:"The backup job checks in here after each run, so the alert fires when a backup stops happening. Nothing is a worse false comfort than a backup that failed quietly.",
     href:"https://github.com/louislam/uptime-kuma"
   },
   "Umami":{
