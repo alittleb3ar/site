@@ -129,9 +129,8 @@
     current = node;
   }
 
-  /* Every chip in either diagram, not just the deployment one. The
-     architecture chips used to be bare links to vendor homepages, which put
-     the notes on the diagram nobody reaches first. */
+  /* Diagram chips only. The hero's side doors are the same chip by design,
+     but they are plain links — a note would be in the way of the click. */
   document.querySelectorAll('.diagram .node, .topo .node').forEach(function (node) {
     var key = keyFor(node);
     var entry = entryFor(key);
