@@ -6,9 +6,6 @@
 
    Each entry is an object:
      why   what the thing is doing here, and why it and not something else
-     scar  optional — what it cost. The thing that broke, and what changed.
-           Chips with one get an ochre mark, so the diagrams can be read twice:
-           once for what it is built from, once for where it drew blood.
      href  optional — the project's own homepage
      live  optional — {url, label} for the instance actually running on the
            box. This is the whole reason the chips became buttons: a logo
@@ -55,7 +52,6 @@
      but it is still data, and a stray "<" in a note should read as a "<". */
   function fill(key, entry) {
     pop.textContent = '';
-    pop.classList.toggle('scarred', !!entry.scar);
 
     var title = document.createElement('b');
     title.textContent = key;
@@ -64,13 +60,6 @@
     var why = document.createElement('p');
     why.textContent = entry.why;
     pop.appendChild(why);
-
-    if (entry.scar) {
-      var scar = document.createElement('p');
-      scar.className = 'scar';
-      scar.textContent = entry.scar;
-      pop.appendChild(scar);
-    }
 
     if (!entry.live && !entry.href) return;
 
@@ -137,7 +126,6 @@
     if (!entry) return;
 
     node.classList.add('has-note');
-    if (entry.scar) node.classList.add('has-scar');
     if (entry.live) node.classList.add('has-live');
     node.setAttribute('tabindex', '0');
     node.setAttribute('role', 'button');
